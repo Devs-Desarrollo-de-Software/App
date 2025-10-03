@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TurisGo.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace TurisGo.Migrations
 {
     [DbContext(typeof(TurisGoDbContext))]
-    partial class TurisGoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250920001835_Added_Destinos")]
+    partial class Added_Destinos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,6 +51,9 @@ namespace TurisGo.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
+
+                    b.Property<DateTime>("FechaUltimaActualizacion")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Imagen")
                         .IsRequired()
@@ -1847,33 +1853,6 @@ namespace TurisGo.Migrations
                         .IsUnique();
 
                     b.ToTable("AbpSettingDefinitions", (string)null);
-                });
-
-            modelBuilder.Entity("TurisGo.Destinos.Destino", b =>
-                {
-                    b.OwnsOne("TurisGo.Destinos.Coordenada", "Coordenada", b1 =>
-                        {
-                            b1.Property<Guid>("DestinoId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<double>("Latitud")
-                                .HasColumnType("float")
-                                .HasColumnName("Latitud");
-
-                            b1.Property<double>("Longitud")
-                                .HasColumnType("float")
-                                .HasColumnName("Longitud");
-
-                            b1.HasKey("DestinoId");
-
-                            b1.ToTable("AppDestinos");
-
-                            b1.WithOwner()
-                                .HasForeignKey("DestinoId");
-                        });
-
-                    b.Navigation("Coordenada")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
