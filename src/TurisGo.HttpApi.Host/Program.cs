@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Card;
 
 namespace TurisGo;
 
@@ -27,11 +28,11 @@ public class Program
                 .UseSerilog((context, services, loggerConfiguration) =>
                 {
                     loggerConfiguration
-                    #if DEBUG
+#if DEBUG
                         .MinimumLevel.Debug()
-                    #else
+#else
                         .MinimumLevel.Information()
-                    #endif
+#endif
                         .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                         .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
                         .Enrich.FromLogContext()
@@ -40,7 +41,16 @@ public class Program
                         .WriteTo.Async(c => c.AbpStudio(services));
                 });
             await builder.AddApplicationAsync<TurisGoHttpApiHostModule>();
+
+
             var app = builder.Build();
+            if (builder.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+
+            }
+
             await app.InitializeApplicationAsync();
             await app.RunAsync();
             return 0;

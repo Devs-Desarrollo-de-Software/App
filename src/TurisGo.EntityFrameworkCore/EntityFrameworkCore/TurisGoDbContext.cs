@@ -12,18 +12,21 @@ using Volo.Abp.Identity.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
+using TurisGo.Destinos;
 
 namespace TurisGo.EntityFrameworkCore;
 
-[ReplaceDbContext(typeof(IIdentityDbContext))]
+/*[ReplaceDbContext(typeof(IIdentityDbContext))]
 [ConnectionStringName("Default")]
-public class TurisGoDbContext :
-    AbpDbContext<TurisGoDbContext>,
+*/
+
+public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
     IIdentityDbContext
+   // ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
-
-
+    public DbSet<Destino> Destinos { get; set; }
+    
     #region Entities from the modules
 
     /* Notice: We only implemented IIdentityProDbContext 
@@ -69,7 +72,7 @@ public class TurisGoDbContext :
         builder.ConfigureIdentity();
         builder.ConfigureOpenIddict();
         builder.ConfigureBlobStoring();
-        
+
         /* Configure your own tables/entities inside here */
 
         //builder.Entity<YourEntity>(b =>
@@ -78,5 +81,31 @@ public class TurisGoDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
+        builder.Entity<Destino>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Destinos", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Nombre).IsRequired().HasMaxLength(100);
+            b.Property(x => x.Pais).IsRequired().HasMaxLength(60);
+            b.Property(x => x.Poblacion).IsRequired();
+            b.Property(x => x.Imagen).IsRequired().HasMaxLength(500);
+
+            b.OwnsOne(x => x.Coordenada, cb =>
+            {
+                cb.Property(c => c.Latitud)
+                .HasColumnName("Latitud")
+                .IsRequired();
+
+                cb.Property(c => c.Longitud)
+                .HasColumnName("Longitud")
+                .IsRequired();
+            });
+          
+
+        });
+
+       
     }
 }

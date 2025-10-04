@@ -5,6 +5,8 @@ using Volo.Abp.Identity;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Modularity;
+using Microsoft.Extensions.DependencyInjection;
+using TurisGo.Destinos;
 
 namespace TurisGo;
 
@@ -25,5 +27,7 @@ public class TurisGoApplicationModule : AbpModule
         {
             options.AddMaps<TurisGoApplicationModule>();
         });
+
+       // context.Services.AddTransient<IDestinoAppService, DestinoAppService>();
     }
 }

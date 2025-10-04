@@ -39,6 +39,7 @@ using Volo.Abp.OpenIddict;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.Security.Claims;
+using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 
 namespace TurisGo;
 
@@ -90,6 +91,13 @@ public class TurisGoHttpApiHostModule : AbpModule
     {
         var configuration = context.Services.GetConfiguration();
         var hostingEnvironment = context.Services.GetHostingEnvironment();
+
+        // Agrege esto!
+        Configure<AbpAntiForgeryOptions>(options =>
+        {
+            options.AutoValidate = false;
+        });
+        //Hasta aca!
 
         if (!configuration.GetValue<bool>("App:DisablePII"))
         {
@@ -199,6 +207,7 @@ public class TurisGoHttpApiHostModule : AbpModule
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "TurisGo API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
                 options.CustomSchemaIds(type => type.FullName);
+               
             });
     }
 
@@ -260,19 +269,14 @@ public class TurisGoHttpApiHostModule : AbpModule
         {
             app.UseMultiTenancy();
         }
+       
 
         app.UseUnitOfWork();
         app.UseDynamicClaims();
         app.UseAuthorization();
 
         app.UseSwagger();
-        app.UseAbpSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "TurisGo API");
-
-            var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
-            options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
-        });
+        app.UseAbpSwaggerUI();
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();
