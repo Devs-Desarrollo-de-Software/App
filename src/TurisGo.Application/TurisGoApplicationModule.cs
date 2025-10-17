@@ -7,6 +7,7 @@ using Volo.Abp.FeatureManagement;
 using Volo.Abp.Modularity;
 using Microsoft.Extensions.DependencyInjection;
 using TurisGo.Destinos;
+using System.Net.Http;
 
 namespace TurisGo;
 
@@ -29,5 +30,7 @@ public class TurisGoApplicationModule : AbpModule
         });
 
        // context.Services.AddTransient<IDestinoAppService, DestinoAppService>();
+       // Agregge esto!
+        context.Services.AddHttpClient<ICitySearchService, GeoDbCitySearchService>();
     }
 }
