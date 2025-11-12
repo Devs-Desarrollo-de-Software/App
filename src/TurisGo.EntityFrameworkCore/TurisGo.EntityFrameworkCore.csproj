@@ -32,6 +32,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>compile; build; native; contentfiles; analyzers; buildtransitive</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Volo.Abp.Users.Abstractions" Version="9.3.6" />
   </ItemGroup>
 
 </Project>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TurisGo.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace TurisGo.Migrations
 {
     [DbContext(typeof(TurisGoDbContext))]
-    partial class TurisGoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251022234652_Added_Calificacion")]
+    partial class Added_Calificacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1901,6 +1904,15 @@ namespace TurisGo.Migrations
                         .IsUnique();
 
                     b.ToTable("AbpSettingDefinitions", (string)null);
+                });
+
+            modelBuilder.Entity("TurisGo.Calificaciones.Calificacion", b =>
+                {
+                    b.HasOne("TurisGo.Destinos.Destino", null)
+                        .WithMany()
+                        .HasForeignKey("DestinoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TurisGo.Destinos.Destino", b =>

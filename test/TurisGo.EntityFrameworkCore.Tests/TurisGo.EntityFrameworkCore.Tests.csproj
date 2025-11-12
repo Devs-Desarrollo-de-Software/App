@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="C\**" />
+    <EmbeddedResource Remove="C\**" />
+    <None Remove="C\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\TurisGo.EntityFrameworkCore\TurisGo.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\TurisGo.Application.Tests\TurisGo.Application.Tests.csproj" />
   </ItemGroup>

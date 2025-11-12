@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using TurisGo.Calificaciones;
+using TurisGo.Destinos;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -9,10 +12,19 @@ using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using Volo.Abp.OpenIddict.EntityFrameworkCore;
-using TurisGo.Destinos;
+using Volo.Abp.Users;
+using TurisGo.Usuarios;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
+
+
+
+
+
 
 namespace TurisGo.EntityFrameworkCore;
 
@@ -22,11 +34,12 @@ namespace TurisGo.EntityFrameworkCore;
 
 public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
     IIdentityDbContext
-   // ITenantManagementDbContext
 {
+
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Destino> Destinos { get; set; }
-    
+    public DbSet<Calificacion> Calificaciones { get; set; }
+
     #region Entities from the modules
 
     /* Notice: We only implemented IIdentityProDbContext 
@@ -52,10 +65,16 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
 
     #endregion
 
-    public TurisGoDbContext(DbContextOptions<TurisGoDbContext> options)
+    private readonly ICurrentUser _currentUser;
+
+    public TurisGoDbContext(DbContextOptions<TurisGoDbContext> options, ICurrentUser currentUser) 
         : base(options)
     {
+        _currentUser = currentUser;
+    }
 
+    public TurisGoDbContext(DbContextOptions<TurisGoDbContext> options) : base(options)
+    {
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -102,10 +121,37 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
                 .HasColumnName("Longitud")
                 .IsRequired();
             });
-          
-
         });
 
-       
+        builder.Entity<Calificacion>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Calificaciones", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.Puntuacion).IsRequired();
+            b.Property(x => x.Comentario).HasMaxLength(1000);
+            b.Property(x => x.DestinoId).IsRequired();
+            b.Property(x => x.UserId).IsRequired();
+
+            b.HasIndex(x => new { x.DestinoId, x.UserId }).IsUnique();
+
+            b.HasQueryFilter(e =>
+                !_currentUser.IsAuthenticated ||
+                e.UserId == _currentUser.Id);
+
+        });
     }
+
+    protected override bool ShouldFilterEntity<TEntity>(IMutableEntityType entityType)
+    {
+        if (typeof(IUserOwned).IsAssignableFrom(typeof(TEntity)))
+        {
+            return true;
+        }
+        return base.ShouldFilterEntity<TEntity>(entityType);
+    }
+
 }
+
+
+

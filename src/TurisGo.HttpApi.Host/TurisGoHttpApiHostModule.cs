@@ -40,6 +40,11 @@ using Volo.Abp.Swashbuckle;
 using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.AspNetCore.Mvc.AntiForgery;
+using OpenIddict.Server;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+
 
 namespace TurisGo;
 
@@ -118,7 +123,7 @@ public class TurisGoHttpApiHostModule : AbpModule
             });
         }
 
-        ConfigureAuthentication(context);
+        ConfigureAuthentication(context, configuration); // agrege configuration
         ConfigureUrls(configuration);
         ConfigureBundles();
         ConfigureConventionalControllers();
@@ -128,13 +133,48 @@ public class TurisGoHttpApiHostModule : AbpModule
         ConfigureCors(context, configuration);
     }
 
-    private void ConfigureAuthentication(ServiceConfigurationContext context)
+    private void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
     {
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
             options.IsDynamicClaimsEnabled = true;
         });
+
+        //Agregue esto!
+
+        context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = configuration["AuthServer:Authority"];
+                options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
+                options.Audience = "TurisGo";
+
+
+                // Configura eventos para devolver JSON en lugar de HTML
+                options.Events = new JwtBearerEvents
+                {
+                    OnChallenge = context =>
+                    {
+                        context.HandleResponse();
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+
+                        var result = JsonSerializer.Serialize(new
+                        {
+                            error = new
+                            {
+                                code = "unauthorized",
+                                message = "Se requiere autenticación. Debe proporcionar un token Bearer válido.",
+                                details = "No se proporcionó un token de acceso o el token es inválido."
+                            }
+                        });
+
+                        return context.Response.WriteAsync(result);
+                    }
+                };
+            });   //Hasta aca!
+            
     }
 
     private void ConfigureUrls(IConfiguration configuration)
@@ -207,7 +247,32 @@ public class TurisGoHttpApiHostModule : AbpModule
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "TurisGo API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
                 options.CustomSchemaIds(type => type.FullName);
-               
+
+                // Definicion de seguridad Bearer
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Ingrese el token JWT en el formato: Bearer {token}",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                //Requisito de seguridad
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { 
+                        new OpenApiSecurityScheme
+                        {
+                          Reference = new OpenApiReference
+                          {
+                              Type = ReferenceType.SecurityScheme,
+                              Id = "Bearer"
+                          }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
     }
 
