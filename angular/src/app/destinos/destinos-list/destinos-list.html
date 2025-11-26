@@ -1,0 +1,113 @@
+<div class="container">
+  <div class="search-header">
+    <h1>{{ '::Destinations' | abpLocalization }}</h1>
+    <h2>{{ '::Destinations' | abpLocalization }}/{{ '::Country' | abpLocalization }}</h2>
+  </div>
+
+  <div class="search-bar">
+    <div class="input-group">
+      <label>{{ '::Destination' | abpLocalization }}</label>
+      <input
+        type="text"
+        class="form-control"
+        [placeholder]="'::Destination' | abpLocalization"
+        [(ngModel)]="nombreCiudad"
+        (keyup.enter)="onSearch()"
+        (input)="onSearchInput()"
+      />
+    </div>
+    <div class="input-group">
+      <label>{{ '::Country' | abpLocalization }}</label>
+      <input
+        type="text"
+        class="form-control"
+        [placeholder]="'::Country' | abpLocalization"
+        [(ngModel)]="nombrePais"
+        (keyup.enter)="onSearch()"
+        (input)="onSearchInput()"
+      />
+    </div>
+    <button class="btn btn-primary" (click)="onSearch()">
+      <i class="fas fa-search"></i> {{ '::Search' | abpLocalization }}
+    </button>
+    <button class="btn btn-secondary" (click)="clearSearch()">
+      <i class="fas fa-times"></i> {{ '::Clear' | abpLocalization }}
+    </button>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>{{ '::Loading' | abpLocalization }}</p>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-circle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Results grid -->
+  <div *ngIf="!loading && ciudades.length > 0" class="results-grid">
+    <div class="city-card" *ngFor="let ciudad of ciudades">
+      <div class="card-image">
+        <div class="country-badge">
+          <i class="fas fa-map-marker-alt"></i>
+          {{ ciudad.country }}
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h3 class="city-name">{{ ciudad.name }}</h3>
+
+        <div class="info-item">
+          <span class="info-label">
+            <i class="fas fa-globe"></i>
+            <!--{{ '::Destinations' | abpLocalization }}/-->{{ '::Country' | abpLocalization }}:
+          </span>
+          <span class="info-value">{{ ciudad.country }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">
+            <i class="fas fa-users"></i>
+            {{ '::Population' | abpLocalization }}:
+          </span>
+          <span class="info-value">{{ formatearPoblacion(ciudad.population) }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">
+            <i class="fas fa-map-pin"></i>
+            {{ '::Coordinates' | abpLocalization }}:
+          </span>
+          <span class="info-value"
+            >{{ formatearCoordenadas(ciudad.latitude, ciudad.longitude) }}</span
+          >
+        </div>
+
+        <button class="btn-view-map" (click)="verEnMapa(ciudad)">
+          <i class="fas fa-map"></i> {{ '::ViewOnMap' | abpLocalization }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No results message -->
+  <div
+    *ngIf="!loading && nombreCiudad && ciudades.length === 0 && !errorMessage"
+    class="no-results"
+  >
+    <i class="fas fa-search"></i>
+    <p>{{ '::NoResults' | abpLocalization }}</p>
+  </div>
+
+  <!-- Empty state -->
+  <div
+    *ngIf="!loading && !nombreCiudad && ciudades.length === 0 && !errorMessage"
+    class="empty-state"
+  >
+    <i class="fas fa-search-location"></i>
+    <p>{{ '::EnterCityName' | abpLocalization }}</p>
+  </div>
+</div>

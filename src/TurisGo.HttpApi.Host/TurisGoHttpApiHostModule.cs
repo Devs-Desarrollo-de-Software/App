@@ -142,7 +142,7 @@ public class TurisGoHttpApiHostModule : AbpModule
         });
 
         //Agregue esto!
-
+        /*
         context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -174,6 +174,7 @@ public class TurisGoHttpApiHostModule : AbpModule
                     }
                 };
             });   //Hasta aca!
+        */
             
     }
 
