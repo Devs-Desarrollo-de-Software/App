@@ -9,5 +9,6 @@ namespace TurisGo.Destinos
     public interface ICitySearchService
     {
         Task<List<CityDto>> SearchCitiesByNameAsync(string namePrefix);
+        Task<List<CityDto>> FilterCitiesAsync(string paisPrefix, int poblacionMin, string regionPrefix);
     }
 }

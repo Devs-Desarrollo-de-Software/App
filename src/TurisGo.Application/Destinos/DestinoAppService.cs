@@ -41,6 +41,23 @@ namespace TurisGo.Destinos
             return await _citySearchService.SearchCitiesByNameAsync(nombre);
         }
 
+        [HttpGet]
+        [Route("api/app/destino/buscar-ciudades-por-filtro")]
+        public async Task<List<CityDto>> FiltrarCiudadesAsync(string paisPrefix = null, int poblacionMin = 0, string regionPrefix = null)
+        {
+            if (paisPrefix.IsNullOrEmpty() && regionPrefix.IsNullOrEmpty() && poblacionMin <= 0)
+            {
+                return new List<CityDto>(); // Retorna lista vacia.
+            }
+
+            if (poblacionMin < 0)
+                throw new ArgumentException("La poblacion no debe ser negativa", nameof(poblacionMin));
+
+            return await _citySearchService.FilterCitiesAsync(paisPrefix, poblacionMin, regionPrefix);
+        }
+
+        
+
     }
 
 }

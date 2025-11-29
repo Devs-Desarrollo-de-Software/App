@@ -30,8 +30,10 @@ namespace TurisGo.Destinos
         }
 
 
+        // ----------------- Pruebas para el metodo SearchCitiesByName ------------------------
+
         [Fact]
-        public async Task Should_Return_CityList()
+        public async Task SearchByName_Should_Return_CityList()
         {
             //Arrange
             var cities = new List<CityDto>
@@ -72,7 +74,7 @@ namespace TurisGo.Destinos
 
 
         [Fact]
-        public async Task Should_Throw_Exception_When_NameIsEmpty()
+        public async Task SearchByName_Should_Throw_Exception_When_NameIsEmpty()
         {
             //Act & Assert
             await Should.ThrowAsync<ArgumentException>(async () =>
@@ -83,7 +85,7 @@ namespace TurisGo.Destinos
 
 
         [Fact]
-        public async Task Should_Return_EmptyList_When_NoResults()
+        public async Task SearchByName_Should_Return_EmptyList_When_NoResults()
         {
             //Arrange
             _mockCityService
@@ -99,7 +101,7 @@ namespace TurisGo.Destinos
         }
 
         [Fact]
-        public async Task Should_Throw_Exception_When_ApiFails()
+        public async Task SearchByName_Should_Throw_Exception_When_ApiFails()
         {
             //Arrange
             _mockCityService
@@ -109,8 +111,95 @@ namespace TurisGo.Destinos
             //Act & Assert
             await Should.ThrowAsync<HttpRequestException>(async () =>
             {
-               await _destinoAppService.BuscarCiudadesPorNombreAsync("Roma");
+                await _destinoAppService.BuscarCiudadesPorNombreAsync("Roma");
             });
+
+        }
+
+        // --------------- Pruebas para el metodo FilterCities() --------------------------
+
+        [Fact]
+        public async Task Filter_Should_Throw_When_No_Filters_Provided()
+        {
+            
+            var result = await _destinoAppService.FiltrarCiudadesAsync(null, 0, null);
+
+            result.ShouldNotBeNull();
+            result.ShouldBeEmpty();
+
+        }
+
+        [Fact]
+        public async Task Filter_Should_Throw_When_Population_Is_Negative()
+        {
+            await Should.ThrowAsync<ArgumentException>(() =>
+            
+                 _destinoAppService.FiltrarCiudadesAsync("AR", -1, null)
+            );
+        }
+
+        [Fact]
+        public async Task Filter_Should_Call_ICitySearchService_With_Correct_Parameters()
+        {
+            // Arrange
+            _mockCityService
+                .Setup(x => x.FilterCitiesAsync("AR", 1000000, null))
+                .ReturnsAsync(new List<CityDto>());
+
+            // Act
+            await _destinoAppService.FiltrarCiudadesAsync("AR", 1000000, null);
+
+            // Assert
+            _mockCityService.Verify(
+                x => x.FilterCitiesAsync("AR", 1000000, null),
+                Times.Once
+                );
+        }
+
+        [Fact]
+        public async Task Filter_Should_Return_Empty_List_When_No_Result()
+        {
+            // Arrange
+            _mockCityService
+                .Setup(x => x.FilterCitiesAsync("XX", 0, null))
+                .ReturnsAsync(new List<CityDto>());
+
+            // Act
+            var result = await _destinoAppService.FiltrarCiudadesAsync("XX", 0, null);
+
+            // Assert
+            result.ShouldNotBeNull();
+            result.Count.ShouldBe(0);
+        }
+
+        [Fact]
+        public async Task Filter_Should_Throw_Api_Fails()
+        {
+            _mockCityService
+                .Setup(x => x.FilterCitiesAsync("AR", 1000000, null))
+                .ThrowsAsync(new HttpRequestException("API error"));
+
+            await Should.ThrowAsync<HttpRequestException>(() =>
+
+                _destinoAppService.FiltrarCiudadesAsync("AR", 1000000, null)
+            );
+        }
+
+        [Fact]
+        public async Task Filter_Should_Work_With_Only_Region()
+        {
+            var cities = new List<CityDto>
+            {
+                new CityDto { Name = "Cordoba", Country = "Argentina", Population = 1300000 }
+            };
+
+            _mockCityService
+                .Setup(x => x.FilterCitiesAsync(null, 0, "cor"))
+                .ReturnsAsync(cities);
+
+            var result = await _destinoAppService.FiltrarCiudadesAsync(null, 0, "cor");
+
+            result.ShouldNotBeEmpty();
 
         }
 
