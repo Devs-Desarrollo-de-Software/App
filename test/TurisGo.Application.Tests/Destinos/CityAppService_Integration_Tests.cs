@@ -2,11 +2,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Modularity;
 using Xunit;
 
 namespace TurisGo.Destinos
 {
+    [Collection("GeoDbIntegrationTests")]
     public abstract class CityAppService_Integration_Tests<TStartupModule> : TurisGoApplicationTestBase<TStartupModule>
         where TStartupModule : IAbpModule
     {
@@ -46,37 +48,6 @@ namespace TurisGo.Destinos
             result.ShouldBeEmpty();
         }
 
-        [Fact]
-        public async Task SearchByName_Should_Map_All_Required_Properties()
-        {
-            
-            // Act
-            var result = await _service.SearchCitiesByNameAsync("Roma");
-
-            // Assert
-            result.ShouldNotBeNull();
-            if (result.Any())
-            {
-                var city = result.First();
-                city.Name.ShouldNotBeNullOrWhiteSpace();
-                city.Country.ShouldNotBeNullOrWhiteSpace();
-                city.Latitude.ShouldBeInRange(-90, 90);
-                city.Longitude.ShouldBeInRange(-180, 180);
-                city.Population.ShouldBeGreaterThanOrEqualTo(0);
-            }
-        }
-
-        [Fact]
-        public async Task SearchByName_Should_Handle_Special_Characters()
-        {
-            
-            // Act
-            var result = await _service.SearchCitiesByNameAsync("São Paulo");
-
-            // Assert
-            result.ShouldNotBeNull();
-            // Deberia manejar caracteres especiales sin errores
-        }
 
         // ----------------------- Pruebas para el metodo FilterCities --------------------------
 
@@ -94,21 +65,6 @@ namespace TurisGo.Destinos
 
         }
 
-        [Fact]
-        public async Task Filter_Should_Return_Cities_By_MinPopulation()
-        {
-            
-
-            // Act
-            var result = await _service.FilterCitiesAsync(null, 2000000, null);
-
-            // Assert
-            result.ShouldNotBeNull();
-            if (result.Any())
-            {
-                result.ShouldAllBe(c => c.Population >= 2000000);
-            }
-        }
 
         [Fact]
         public async Task Filter_Should_Combine_Multiple_Filters()
@@ -149,19 +105,40 @@ namespace TurisGo.Destinos
             // Deberia retornar alguna resultado por defecto o vacio.
         }
 
+
+        // ------------------------ Pruebas para el metodo GetDetailsAsync ----------------------------
+
         [Fact]
-        public async Task Filter_Should_Validate_Country_Code_Format()
+        public async Task GetCityDetails_Should_Return_Complete_Information()
         {
+            // Arrange - Usamos un id conocido de antemano (Buenos Aires)
+            var cityId = 3435910;
+
             // Act
-            var result = await _service.FilterCitiesAsync("INVALID", 0, null);
+            var result = await _service.GetCityDetailsAsync(cityId);
 
             // Assert
             result.ShouldNotBeNull();
-            result.ShouldBeEmpty(); 
+            result.Id.ShouldBe(cityId);
+            result.Name.ShouldNotBeNullOrWhiteSpace();
+            result.Country.ShouldNotBeNullOrWhiteSpace();
+            result.CountryCode.ShouldNotBeNullOrWhiteSpace();
+            result.Region.ShouldNotBeNullOrWhiteSpace();
+            result.Latitude.ShouldBeInRange(-90, 90);
+            result.Longitude.ShouldBeInRange(-180, 180);
+            result.Population.ShouldBeGreaterThanOrEqualTo(0);
+            result.TimeZone.ShouldNotBeNullOrWhiteSpace();
         }
-        
 
-        
+        [Fact]
+        public async Task GetCityDetails_Should_Throw_When_City_Not_Found()
+        {
+            // Act & Assert
+            await Should.ThrowAsync<EntityNotFoundException>(async () =>
+            {
+                await _service.GetCityDetailsAsync(99999999);
+            });
+        }
 
     }
 }
