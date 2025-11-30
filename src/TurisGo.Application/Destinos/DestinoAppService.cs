@@ -8,6 +8,7 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Validation;
 
 namespace TurisGo.Destinos
 {
@@ -37,7 +38,8 @@ namespace TurisGo.Destinos
         public async Task<List<CityDto>> BuscarCiudadesPorNombreAsync(string nombre)
         {
             if (string.IsNullOrWhiteSpace(nombre))
-                throw new ArgumentException("El nombre de la ciudad no puede estar vacio.");
+                throw new AbpValidationException("El nombre de la ciudad no puede estar vacio.");
+            
             return await _citySearchService.SearchCitiesByNameAsync(nombre);
         }
 
@@ -45,15 +47,26 @@ namespace TurisGo.Destinos
         [Route("api/app/destino/buscar-ciudades-por-filtro")]
         public async Task<List<CityDto>> FiltrarCiudadesAsync(string paisPrefix = null, int poblacionMin = 0, string regionPrefix = null)
         {
+            // Si no viene ningun filtro, devolemos lista vacia.
             if (paisPrefix.IsNullOrEmpty() && regionPrefix.IsNullOrEmpty() && poblacionMin <= 0)
             {
                 return new List<CityDto>(); // Retorna lista vacia.
             }
 
             if (poblacionMin < 0)
-                throw new ArgumentException("La poblacion no debe ser negativa", nameof(poblacionMin));
+                throw new AbpValidationException("La poblacion no debe ser negativa.");
 
             return await _citySearchService.FilterCitiesAsync(paisPrefix, poblacionMin, regionPrefix);
+        }
+
+        [HttpGet]
+        [Route("api/app/destino/obtener-info-ciudad/{cityId}")]
+        public async Task<CityDetailDto> ObtenerDetalleCiudadAsync(int cityId)
+        {
+            if (cityId <= 0)
+                throw new AbpValidationException("El Id debe ser mayor a cero.");
+
+            return await _citySearchService.GetCityDetailsAsync(cityId);
         }
 
         

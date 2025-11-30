@@ -10,5 +10,6 @@ namespace TurisGo.Destinos
     {
         Task<List<CityDto>> SearchCitiesByNameAsync(string namePrefix);
         Task<List<CityDto>> FilterCitiesAsync(string paisPrefix, int poblacionMin, string regionPrefix);
+        Task<CityDetailDto> GetCityDetailsAsync(int cityId);
     }
 }
