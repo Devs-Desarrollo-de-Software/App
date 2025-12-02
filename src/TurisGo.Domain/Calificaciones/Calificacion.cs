@@ -19,31 +19,56 @@ namespace TurisGo.Calificaciones
 
         public Calificacion(Guid id, Guid destinoId, Guid usuarioId, int puntuacion, string comentario) : base(id)
         {
-            Puntuacion = puntuacion;
-            Comentario = string.IsNullOrWhiteSpace(comentario) ? null : comentario.Trim();
-            DestinoId = destinoId;
-            UserId = usuarioId;
+            SetPutuacion(puntuacion);
+            SetComentario(comentario);
+            SetDestino(destinoId);
+            SetUser(usuarioId);
+        }
 
+        public void SetPutuacion(int puntuacion)
+        {
             if (puntuacion < 1 || puntuacion > 5)
             {
-                throw new ArgumentOutOfRangeException(nameof(puntuacion), "La puntuación debe estar entre 1 y 5.");
+                throw new ArgumentOutOfRangeException(nameof(puntuacion),
+                    "La puntuacion debe estar entre 1 y 5.");
             }
-
-            if (DestinoId == Guid.Empty)
-            {
-                throw new ArgumentException("El ID del destino no puede estar vacío.", nameof(DestinoId));
-            }
-
-            if (UserId == Guid.Empty)
-            {
-                throw new ArgumentException("El ID del usuario no puede estar vacío.", nameof(UserId));
-            }
-
-            if (!string.IsNullOrEmpty(comentario) && comentario.Length > 1000)
-                throw new ArgumentException("El comentario no puede superar los 1000 caracteres.", nameof(comentario));
-
-         
+            Puntuacion = puntuacion;
         }
+
+        public void SetComentario(string comentario)
+        {
+            if (!string.IsNullOrEmpty(comentario) && comentario.Length > 1000)
+            {
+                throw new ArgumentException(
+                    "El comentario no debe superar los 1000 caracteres.");
+            }
+
+            Comentario = string.IsNullOrWhiteSpace(comentario) ? null : comentario.Trim();
+        }
+
+        public void SetDestino (Guid IdDestino)
+        {
+            if (IdDestino == Guid.Empty)
+            {
+                throw new ArgumentException(
+                    "El ID del destino no puede estar vacio.", nameof(IdDestino));
+            }
+
+            DestinoId = IdDestino;
+        }
+
+        public void SetUser(Guid IdUser)
+        {
+            if (IdUser == Guid.Empty)
+            {
+                throw new ArgumentException(
+                    "El ID del destino no puede estar vacio.", nameof(IdUser));
+            }
+
+            UserId = IdUser;
+        }
+
+
 
     }
 }
