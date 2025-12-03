@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TurisGo.Calificaciones
 {
-    public class CreateUpdateCalificacionDto
+    public class CreateCalificacionDto
     {
         [Required]
         public Guid DestinoId { get; set; }
