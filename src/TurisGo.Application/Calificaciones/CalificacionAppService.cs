@@ -17,29 +17,21 @@ using Volo.Abp.Validation;
 namespace TurisGo.Calificaciones
 {
    [Authorize] //Exige token
-    public class CalificacionAppService :
-        CrudAppService
-        <
-          Calificacion,
-          CalificacionDto,
-          Guid,
-          PagedAndSortedResultRequestDto,
-          CreateUpdateCalificacionDto
-        >,
-        ICalificacionAppService
+    public class CalificacionAppService : ApplicationService, ICalificacionAppService
     {
         private readonly ICurrentUser _currentUser;
+        private readonly IRepository<Calificacion, Guid> _repository;
 
         public CalificacionAppService(
             IRepository<Calificacion, Guid> repository,                                  
-            ICurrentUser currentUser) 
-            : base(repository)
+            ICurrentUser currentUser)
         {
-            _currentUser = currentUser;                          
+            _currentUser = currentUser;   
+            _repository = repository;
         }
 
 
-        public override async Task<CalificacionDto> CreateAsync(CreateUpdateCalificacionDto input)
+        public async Task<CalificacionDto> CreateAsync(CreateCalificacionDto input)
         {
             if (!_currentUser.IsAuthenticated)
                 throw new UnauthorizedAccessException("Debe estar autenticado para calificar un destino.");
@@ -47,7 +39,7 @@ namespace TurisGo.Calificaciones
             var userId = _currentUser.Id!.Value;
 
             // Verificar si el usuario ya califico anteriormente
-            var yaCalifico = await Repository.FirstOrDefaultAsync(x =>
+            var yaCalifico = await _repository.FirstOrDefaultAsync(x =>
                 x.DestinoId == input.DestinoId &&
                 x.UserId == userId);
 
@@ -63,8 +55,76 @@ namespace TurisGo.Calificaciones
                 input.Comentario
             );
 
-            var calificacionCreada = await Repository.InsertAsync(calificacion, autoSave: true);
+            var calificacionCreada = await _repository.InsertAsync(calificacion, autoSave: true);
             return ObjectMapper.Map<Calificacion, CalificacionDto>(calificacionCreada);
         }
+
+        public async Task<CalificacionDto> GetAsync(Guid id)
+        {
+            var calificacion = await _repository.GetAsync(id);
+            return ObjectMapper.Map<Calificacion, CalificacionDto>(calificacion);
+        }
+
+        public async Task<PagedResultDto<CalificacionDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        {
+            var queryable = await _repository.GetQueryableAsync();
+
+            var query = queryable
+                .OrderByDescending(x => x.CreationTime)
+                .Skip(input.SkipCount)
+                .Take(input.MaxResultCount);
+
+            var totalCount = await AsyncExecuter.CountAsync(queryable);
+            var calificaciones = await AsyncExecuter.ToListAsync(query);
+
+            return new PagedResultDto<CalificacionDto>(
+                totalCount,
+                ObjectMapper.Map<List<Calificacion>, List<CalificacionDto>>(calificaciones)
+            );
+        }
+
+        public async Task <CalificacionDto> UpdateAsync(Guid id, UpdateCalificacionDto input)
+        {
+
+            if (!_currentUser.IsAuthenticated)
+                throw new UnauthorizedAccessException("Debe estar autenticado para actualizar!");
+
+            var userId = _currentUser.Id!.Value;
+
+            // Buscar la calificacion
+            var calificacion = await _repository.GetAsync(id);
+
+            if (calificacion.UserId != userId)
+                throw new AbpAuthorizationException("No tiene permisos para editar esta calificación.");
+
+            // Actualizar los datos
+            calificacion.SetPuntuacion(input.Puntuacion);
+            calificacion.SetComentario(input.Comentario);
+
+            // Guardar cambios
+            var calificacionAutualizada = await _repository.UpdateAsync(calificacion, autoSave: true);
+            return ObjectMapper.Map<Calificacion, CalificacionDto>(calificacionAutualizada);
+
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            if (!_currentUser.IsAuthenticated)
+                throw new UnauthorizedAccessException("Debe estar autenticado para eliminar una calificación");
+
+            var userId = _currentUser.Id!.Value;
+
+            // Buscar la calificacion
+            var calificacion = await _repository.GetAsync(id);
+
+            // Verificar que la calificacion pertenece al usuario actual
+            if (calificacion.UserId != userId)
+                throw new AbpAuthorizationException("No tiene permisos para eliminar esta calificación");
+
+            // Eliminar la calificacion
+            await _repository.DeleteAsync(id, autoSave: true);
+        }
+
+        
     }
 }

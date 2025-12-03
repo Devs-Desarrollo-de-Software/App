@@ -19,6 +19,6 @@ public class TurisGoApplicationAutoMapperProfile : Profile
         CreateMap<Coordenada, CoordenadaDto>().ReverseMap();
 
         CreateMap<Calificacion,CalificacionDto>();
-        CreateMap<CreateUpdateCalificacionDto, Calificacion>();     
+        CreateMap<CreateCalificacionDto, Calificacion>();     
     }
 }

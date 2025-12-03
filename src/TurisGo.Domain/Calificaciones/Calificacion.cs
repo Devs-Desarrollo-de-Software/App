@@ -19,13 +19,13 @@ namespace TurisGo.Calificaciones
 
         public Calificacion(Guid id, Guid destinoId, Guid usuarioId, int puntuacion, string comentario) : base(id)
         {
-            SetPutuacion(puntuacion);
+            SetPuntuacion(puntuacion);
             SetComentario(comentario);
             SetDestino(destinoId);
             SetUser(usuarioId);
         }
 
-        public void SetPutuacion(int puntuacion)
+        public void SetPuntuacion(int puntuacion)
         {
             if (puntuacion < 1 || puntuacion > 5)
             {
@@ -67,8 +67,5 @@ namespace TurisGo.Calificaciones
 
             UserId = IdUser;
         }
-
-
-
     }
 }

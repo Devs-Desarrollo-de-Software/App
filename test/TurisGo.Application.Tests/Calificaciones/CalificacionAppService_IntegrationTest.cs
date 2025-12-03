@@ -86,7 +86,7 @@ namespace TurisGo.Calificaciones
         {
             using (UseAnonymous())
             {
-                var input = new CreateUpdateCalificacionDto
+                var input = new CreateCalificacionDto
                 {
                     DestinoId = Guid.NewGuid(),
                     Puntuacion = 5,
@@ -104,6 +104,34 @@ namespace TurisGo.Calificaciones
         }
 
         [Fact]
+        public async Task Should_Not_Allow_Duplicate_Rating_For_Same_Destino()
+        {
+            var user = Guid.NewGuid();
+            var destinoId = await CrearDestinoAsync("Londres");
+
+            using (UseUser(user, "user"))
+            {
+                // Primera calificación - OK
+                await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 5,
+                    Comentario = "Primera"
+                });
+
+                // Segunda calificación mismo destino - DEBE FALLAR
+                await Should.ThrowAsync<AbpValidationException>(async () =>
+                    await _calificaciones.CreateAsync(new CreateCalificacionDto
+                    {
+                        DestinoId = destinoId,
+                        Puntuacion = 4,
+                        Comentario = "Intento duplicado"
+                    })
+                );
+            }
+        }
+
+        [Fact]
         public async Task Should_Filter_Ratings_By_Current_User()
         {
             var user1 = Guid.NewGuid();
@@ -116,12 +144,12 @@ namespace TurisGo.Calificaciones
                 d1_user1 = await CrearDestinoAsync("Tokio");
                 d2_user1 = await CrearDestinoAsync("Paris");
 
-                await _calificaciones.CreateAsync(new CreateUpdateCalificacionDto { 
+                await _calificaciones.CreateAsync(new CreateCalificacionDto { 
                     DestinoId = d1_user1, 
                     Puntuacion = 5, 
                     Comentario = "A" });
 
-                await _calificaciones.CreateAsync(new CreateUpdateCalificacionDto { 
+                await _calificaciones.CreateAsync(new CreateCalificacionDto { 
                     DestinoId = d2_user1, 
                     Puntuacion = 4, 
                     Comentario = "B" });
@@ -130,7 +158,7 @@ namespace TurisGo.Calificaciones
             using (UseUser(user2, "user2"))
             {
                 d1_user2 = await CrearDestinoAsync("Roma");
-                await _calificaciones.CreateAsync(new CreateUpdateCalificacionDto {
+                await _calificaciones.CreateAsync(new CreateCalificacionDto {
                     DestinoId = d1_user2, 
                     Puntuacion = 2, 
                     Comentario = "C" });
@@ -163,20 +191,21 @@ namespace TurisGo.Calificaciones
 
             using (UseUser(user, "user"))
             {
-                califId = (await _calificaciones.CreateAsync(new CreateUpdateCalificacionDto
+                califId = (await _calificaciones.CreateAsync(new CreateCalificacionDto
                 {
                     DestinoId = destinoId,
                     Puntuacion = 3,
                     Comentario = "Original"
                 })).Id;
 
-                var updated = await _calificaciones.UpdateAsync(califId, new CreateUpdateCalificacionDto
+                // Usar UpdateCalificacionDto en lugar de CreateCalificacionDto
+                var updated = await _calificaciones.UpdateAsync(califId, new UpdateCalificacionDto
                 {
-                    DestinoId = destinoId,
                     Puntuacion = 5,
                     Comentario = "Edit"
                 });
                 updated.Puntuacion.ShouldBe(5);
+                updated.Comentario.ShouldBe("Edit");
 
                 await _calificaciones.DeleteAsync(califId);
 
@@ -184,6 +213,65 @@ namespace TurisGo.Calificaciones
                 list.Items.Any(i => i.Id == califId).ShouldBeFalse();
             }
         }
+
+        // Verificar que NO se puede actualizar calificación ajena
+        [Fact]
+        public async Task Should_Not_Allow_Update_Other_User_Rating()
+        {
+            var user1 = Guid.NewGuid();
+            var user2 = Guid.NewGuid();
+            var destinoId = await CrearDestinoAsync("Berlin");
+            Guid califId;
+
+            using (UseUser(user1, "user1"))
+            {
+                califId = (await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 4,
+                    Comentario = "De user1"
+                })).Id;
+            }
+
+            using (UseUser(user2, "user2"))
+            {
+                await Should.ThrowAsync<EntityNotFoundException>(async () =>
+                    await _calificaciones.UpdateAsync(califId, new UpdateCalificacionDto
+                    {
+                        Puntuacion = 1,
+                        Comentario = "Intento de user2"
+                    })
+                );
+            }
+        }
+
+        // Verificar que NO se puede eliminar calificación ajena
+        [Fact]
+        public async Task Should_Not_Allow_Delete_Other_User_Rating()
+        {
+            var user1 = Guid.NewGuid();
+            var user2 = Guid.NewGuid();
+            var destinoId = await CrearDestinoAsync("Ámsterdam");
+            Guid califId;
+
+            using (UseUser(user1, "user1"))
+            {
+                califId = (await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 5,
+                    Comentario = "De user1"
+                })).Id;
+            }
+
+            using (UseUser(user2, "user2"))
+            {
+                await Should.ThrowAsync<EntityNotFoundException>(async () =>
+                    await _calificaciones.DeleteAsync(califId)
+                );
+            }
+        }
+
 
         [Fact]
         public async Task Should_Throw_When_Rating_Out_Of_Range()
@@ -194,12 +282,72 @@ namespace TurisGo.Calificaciones
             using (UseUser(user, "user"))
             {
                 await Should.ThrowAsync<AbpValidationException>(() =>
-                    _calificaciones.CreateAsync(new CreateUpdateCalificacionDto
+                    _calificaciones.CreateAsync(new CreateCalificacionDto
                     {
                         DestinoId = destinoId,
                         Puntuacion = 999,
                         Comentario = "invalid"
                     }));
+            }
+        }
+
+        // ← NUEVA: Verificar autenticación en Update
+        [Fact]
+        public async Task Should_Require_Authentication_On_Update()
+        {
+            var user = Guid.NewGuid();
+            var destinoId = await CrearDestinoAsync("Milán");
+            Guid califId;
+
+            using (UseUser(user, "user"))
+            {
+                califId = (await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 3,
+                    Comentario = "Original"
+                })).Id;
+            }
+
+            using (UseAnonymous())
+            {
+                var ex = await Should.ThrowAsync<Exception>(async () =>
+                    await _calificaciones.UpdateAsync(califId, new UpdateCalificacionDto
+                    {
+                        Puntuacion = 5,
+                        Comentario = "Intento"
+                    })
+                );
+
+                (ex is AbpAuthorizationException || ex is UnauthorizedAccessException).ShouldBeTrue();
+            }
+        }
+
+        // Verificar autenticación en Delete
+        [Fact]
+        public async Task Should_Require_Authentication_On_Delete()
+        {
+            var user = Guid.NewGuid();
+            var destinoId = await CrearDestinoAsync("Florencia");
+            Guid califId;
+
+            using (UseUser(user, "user"))
+            {
+                califId = (await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 4,
+                    Comentario = "Original"
+                })).Id;
+            }
+
+            using (UseAnonymous())
+            {
+                var ex = await Should.ThrowAsync<Exception>(async () =>
+                    await _calificaciones.DeleteAsync(califId)
+                );
+
+                (ex is AbpAuthorizationException || ex is UnauthorizedAccessException).ShouldBeTrue();
             }
         }
 
