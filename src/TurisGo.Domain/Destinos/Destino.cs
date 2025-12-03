@@ -19,11 +19,28 @@ namespace TurisGo.Destinos
 
         public Destino(Guid id, string nombre, string pais, int poblacion, string imagen, Coordenada coordenada) : base(id)
         {
+            if (nombre.IsNullOrEmpty())
+            {
+                throw new ArgumentNullException("El nombre del destino no debe estar vacio", nameof(nombre));
+            }
+            if (pais.IsNullOrEmpty())
+            {
+                throw new ArgumentNullException("El país no debe estar vacio", nameof(pais));
+            }
+            if (poblacion < 0)
+            {
+                throw new ArgumentNullException("La poblacion no debe ser negativa", nameof(poblacion));
+            } 
+            if (coordenada is null)
+            {
+                throw new ArgumentNullException("Las coordenadas no debe ser nula", nameof (coordenada));
+            }
+  
             Nombre = nombre;
             Pais = pais;
             Poblacion = poblacion;
             Imagen = imagen;
-            Coordenada = coordenada ?? throw new ArgumentException(nameof(coordenada));
+            Coordenada = coordenada;
         }
 
     } 

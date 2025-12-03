@@ -8,14 +8,13 @@ using Volo.Abp.Application.Services;
 
 namespace TurisGo.Calificaciones
 {
-    public interface ICalificacionAppService : 
-        ICrudAppService
-        <
-        CalificacionDto,
-        Guid,
-        PagedAndSortedResultRequestDto,
-        CreateUpdateCalificacionDto
-        >
+    public interface ICalificacionAppService : IApplicationService
     {
+        Task<CalificacionDto> CreateAsync(CreateCalificacionDto input);
+        Task<CalificacionDto> UpdateAsync(Guid id, UpdateCalificacionDto input);
+        Task<CalificacionDto> GetAsync(Guid id);
+        Task<PagedResultDto<CalificacionDto>> GetListAsync(PagedAndSortedResultRequestDto input);
+
+        Task DeleteAsync(Guid id);
     }
 }

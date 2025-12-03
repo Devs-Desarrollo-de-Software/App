@@ -22,10 +22,6 @@ using System.Linq;
 using System.Linq.Expressions;
 
 
-
-
-
-
 namespace TurisGo.EntityFrameworkCore;
 
 /*[ReplaceDbContext(typeof(IIdentityDbContext))]
@@ -137,7 +133,7 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
 
             b.HasQueryFilter(e =>
                 !_currentUser.IsAuthenticated ||
-                e.UserId == _currentUser.Id);
+                (_currentUser.Id.HasValue && e.UserId == _currentUser.Id.Value));
 
         });
     }
