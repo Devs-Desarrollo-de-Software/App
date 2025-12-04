@@ -11,10 +11,10 @@ namespace TurisGo.Calificaciones
     public interface ICalificacionAppService : IApplicationService
     {
         Task<CalificacionDto> CreateAsync(CreateCalificacionDto input);
-        Task<CalificacionDto> UpdateAsync(Guid id, UpdateCalificacionDto input);
+        Task<CalificacionDto> UpdateAsync(Guid id, UpdateCalificacionDto input);    // 5.3. Editar una calificacion propia.
         Task<CalificacionDto> GetAsync(Guid id);
         Task<PagedResultDto<CalificacionDto>> GetListAsync(PagedAndSortedResultRequestDto input);
-
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(Guid id);  // 5.3. Eliminar un destino propio.
+        Task<PromedioCalificacionDto> GetPromedioAsync(Guid destinoId);  // 5.4. Obtener promedio de calificacion de un destino
     }
 }

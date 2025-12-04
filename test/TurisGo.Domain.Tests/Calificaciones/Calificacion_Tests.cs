@@ -1,10 +1,7 @@
 ﻿using Shouldly;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
+using TurisGo.Calificaciones;
 
 namespace TurisGo.Calificaciones
 {
@@ -296,5 +293,25 @@ namespace TurisGo.Calificaciones
             //Assert
             calificacion.Comentario.ShouldBe("Nuevo comentario");
         }
+
+        // --- Operacion 5.4. Obtener promedio calificacion de un destino ---
+
+        [Fact]
+        public void PromedioCalificacionDto_Should_Accept_Zero_Values()
+        {
+            // Arrange & Act
+            var dto = new PromedioCalificacionDto
+            {
+                DestinoId = Guid.NewGuid(),
+                PromedioCalificacion = 0,
+                TotalCalificaciones = 0
+            };
+
+            // Assert
+            dto.PromedioCalificacion.ShouldBe(0);
+            dto.TotalCalificaciones.ShouldBe(0);
+        }
+
+
     }
 }
