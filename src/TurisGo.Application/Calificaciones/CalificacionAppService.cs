@@ -1,15 +1,21 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Abp.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TurisGo.Destinos;
+using TurisGo.EntityFrameworkCore;
+using TurisGo.Usuarios;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Authorization;
 using Volo.Abp.Clients;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Users;
 using Volo.Abp.Validation;
@@ -21,6 +27,7 @@ namespace TurisGo.Calificaciones
     {
         private readonly ICurrentUser _currentUser;
         private readonly IRepository<Calificacion, Guid> _repository;
+
 
         public CalificacionAppService(
             IRepository<Calificacion, Guid> repository,                                  
@@ -104,6 +111,46 @@ namespace TurisGo.Calificaciones
             // Guardar cambios
             var calificacionAutualizada = await _repository.UpdateAsync(calificacion, autoSave: true);
             return ObjectMapper.Map<Calificacion, CalificacionDto>(calificacionAutualizada);
+
+        }
+
+        [AllowAnonymous]    // Permitir que cualquier usuario consulte.
+        public async Task<PromedioCalificacionDto> GetPromedioAsync(Guid destinoId)
+        {
+            if (destinoId == Guid.Empty)
+            {
+                throw new AbpValidationException("El ID del destino no puede ser nulo.");
+            }
+
+            var queryable = await _repository.GetQueryableAsync();
+
+            var calificaciones = await AsyncExecuter.ToListAsync(
+                queryable
+                    .IgnoreQueryFilters()
+                    .Where(c => c.DestinoId == destinoId)
+            );
+
+                if (!calificaciones.Any())
+                {
+                    return new PromedioCalificacionDto
+                    {
+                        DestinoId = destinoId,
+                        PromedioCalificacion = 0,
+                        TotalCalificaciones = 0
+                    };
+                }
+
+                // Calcular el promedio
+                var promedio = calificaciones.Average(c => c.Puntuacion);
+                var total = calificaciones.Count;
+
+                return new PromedioCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    PromedioCalificacion = Math.Round(promedio, 2),
+                    TotalCalificaciones = total
+                };
+            
 
         }
 

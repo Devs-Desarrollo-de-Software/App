@@ -351,7 +351,192 @@ namespace TurisGo.Calificaciones
             }
         }
 
+        // ------------------ Operacion 5.4. Obtener promedio de calificacion de un destino ------------
 
+        [Fact]
+        public async Task Should_Calculate_Average_Rating_Correctly()
+        {
+            // Arrange
+            var destinoId = await CrearDestinoAsync("Barcelona");
+            var user1 = Guid.NewGuid();
+            var user2 = Guid.NewGuid();
+            var user3 = Guid.NewGuid();
+
+            // Crear 3 calificaciones: 5, 4, 3 (promedio = 4.0)
+            using (UseUser(user1, "user1"))
+            {
+                await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 5,
+                    Comentario = "Excelente"
+                });
+            }
+            using (UseUser(user2, "user2"))
+            {
+                await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 4,
+                    Comentario = "Muy bueno"
+                });
+            }
+            using (UseUser(user3, "user3"))
+            {
+                await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 3,
+                    Comentario = "Regular"
+                });
+            }
+
+            // Act
+            var promedio = await _calificaciones.GetPromedioAsync(destinoId);
+
+            // Assert
+            promedio.ShouldNotBeNull();
+            promedio.DestinoId.ShouldBe(destinoId);
+            promedio.TotalCalificaciones.ShouldBe(3);
+            promedio.PromedioCalificacion.ShouldBe(4.0);
+        }
+
+        [Fact]
+        public async Task Should_Return_Zero_When_No_Ratings()
+        {
+            // Arrange
+            var destinoId = await CrearDestinoAsync("Madrid");
+
+            // Act - No se crean calificaciones
+            var promedio = await _calificaciones.GetPromedioAsync(destinoId);
+
+            // Assert
+            promedio.ShouldNotBeNull();
+            promedio.DestinoId.ShouldBe(destinoId);
+            promedio.TotalCalificaciones.ShouldBe(0);
+            promedio.PromedioCalificacion.ShouldBe(0);
+        }
+
+
+        [Fact]
+        public async Task Should_Throw_When_DestinoId_Is_Empty()
+        {
+            // Act & Assert
+            await Should.ThrowAsync<AbpValidationException>(async () =>
+                await _calificaciones.GetPromedioAsync(Guid.Empty)
+            );
+        }
+
+        [Fact]
+        public async Task Should_Allow_Anonymous_Access_To_Average()
+        {
+            // Arrange
+            var destinoId = await CrearDestinoAsync("Londres");
+            var user = Guid.NewGuid();
+
+            using (UseUser(user, "user"))
+            {
+                await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 5,
+                    Comentario = "Test"
+                });
+            }
+
+            // Act - Sin autenticación
+            using (UseAnonymous())
+            {
+                var promedio = await _calificaciones.GetPromedioAsync(destinoId);
+
+                // Assert
+                promedio.ShouldNotBeNull();
+                promedio.TotalCalificaciones.ShouldBe(1);
+                promedio.PromedioCalificacion.ShouldBe(5.0);
+            }
+        }
+
+        [Fact]
+        public async Task Should_Not_Include_Ratings_From_Different_Destino()
+        {
+            // Arrange
+            var destino1 = await CrearDestinoAsync("Viena");
+            var destino2 = await CrearDestinoAsync("Praga");
+            var user1 = Guid.NewGuid();
+            var user2 = Guid.NewGuid();
+
+            // Usuario 1 califica destino 1
+            using (UseUser(user1, "user1"))
+            {
+                await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destino1,
+                    Puntuacion = 5,
+                    Comentario = "Destino 1"
+                });
+            }
+
+            // Usuario 2 califica destino 2
+            using (UseUser(user2, "user2"))
+            {
+                await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destino2,
+                    Puntuacion = 1,
+                    Comentario = "Destino 2"
+                });
+            }
+
+            // Act - Obtener promedio solo del destino 1
+            var promedio = await _calificaciones.GetPromedioAsync(destino1);
+
+            // Assert - Solo debe contar la calificación del destino 1
+            promedio.TotalCalificaciones.ShouldBe(1);
+            promedio.PromedioCalificacion.ShouldBe(5.0); // Solo la de user1
+        }
+
+        [Fact]
+        public async Task Should_Update_Average_When_New_Rating_Added()
+        {
+            // Arrange
+            var destinoId = await CrearDestinoAsync("Ámsterdam");
+            var user1 = Guid.NewGuid();
+            var user2 = Guid.NewGuid();
+
+            // Primera calificación
+            using (UseUser(user1, "user1"))
+            {
+                await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 5,
+                    Comentario = "Primera"
+                });
+            }
+
+            // Act 1 - Obtener promedio inicial
+            var promedio1 = await _calificaciones.GetPromedioAsync(destinoId);
+            promedio1.TotalCalificaciones.ShouldBe(1);
+            promedio1.PromedioCalificacion.ShouldBe(5.0);
+
+            // Agregar segunda calificación
+            using (UseUser(user2, "user2"))
+            {
+                await _calificaciones.CreateAsync(new CreateCalificacionDto
+                {
+                    DestinoId = destinoId,
+                    Puntuacion = 3,
+                    Comentario = "Segunda"
+                });
+            }
+
+            // Act 2 - Obtener promedio actualizado
+            var promedio2 = await _calificaciones.GetPromedioAsync(destinoId);
+
+            // Assert - El promedio debe actualizarse
+            promedio2.TotalCalificaciones.ShouldBe(2);
+            promedio2.PromedioCalificacion.ShouldBe(4.0); // (5+3)/2 = 4.0
+        }
 
 
     }
