@@ -17,6 +17,7 @@ using Volo.Abp.Clients;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Identity;
 using Volo.Abp.Users;
 using Volo.Abp.Validation;
 
@@ -27,17 +28,20 @@ namespace TurisGo.Calificaciones
     {
         private readonly ICurrentUser _currentUser;
         private readonly IRepository<Calificacion, Guid> _repository;
-
+        private readonly IRepository<IdentityUser, Guid> _userRepository;
 
         public CalificacionAppService(
             IRepository<Calificacion, Guid> repository,                                  
-            ICurrentUser currentUser)
+            ICurrentUser currentUser,
+            IRepository<IdentityUser, Guid> userRepository)
         {
             _currentUser = currentUser;   
             _repository = repository;
+            _userRepository = userRepository;
         }
 
 
+        // 5.1 Calificar un destino
         public async Task<CalificacionDto> CreateAsync(CreateCalificacionDto input)
         {
             if (!_currentUser.IsAuthenticated)
@@ -66,12 +70,14 @@ namespace TurisGo.Calificaciones
             return ObjectMapper.Map<Calificacion, CalificacionDto>(calificacionCreada);
         }
 
+        // Obtener una calificacion propia
         public async Task<CalificacionDto> GetAsync(Guid id)
         {
             var calificacion = await _repository.GetAsync(id);
             return ObjectMapper.Map<Calificacion, CalificacionDto>(calificacion);
         }
 
+        // Listar calificaciones propias.
         public async Task<PagedResultDto<CalificacionDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             var queryable = await _repository.GetQueryableAsync();
@@ -90,6 +96,7 @@ namespace TurisGo.Calificaciones
             );
         }
 
+        // 5.3. Editar calificacion propia.
         public async Task <CalificacionDto> UpdateAsync(Guid id, UpdateCalificacionDto input)
         {
 
@@ -114,6 +121,7 @@ namespace TurisGo.Calificaciones
 
         }
 
+        // 5.4 Consultar promedio de calificaciones 
         [AllowAnonymous]    // Permitir que cualquier usuario consulte.
         public async Task<PromedioCalificacionDto> GetPromedioAsync(Guid destinoId)
         {
@@ -150,10 +158,58 @@ namespace TurisGo.Calificaciones
                     PromedioCalificacion = Math.Round(promedio, 2),
                     TotalCalificaciones = total
                 };
-            
+        }
+
+        // 5.5 Listar comentarios propios de un destino
+        public async Task<ListarComentariosDto> GetListComentariosAsync (Guid destinoId)
+        {
+            if (destinoId == Guid.Empty)
+            {
+                throw new AbpValidationException("El ID del destino no puede ser nulo.");
+            }
+
+            if (!_currentUser.IsAuthenticated)
+            {
+                throw new AbpAuthorizationException("Debe estar autenticado para ver comentarios.");
+            }
+
+            var userId = _currentUser.Id!.Value;
+            var queryable = await _repository.GetQueryableAsync();
+
+            var calificaciones = await AsyncExecuter.ToListAsync(
+                queryable
+                    .Where(c => c.DestinoId == destinoId)
+                    .OrderByDescending(c => c.CreationTime)
+            );
+
+            if (!calificaciones.Any())
+            {
+                return new ListarComentariosDto
+                {
+                    DestinoId = destinoId,
+                    Comentarios = new List<ComentarioDto>()
+                };
+            }
+
+            // El usuario solo ve su propio nombre
+            var currentUserName = _currentUser.UserName ?? "Usuario";
+
+            var comentarios = calificaciones.Select(c => new ComentarioDto
+            {
+                NombreUsuario = currentUserName,
+                Puntuacion = c.Puntuacion,
+                Comentario = c.Comentario ?? string.Empty
+            }).ToList();
+
+            return new ListarComentariosDto
+            {
+                DestinoId = destinoId,
+                Comentarios = comentarios
+            };
 
         }
 
+        // 5.3 Eliminar calificacion propia
         public async Task DeleteAsync(Guid id)
         {
             if (!_currentUser.IsAuthenticated)

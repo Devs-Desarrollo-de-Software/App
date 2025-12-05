@@ -538,6 +538,23 @@ namespace TurisGo.Calificaciones
             promedio2.PromedioCalificacion.ShouldBe(4.0); // (5+3)/2 = 4.0
         }
 
+      
+        [Fact]
+        public async Task Should_Return_Empty_List_When_No_Comentarios()
+        {
+            // Arrange
+            var destinoId = await CrearDestinoAsync("Madrid");
+
+            // Act - No se crean comentarios
+            var resultado = await _calificaciones.GetListComentariosAsync(destinoId);
+
+            // Assert
+            resultado.ShouldNotBeNull();
+            resultado.DestinoId.ShouldBe(destinoId);
+            resultado.Comentarios.ShouldNotBeNull();
+            resultado.Comentarios.Count.ShouldBe(0);
+        }
+
 
     }
 

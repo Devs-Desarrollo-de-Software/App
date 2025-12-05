@@ -16,5 +16,6 @@ namespace TurisGo.Calificaciones
         Task<PagedResultDto<CalificacionDto>> GetListAsync(PagedAndSortedResultRequestDto input);
         Task DeleteAsync(Guid id);  // 5.3. Eliminar un destino propio.
         Task<PromedioCalificacionDto> GetPromedioAsync(Guid destinoId);  // 5.4. Obtener promedio de calificacion de un destino
+        Task<ListarComentariosDto> GetListComentariosAsync(Guid destinoId);
     }
 }

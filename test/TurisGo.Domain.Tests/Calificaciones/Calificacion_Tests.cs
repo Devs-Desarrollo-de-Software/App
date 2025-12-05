@@ -1,7 +1,8 @@
 ﻿using Shouldly;
 using System;
-using Xunit;
+using System.Collections.Generic;
 using TurisGo.Calificaciones;
+using Xunit;
 
 namespace TurisGo.Calificaciones
 {
@@ -297,20 +298,57 @@ namespace TurisGo.Calificaciones
         // --- Operacion 5.4. Obtener promedio calificacion de un destino ---
 
         [Fact]
-        public void PromedioCalificacionDto_Should_Accept_Zero_Values()
+        public void ComentarioDto_Should_Be_Created_With_Valid_Data()
         {
             // Arrange & Act
-            var dto = new PromedioCalificacionDto
+            var dto = new ComentarioDto
             {
-                DestinoId = Guid.NewGuid(),
-                PromedioCalificacion = 0,
-                TotalCalificaciones = 0
+                NombreUsuario = "usuario123",
+                Puntuacion = 5,
+                Comentario = "Excelente lugar"
             };
 
             // Assert
-            dto.PromedioCalificacion.ShouldBe(0);
-            dto.TotalCalificaciones.ShouldBe(0);
+            dto.NombreUsuario.ShouldBe("usuario123");
+            dto.Puntuacion.ShouldBe(5);
+            dto.Comentario.ShouldBe("Excelente lugar");
         }
+
+
+        [Fact]
+        public void ListarComentariosDto_Should_Be_Created_With_Valid_Data()
+        {
+            // Arrange
+            var destinoId = Guid.NewGuid();
+            var comentarios = new List<ComentarioDto>
+    {
+        new ComentarioDto
+        {
+            NombreUsuario = "user1",
+            Puntuacion = 5,
+            Comentario = "Excelente"
+        },
+        new ComentarioDto
+        {
+            NombreUsuario = "user2",
+            Puntuacion = 4,
+            Comentario = "Muy bueno"
+        }
+    };
+
+            // Act
+            var dto = new ListarComentariosDto
+            {
+                DestinoId = destinoId,
+                Comentarios = comentarios
+            };
+
+            // Assert
+            dto.DestinoId.ShouldBe(destinoId);
+            dto.Comentarios.ShouldNotBeNull();
+            dto.Comentarios.Count.ShouldBe(2);
+        }
+
 
 
     }
