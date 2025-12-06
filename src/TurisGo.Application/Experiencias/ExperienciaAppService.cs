@@ -91,6 +91,25 @@ namespace TurisGo.Experiencias
 
         }
 
+        public async Task DeleteAsync(Guid id)
+        {
+            var userId = CurrentUser.Id!.Value;
+            var experiencia = await _repository.FirstOrDefaultAsync(c => 
+                                        c.Id == id &&
+                                        c.UserId == userId);
+
+            if (experiencia == null)
+            {
+                throw new BusinessException("El ID no corresponde a ninguna experiencia propia.");
+            }
+
+            await _repository.DeleteAsync(experiencia, autoSave: true);
+
+        }
+
+        
+
+
 
 
 
