@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Threading.Tasks;
+using TurisGo.Calificaciones;
 using TurisGo.Destinos;
 using Volo.Abp;  
-using Volo.Abp.Application.Services;  
+using Volo.Abp.Application.Services;
+using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Repositories;  
 using Volo.Abp.Validation;
 
@@ -58,6 +60,38 @@ namespace TurisGo.Experiencias
             return ObjectMapper.Map<Experiencia, ExperienciaDto>(experienciaCreada);
 
         }
+
+
+        public async Task<ExperienciaDto> UpdateAsync(Guid id, UpdateExperienciaDto input)
+        {
+
+            var userId = CurrentUser.Id!.Value;
+
+            // Verificar que ya califico anteriormente.
+            var experiencia = await _repository.GetAsync(id);
+            if (experiencia == null)
+            {
+                throw new BusinessException("El ID no corresponde a ninguna experiencia.");
+            }
+
+            if (experiencia.UserId != userId)
+                throw new AbpAuthorizationException("No tiene permisos para editar esta calificación.");
+
+            // Actualizamos experiencia
+            experiencia.SetTitulo(input.Titulo);
+            experiencia.SetDescripcion(input.Descripcion);
+            experiencia.SetValoracion(input.Valoracion);
+
+            // Agregar la experiencia a la BD
+            var experienciaCreada = await _repository.UpdateAsync(experiencia, autoSave: true);
+
+
+            // Mapear y devolver un DTO
+            return ObjectMapper.Map<Experiencia, ExperienciaDto>(experienciaCreada);
+
+        }
+
+
 
 
     }
