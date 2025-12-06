@@ -10,11 +10,11 @@ using Xunit;
 
 namespace TurisGo.Experiencias
 {
-    public class Experiencia_Tests 
+    public class Experiencia_Tests
     {
         private readonly Guid _userId = Guid.NewGuid();
         private readonly Guid _destinoId = Guid.NewGuid();
-    
+
 
         [Fact]
         public void Create_Should_Create_Experiencia_With_Valid_Data()
@@ -100,5 +100,82 @@ namespace TurisGo.Experiencias
         }
 
 
+        [Fact]
+        public void UpdateAsync_Should_Update_Experiencia_With_Valid_Data()
+        {
+            // Arrange
+            var experiencia = new Experiencia(
+                Guid.NewGuid(),
+                _userId,
+                _destinoId,
+                "Titulo Inicial",
+                "Descripcion Inicial",
+                TipoValoracion.Positiva
+            );
+
+            var updateDto = new UpdateExperienciaDto
+            {
+                Titulo = "Titulo Actualizado",
+                Descripcion = "Descripcion Actualizada",
+                Valoracion = TipoValoracion.Negativa
+            };
+
+
+            // Act
+            experiencia.SetTitulo(updateDto.Titulo);
+            experiencia.SetDescripcion(updateDto.Descripcion);
+            experiencia.SetValoracion(updateDto.Valoracion);
+
+
+            // Assert
+            experiencia.Titulo.ShouldBe("Titulo Actualizado");
+            experiencia.Descripcion.ShouldBe("Descripcion Actualizada");
+            experiencia.Valoracion.ShouldBe(TipoValoracion.Negativa);
+        }
+
+        [Fact]
+        public void UpdateAsync_Should_Throw_Exception_When_Titulo_Is_Null()
+        {
+            // Arrange
+            var experiencia = new Experiencia(
+                Guid.NewGuid(),
+                _userId,
+                _destinoId,
+                "Titulo Inicial",
+                "Descripcion Inicial",
+                TipoValoracion.Positiva
+            );
+
+            // Act & Assert
+            Should.Throw<AbpValidationException>(() =>
+            {
+                experiencia.SetTitulo(null);
+            });
+
+        }
+
+        [Fact]
+        public void UpdateAsync_Should_Throw_Exception_When_Descripcion_Exceeds_MaxLength()
+        {
+            // Arrange
+            var experiencia = new Experiencia(
+                Guid.NewGuid(),
+                _userId,
+                _destinoId,
+                "Titulo Inicial",
+                "Descripcion Inicial",
+                TipoValoracion.Positiva
+            );
+
+            var descripcionLarga = new string('B', 501); // 501 caracteres
+
+            // Act & Assert
+            Should.Throw<AbpValidationException>(() =>
+            {
+                experiencia.SetDescripcion(descripcionLarga);
+            });
+
+
+        }
     }
 }

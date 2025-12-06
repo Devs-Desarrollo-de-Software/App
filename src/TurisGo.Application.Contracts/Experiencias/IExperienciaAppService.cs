@@ -10,5 +10,6 @@ namespace TurisGo.Experiencias
     public interface IExperienciaAppService : IApplicationService
     {
         Task<ExperienciaDto> CreateAsync(CreateExperienciaDto input); // 4.1. Crear una nueva experiencia de un destino.
+        Task<ExperienciaDto> UpdateAsync(Guid Id, UpdateExperienciaDto input); // 4.2. Editar una experiencia propia.
     }
 }
