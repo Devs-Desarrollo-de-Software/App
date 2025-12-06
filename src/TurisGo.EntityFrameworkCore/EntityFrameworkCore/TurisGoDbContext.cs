@@ -20,6 +20,7 @@ using TurisGo.Usuarios;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using TurisGo.Experiencias;
 
 
 namespace TurisGo.EntityFrameworkCore;
@@ -35,6 +36,8 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Destino> Destinos { get; set; }
     public DbSet<Calificacion> Calificaciones { get; set; }
+
+    public DbSet<Experiencia> Experiencias { get; set; }
 
     #region Entities from the modules
 
@@ -88,14 +91,6 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
         builder.ConfigureOpenIddict();
         builder.ConfigureBlobStoring();
 
-        /* Configure your own tables/entities inside here */
-
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(TurisGoConsts.DbTablePrefix + "YourEntities", TurisGoConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
 
         builder.Entity<Destino>(b =>
         {
@@ -136,6 +131,19 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
                 (_currentUser.Id.HasValue && e.UserId == _currentUser.Id.Value));
 
         });
+
+        builder.Entity<Experiencia>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Experiencias", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.UserId).IsRequired();
+            b.Property(x => x.DestinoId).IsRequired();
+            b.Property(x => x.Titulo).IsRequired().HasMaxLength(100);
+            b.Property(x => x.Descripcion).IsRequired().HasMaxLength(500);
+
+        });
+
     }
 
     protected override bool ShouldFilterEntity<TEntity>(IMutableEntityType entityType)

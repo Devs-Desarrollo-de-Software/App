@@ -1,6 +1,7 @@
 using AutoMapper;
 using TurisGo.Calificaciones;
 using TurisGo.Destinos;
+using TurisGo.Experiencias;
 
 namespace TurisGo;
 
@@ -19,6 +20,9 @@ public class TurisGoApplicationAutoMapperProfile : Profile
         CreateMap<Coordenada, CoordenadaDto>().ReverseMap();
 
         CreateMap<Calificacion,CalificacionDto>();
-        CreateMap<CreateCalificacionDto, Calificacion>();     
+        CreateMap<CreateCalificacionDto, Calificacion>();
+
+        CreateMap<Experiencia, ExperienciaDto>();
+        CreateMap<CreateExperienciaDto, Experiencia>();
     }
 }
