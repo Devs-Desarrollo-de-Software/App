@@ -15,7 +15,7 @@ using Volo.Abp.Authorization;
 
 namespace TurisGo.Experiencias
 {
-    public class ExperienciaAppService_Tests<TStartupModule> : TurisGoApplicationTestBase<TStartupModule>
+    public abstract class ExperienciaAppService_Tests<TStartupModule> : TurisGoApplicationTestBase<TStartupModule>
         where TStartupModule : IAbpModule
     {
         private readonly IRepository<Experiencia, Guid> _experienciaRepository;
@@ -180,10 +180,30 @@ namespace TurisGo.Experiencias
             });
         }
 
+        [Fact]
+        public async Task DeleteAsync_Should_Delete_Experiencia_When_User_Is_Owner()
+        {
+            // Arrange
+            var destino = await CreateTestDestinoAsync();
+            var userId = _currentUser.Id!.Value;
+            var experiencia = new Experiencia(
+                Guid.NewGuid(),
+                userId,
+                destino.Id,
+                "Titulo a eliminar",
+                "Descripcion a eliminar",
+                TipoValoracion.Neutra
+            );
+            await _experienciaRepository.InsertAsync(experiencia, autoSave: true);
 
+            // Act
+            await _service.DeleteAsync(experiencia.Id);
 
+            // Assert
+            var experienciaInDb = await _experienciaRepository.FindAsync(experiencia.Id);
+            experienciaInDb.ShouldBeNull();
+        }
 
-
-
+        
     }
 }
