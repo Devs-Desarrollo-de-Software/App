@@ -204,6 +204,45 @@ namespace TurisGo.Experiencias
             experienciaInDb.ShouldBeNull();
         }
 
+        [Fact]
+        public async Task GetListExperienciaAsync_Should_Get_List_Of_Experiencia()
+        {
+            // Arrange
+            var destino = await CreateTestDestinoAsync();
+            var experiencia = new Experiencia(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                destino.Id,
+                "Titulo",
+                "Descripcion",
+                TipoValoracion.Positiva
+                );
+
+            await _experienciaRepository.InsertAsync(experiencia, autoSave: true);
+
+            // Act
+            var result = await _service.GetListExperienciasAsync(destino.Id);
+
+            // Assert
+            result.ShouldNotBeNull();
+            result.Experiencias.Count.ShouldBe(1);
+            result.DestinoId.ShouldBe(destino.Id);
+            result.Experiencias.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public async Task GetListExperienciasAsync_Should_Throw_Exception_When_Destino_Does_Not_Exist()
+        {
+            // Arrange
+            var destinoId = Guid.NewGuid(); // ID de destino inexistente
+
+            // Act & Assert
+            await Should.ThrowAsync<BusinessException>(async () =>
+            {
+                await _service.GetListExperienciasAsync(destinoId);
+            });
+        }
+
         
     }
 }

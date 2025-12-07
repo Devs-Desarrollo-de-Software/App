@@ -321,20 +321,20 @@ namespace TurisGo.Calificaciones
             // Arrange
             var destinoId = Guid.NewGuid();
             var comentarios = new List<ComentarioDto>
-    {
-        new ComentarioDto
-        {
-            NombreUsuario = "user1",
-            Puntuacion = 5,
-            Comentario = "Excelente"
-        },
-        new ComentarioDto
-        {
-            NombreUsuario = "user2",
-            Puntuacion = 4,
-            Comentario = "Muy bueno"
-        }
-    };
+            {
+                new ComentarioDto
+                {
+                    NombreUsuario = "user1",
+                    Puntuacion = 5,
+                    Comentario = "Excelente"
+                },
+                new ComentarioDto
+                {
+                    NombreUsuario = "user2",
+                    Puntuacion = 4,
+                    Comentario = "Muy bueno"
+                }
+            };
 
             // Act
             var dto = new ListarComentariosDto

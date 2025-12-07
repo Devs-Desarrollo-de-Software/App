@@ -177,5 +177,43 @@ namespace TurisGo.Experiencias
 
 
         }
+
+        [Fact]
+        public void GetListExperienciasAsync_Should_Return_List_Experiencias()
+        {
+            // Arrange
+            var destinoId = Guid.NewGuid();
+            var experiencias = new List<ExperienciaPropiaDto>
+            {
+                new ExperienciaPropiaDto
+                {
+                    NombreUsuario = "user1",
+                    Titulo = "titulo 1",
+                    Descripcion = "Descripcion 1",
+                    Valoracion = TipoValoracion.Positiva
+                },
+
+                new ExperienciaPropiaDto
+                {
+                    NombreUsuario = "user 2",
+                    Titulo = "titulo 2",
+                    Descripcion = "Descripcion 2",
+                    Valoracion = TipoValoracion.Neutra
+                }
+            };
+
+            // Act
+            var dto = new ListarExperienciasDto
+            {
+                DestinoId = destinoId,
+                Experiencias = experiencias
+            };
+
+            // Assert
+            dto.ShouldNotBeNull();
+            dto.DestinoId.ShouldBe(destinoId);
+            dto.Experiencias.Count.ShouldBe(2);
+
+        }
     }
 }
