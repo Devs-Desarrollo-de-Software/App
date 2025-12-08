@@ -172,10 +172,17 @@ namespace TurisGo.Experiencias
 
             var query = queryable.Where(e => e.UserId == userId);
 
-            // Filtrar por valoracion si se proporciona
+            // 4.5. Filtrar experiencias por valoración.
             if (input.Valoracion.HasValue)
             {
                 query = query.Where(e => e.Valoracion == input.Valoracion.Value);
+            }
+
+            // 4.6. Buscar experiencias por palabra clave en título o descripción.
+            if (string.IsNullOrEmpty(input.PalabraClave) == false)
+            {
+                query = query.Where(e => e.Titulo.Contains(input.PalabraClave) ||
+                                         e.Descripcion.Contains(input.PalabraClave));
             }
 
             // Ordenar por fecha de creacion (mas reciente primero)

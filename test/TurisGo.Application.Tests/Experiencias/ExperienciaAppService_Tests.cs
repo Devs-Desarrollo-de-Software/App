@@ -47,7 +47,7 @@ namespace TurisGo.Experiencias
         }
 
         // Helper method to create a test Experiencia
-        private async Task<Experiencia> CreateTestExperienciaAsync(TipoValoracion valoracion, string titulo = "Experiencia de prueba")
+        private async Task<Experiencia> CreateTestExperienciaAsync(TipoValoracion valoracion, string? titulo, string? descripcion)
         {
             var destino = await CreateTestDestinoAsync();
 
@@ -56,7 +56,7 @@ namespace TurisGo.Experiencias
                 _currentUser.Id!.Value,
                 destino.Id,
                 titulo,
-                "Descripción de la experiencia de prueba.",
+                descripcion,
                 valoracion
             );
 
@@ -265,9 +265,9 @@ namespace TurisGo.Experiencias
         public async Task GetListAsync_Should_Return_All_Experiencias_When_No_Filter()
         {
             // Arrange
-            await CreateTestExperienciaAsync(TipoValoracion.Positiva, "Exp 1");
-            await CreateTestExperienciaAsync(TipoValoracion.Neutra, "Exp 2");
-            await CreateTestExperienciaAsync(TipoValoracion.Negativa, "Exp 3");
+            await CreateTestExperienciaAsync(TipoValoracion.Positiva, "Exp 1","Des 1");
+            await CreateTestExperienciaAsync(TipoValoracion.Neutra, "Exp 2","Des 2");
+            await CreateTestExperienciaAsync(TipoValoracion.Negativa, "Exp 3","Des 3");
 
             var input = new GetExperienciasListDto
             {
@@ -293,10 +293,10 @@ namespace TurisGo.Experiencias
         public async Task GetListAsync_Should_Return_Only_Positivas_When_Filtered()
         {
             // Arrange
-            await CreateTestExperienciaAsync(TipoValoracion.Positiva);
-            await CreateTestExperienciaAsync(TipoValoracion.Positiva);
-            await CreateTestExperienciaAsync(TipoValoracion.Neutra);
-            await CreateTestExperienciaAsync(TipoValoracion.Negativa);
+            await CreateTestExperienciaAsync(TipoValoracion.Positiva,"Exp 1", "Des 1");
+            await CreateTestExperienciaAsync(TipoValoracion.Positiva, "Exp 2", "Des 2");
+            await CreateTestExperienciaAsync(TipoValoracion.Neutra, "Exp 3", "Des 3");
+            await CreateTestExperienciaAsync(TipoValoracion.Negativa, "Exp 4", "Des 4");
 
             var input = new GetExperienciasListDto
             {
@@ -321,7 +321,7 @@ namespace TurisGo.Experiencias
         public async Task GetListAsync_Should_Only_Return_Current_User_Experiencias()
         {
             // Arrange
-            await CreateTestExperienciaAsync(TipoValoracion.Positiva, "Mi exp");
+            await CreateTestExperienciaAsync(TipoValoracion.Positiva, "Mi exp","Mi desc");
 
             // Crear experiencia de otro usuario
             var destino = await CreateTestDestinoAsync();
@@ -348,6 +348,93 @@ namespace TurisGo.Experiencias
             // Assert
             result.Items.ShouldAllBe(x => x.UserId == _currentUser.Id!.Value);
             result.Items.ShouldNotContain(x => x.Titulo == "Experiencia ajena");
+        }
+
+        [Fact]
+        public async Task GetListAsync_Should_Find_Experiencias_By_Keyword_In_Titulo()
+        {
+            // Arrange
+            await CreateTestExperienciaAsync(
+                TipoValoracion.Positiva,
+                "Excelente gastronomía local",
+                "Probé platos típicos"  
+            );
+            await CreateTestExperienciaAsync(
+                TipoValoracion.Positiva,
+                "Hermosas playas",
+                "Las playas son increíbles"
+            );
+            
+            var input = new GetExperienciasListDto
+            {
+                PalabraClave = "gastronomía",
+                SkipCount = 0,
+                MaxResultCount = 10
+            };
+
+            // Act
+            var result = await _service.GetListAsync(input);
+
+            // Assert
+            result.TotalCount.ShouldBeGreaterThanOrEqualTo(1);
+            result.Items.ShouldContain(x => x.Titulo.Contains("gastronomía", StringComparison.OrdinalIgnoreCase));
+            result.Items.ShouldNotContain(x => x.Titulo.Contains("playas", StringComparison.OrdinalIgnoreCase));
+
+        }
+
+        [Fact]
+        public async Task GetListAsync_Should_Find_Experiencias_By_Keyword_In_Descripcion()
+        {
+            // Arrange
+            await CreateTestExperienciaAsync(
+                TipoValoracion.Positiva,
+                "Título genérico",
+                "La seguridad del lugar es excelente"    
+            );
+            await CreateTestExperienciaAsync(
+                TipoValoracion.Positiva,
+                "Otro título",
+                "Buena experiencia en general"
+            );
+
+            var input = new GetExperienciasListDto
+            {
+                PalabraClave = "seguridad",
+                SkipCount = 0,
+                MaxResultCount = 10
+            };
+
+            // Act
+            var result = await _service.GetListAsync(input);
+
+            // Assert
+            result.TotalCount.ShouldBeGreaterThanOrEqualTo(1);
+            result.Items.ShouldContain(x => x.Descripcion.Contains("seguridad", StringComparison.OrdinalIgnoreCase));
+        }
+
+        [Fact]
+        public async Task GetListAsync_Should_Return_Empty_When_No_Match()
+        {
+            // Arrange
+            await CreateTestExperienciaAsync(
+                TipoValoracion.Positiva,
+                "Experiencia urbana",
+                "Ciudad muy activa"
+            );
+
+            var input = new GetExperienciasListDto
+            {
+                PalabraClave = "montaña",  // No hay coincidencias
+                SkipCount = 0,
+                MaxResultCount = 10
+            };
+
+            // Act
+            var result = await _service.GetListAsync(input);
+
+            // Assert
+            result.Items.ShouldBeEmpty();
+            result.TotalCount.ShouldBe(0);
         }
 
 

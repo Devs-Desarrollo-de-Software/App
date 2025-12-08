@@ -10,5 +10,6 @@ namespace TurisGo.Experiencias
     public class GetExperienciasListDto : PagedAndSortedResultRequestDto
     {
         public TipoValoracion? Valoracion { get; set; }
+        public string PalabraClave { get; set; }
     }
 }
