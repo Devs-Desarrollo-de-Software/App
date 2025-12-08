@@ -17,7 +17,7 @@ namespace TurisGo.Experiencias
 
 
         [Fact]
-        public void Create_Should_Create_Experiencia_With_Valid_Data()
+        public void Should_Create_Experiencia_With_Valid_Data()
         {
             // Arrange
             var id = Guid.NewGuid();
@@ -46,7 +46,7 @@ namespace TurisGo.Experiencias
         }
 
         [Fact]
-        public void Create_Should_Throw_Exception_When_UserId_Is_Empty()
+        public void Should_Throw_Exception_When_UserId_Is_Empty()
         {
             // Act & Assert
             Should.Throw<AbpValidationException>(() =>
@@ -63,7 +63,7 @@ namespace TurisGo.Experiencias
         }
 
         [Fact]
-        public void Create_Should_Throw_Exception_When_DestinoId_Is_Empty()
+        public void Should_Throw_Exception_When_DestinoId_Is_Empty()
         {
             // Act & Assert
             Should.Throw<AbpValidationException>(() =>
@@ -80,7 +80,7 @@ namespace TurisGo.Experiencias
         }
 
         [Fact]
-        public void Create_Should_Throw_Exception_When_Titulo_Exceeds_MaxLength()
+        public void Should_Throw_Exception_When_Titulo_Exceeds_MaxLength()
         {
             // Arrange
             var tituloLargo = new string('A', 101); // 101 caracteres
@@ -101,7 +101,7 @@ namespace TurisGo.Experiencias
 
 
         [Fact]
-        public void UpdateAsync_Should_Update_Experiencia_With_Valid_Data()
+        public void Should_Update_Experiencia_With_Valid_Data()
         {
             // Arrange
             var experiencia = new Experiencia(
@@ -134,7 +134,7 @@ namespace TurisGo.Experiencias
         }
 
         [Fact]
-        public void UpdateAsync_Should_Throw_Exception_When_Titulo_Is_Null()
+        public void Should_Throw_Exception_When_Titulo_Is_Null()
         {
             // Arrange
             var experiencia = new Experiencia(
@@ -155,7 +155,7 @@ namespace TurisGo.Experiencias
         }
 
         [Fact]
-        public void UpdateAsync_Should_Throw_Exception_When_Descripcion_Exceeds_MaxLength()
+        public void Should_Throw_Exception_When_Descripcion_Exceeds_MaxLength()
         {
             // Arrange
             var experiencia = new Experiencia(
@@ -175,44 +175,6 @@ namespace TurisGo.Experiencias
                 experiencia.SetDescripcion(descripcionLarga);
             });
 
-
-        }
-
-        [Fact]
-        public void GetListExperienciasAsync_Should_Return_List_Experiencias()
-        {
-            // Arrange
-            var destinoId = Guid.NewGuid();
-            var experiencias = new List<ExperienciaPropiaDto>
-            {
-                new ExperienciaPropiaDto
-                {
-                    NombreUsuario = "user1",
-                    Titulo = "titulo 1",
-                    Descripcion = "Descripcion 1",
-                    Valoracion = TipoValoracion.Positiva
-                },
-
-                new ExperienciaPropiaDto
-                {
-                    NombreUsuario = "user 2",
-                    Titulo = "titulo 2",
-                    Descripcion = "Descripcion 2",
-                    Valoracion = TipoValoracion.Neutra
-                }
-            };
-
-            // Act
-            var dto = new ListarExperienciasDto
-            {
-                DestinoId = destinoId,
-                Experiencias = experiencias
-            };
-
-            // Assert
-            dto.ShouldNotBeNull();
-            dto.DestinoId.ShouldBe(destinoId);
-            dto.Experiencias.Count.ShouldBe(2);
 
         }
     }

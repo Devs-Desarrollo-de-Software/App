@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Volo.Abp.Application.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -161,8 +162,44 @@ namespace TurisGo.Experiencias
 
         }
 
+       
+        public async Task<PagedResultDto<ExperienciaDto>> GetListAsync (GetExperienciasListDto input)
+        {
 
+            var userId = CurrentUser.Id!.Value;
 
+            var queryable = await _repository.GetQueryableAsync();
+
+            var query = queryable.Where(e => e.UserId == userId);
+
+            // Filtrar por valoracion si se proporciona
+            if (input.Valoracion.HasValue)
+            {
+                query = query.Where(e => e.Valoracion == input.Valoracion.Value);
+            }
+
+            // Ordenar por fecha de creacion (mas reciente primero)
+            query = query.OrderByDescending(e => e.CreationTime);
+
+            // Obtener el total de registros
+            var totalCount = await AsyncExecuter.CountAsync(query);
+
+            // Aplicar paginacion
+            var experiencias = await AsyncExecuter.ToListAsync(
+                query
+                    .Skip(input.SkipCount)
+                    .Take(input.MaxResultCount)
+            );
+
+            // Mapear a DTOs
+            var experienciaDtos = ObjectMapper.Map<List<Experiencia>, List<ExperienciaDto>>(experiencias);
+
+            return new PagedResultDto<ExperienciaDto>(
+                totalCount,
+                experienciaDtos
+            );
+
+        }
 
 
 
