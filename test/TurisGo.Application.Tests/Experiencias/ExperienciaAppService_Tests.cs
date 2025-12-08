@@ -46,6 +46,24 @@ namespace TurisGo.Experiencias
             return await _destinoRepository.InsertAsync(destino, autoSave: true);
         }
 
+        // Helper method to create a test Experiencia
+        private async Task<Experiencia> CreateTestExperienciaAsync(TipoValoracion valoracion, string titulo = "Experiencia de prueba")
+        {
+            var destino = await CreateTestDestinoAsync();
+
+            var experiencia = new Experiencia(
+                Guid.NewGuid(),
+                _currentUser.Id!.Value,
+                destino.Id,
+                titulo,
+                "Descripción de la experiencia de prueba.",
+                valoracion
+            );
+
+            return await _experienciaRepository.InsertAsync(experiencia, autoSave: true);
+        }
+
+
         [Fact]
         public async Task CreateAsync_Should_Create_Experiencia_When_Data_Is_Valid()
         {
@@ -243,6 +261,97 @@ namespace TurisGo.Experiencias
             });
         }
 
-        
+        [Fact]
+        public async Task GetListAsync_Should_Return_All_Experiencias_When_No_Filter()
+        {
+            // Arrange
+            await CreateTestExperienciaAsync(TipoValoracion.Positiva, "Exp 1");
+            await CreateTestExperienciaAsync(TipoValoracion.Neutra, "Exp 2");
+            await CreateTestExperienciaAsync(TipoValoracion.Negativa, "Exp 3");
+
+            var input = new GetExperienciasListDto
+            {
+                Valoracion = null,
+                MaxResultCount = 10,
+                SkipCount = 0
+            };
+
+            // Act
+            var result = await _service.GetListAsync(input);
+
+            // Assert
+            result.TotalCount.ShouldBeGreaterThanOrEqualTo(3);
+            result.Items.Count.ShouldBeGreaterThanOrEqualTo(3);
+
+            result.Items.ShouldContain(x => x.Valoracion == TipoValoracion.Positiva);
+            result.Items.ShouldContain(x => x.Valoracion == TipoValoracion.Neutra);
+            result.Items.ShouldContain(x => x.Valoracion == TipoValoracion.Negativa);
+
+        }
+
+        [Fact]
+        public async Task GetListAsync_Should_Return_Only_Positivas_When_Filtered()
+        {
+            // Arrange
+            await CreateTestExperienciaAsync(TipoValoracion.Positiva);
+            await CreateTestExperienciaAsync(TipoValoracion.Positiva);
+            await CreateTestExperienciaAsync(TipoValoracion.Neutra);
+            await CreateTestExperienciaAsync(TipoValoracion.Negativa);
+
+            var input = new GetExperienciasListDto
+            {
+                Valoracion = TipoValoracion.Positiva, 
+                SkipCount = 0,
+                MaxResultCount = 10
+            };
+
+            // Act
+            var result = await _service.GetListAsync(input);
+
+            // Assert
+            result.TotalCount.ShouldBeGreaterThanOrEqualTo(2);
+            result.Items.ShouldAllBe(x => x.Valoracion == TipoValoracion.Positiva);
+
+            // Verificar que NO hay otros tipos
+            result.Items.ShouldNotContain(x => x.Valoracion == TipoValoracion.Neutra);
+            result.Items.ShouldNotContain(x => x.Valoracion == TipoValoracion.Negativa);
+        }
+
+        [Fact]
+        public async Task GetListAsync_Should_Only_Return_Current_User_Experiencias()
+        {
+            // Arrange
+            await CreateTestExperienciaAsync(TipoValoracion.Positiva, "Mi exp");
+
+            // Crear experiencia de otro usuario
+            var destino = await CreateTestDestinoAsync();
+            var expAjena = new Experiencia(
+                Guid.NewGuid(),
+                Guid.NewGuid(),  // Otro usuario
+                destino.Id,
+                "Experiencia ajena",
+                "No debería aparecer",
+                TipoValoracion.Positiva
+            );
+            await _experienciaRepository.InsertAsync(expAjena, autoSave: true);
+
+            var input = new GetExperienciasListDto
+            {
+                Valoracion = TipoValoracion.Positiva,
+                SkipCount = 0,
+                MaxResultCount = 10
+            };
+
+            // Act
+            var result = await _service.GetListAsync(input);
+
+            // Assert
+            result.Items.ShouldAllBe(x => x.UserId == _currentUser.Id!.Value);
+            result.Items.ShouldNotContain(x => x.Titulo == "Experiencia ajena");
+        }
+
+
+
+
     }
 }

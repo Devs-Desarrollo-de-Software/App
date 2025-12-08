@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace TurisGo.Experiencias
@@ -13,5 +14,6 @@ namespace TurisGo.Experiencias
         Task<ExperienciaDto> UpdateAsync(Guid Id, UpdateExperienciaDto input); // 4.2. Editar una experiencia propia.
         Task DeleteAsync(Guid id); // 4.3. Eliminar una experiencia propia.
         Task<ListarExperienciasDto> GetListExperienciasAsync(Guid destinoId); // 4.4. Listar experiencias de un destino.
+        Task<PagedResultDto<ExperienciaDto>> GetListAsync(GetExperienciasListDto input); // 4.5. Filtrar experiencias por valoración.
     }
 }
