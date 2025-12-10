@@ -175,6 +175,7 @@ public class TurisGoHttpApiHostModule : AbpModule
         {
             options.IsDynamicClaimsEnabled = true;
         });
+
             
     }
 
@@ -335,8 +336,8 @@ public class TurisGoHttpApiHostModule : AbpModule
                     error = new
                     {
                         code = "unauthorized",
-                        message = "Se requiere autenticaciÛn. Debe proporcionar un token Bearer v·lido.",
-                        details = "No se proporcionÛ un token de acceso o el token es inv·lido."
+                        message = "Se requiere autenticaci√≥n. Debe proporcionar un token Bearer v√°lido.",
+                        details = "No se proporcion√≥ un token de acceso o el token es inv√°lido."
                     }
                 });
                 await httpContext.Response.WriteAsync(result);
