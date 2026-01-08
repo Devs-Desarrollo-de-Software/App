@@ -36,8 +36,8 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Destino> Destinos { get; set; }
     public DbSet<Calificacion> Calificaciones { get; set; }
-
     public DbSet<Experiencia> Experiencias { get; set; }
+    public DbSet<Usuario> Usuarios { get; set; }
 
     #region Entities from the modules
 
@@ -141,6 +141,64 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
             b.Property(x => x.DestinoId).IsRequired();
             b.Property(x => x.Titulo).IsRequired().HasMaxLength(100);
             b.Property(x => x.Descripcion).IsRequired().HasMaxLength(500);
+
+        });
+
+        builder.Entity<Usuario>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Usuarios", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.NombreCompleto).IsRequired().HasMaxLength(100);
+            b.Property(x => x.NombreUsuario).IsRequired().HasMaxLength(50);
+            b.Property(x => x.IdentityUserId).IsRequired();
+            b.Property(x => x.Email).IsRequired().HasMaxLength(100);
+            b.Property(x => x.FotoPerfilUrl).HasMaxLength(500);
+            b.Property(x => x.Rol).IsRequired().HasConversion<int>();
+            b.Property(x => x.EstaActivo).IsRequired().HasDefaultValue(true);
+
+            b.OwnsOne(x => x.Preferencias, pb =>
+            {
+                pb.Property(p => p.RecibirEnPantalla)
+                  .HasColumnName("RecibirEnPantalla")
+                  .IsRequired()
+                  .HasDefaultValue(true);
+
+                pb.Property(p => p.RecibirPorEmail)
+                  .HasColumnName("RecibirPorEmail")
+                  .IsRequired()
+                  .HasDefaultValue(false);
+
+                pb.Property(p => p.Frecuencia)
+                  .HasColumnName("Frecuencia")
+                  .IsRequired()
+                  .HasConversion<int>()
+                  .HasDefaultValue(FrecuenciaNotificacion.Inmediata);
+            });
+
+            // Indices
+            b.HasIndex(x => x.NombreUsuario)
+                .IsUnique()
+                .HasDatabaseName("IX_Usuarios_NombreUsuario");
+
+            b.HasIndex(x => x.Email)
+                .IsUnique()
+                .HasDatabaseName("IX_Usuarios_Email");
+
+            b.HasIndex(x => x.IdentityUserId)
+                .IsUnique()
+                .HasDatabaseName("IX_Usuarios_IdentityUserId");
+
+            b.HasIndex(x => x.EstaActivo)
+                .HasDatabaseName("IX_Usuarios_EstaActivo");
+
+
+            // Relacion con IdentityUser
+            b.HasOne<IdentityUser>()
+                .WithMany()
+                .HasForeignKey(e => e.IdentityUserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
 
         });
 
