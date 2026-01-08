@@ -2,6 +2,7 @@ using AutoMapper;
 using TurisGo.Calificaciones;
 using TurisGo.Destinos;
 using TurisGo.Experiencias;
+using TurisGo.Usuarios;
 
 namespace TurisGo;
 
@@ -24,5 +25,14 @@ public class TurisGoApplicationAutoMapperProfile : Profile
 
         CreateMap<Experiencia, ExperienciaDto>();
         CreateMap<CreateExperienciaDto, Experiencia>();
+
+        CreateMap<Usuario, UsuarioDto>();
+            
+        // Mapeo para el perfil público del usuario
+        CreateMap<Usuario, PerfilPublicoDto>();
+
+        CreateMap<PreferenciasNotificacion, PreferenciasNotificacionDto>()
+            .ReverseMap(); // Permite mapear en ambas direcciones
+
     }
 }
