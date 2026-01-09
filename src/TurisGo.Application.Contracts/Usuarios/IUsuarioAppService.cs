@@ -18,5 +18,7 @@ namespace TurisGo.Usuarios
         Task<UsuarioDto> ActualizarPerfilAsync(ActualizarPerfilDto input);
         Task<UsuarioDto> ActualizarPreferenciasAsync(ActualizarPreferenciasDto input);
 
+        // 1.4 Cambiar contraseña
+        Task CambiarPasswordAsync(CambiarPasswordDto input);
     }
 }

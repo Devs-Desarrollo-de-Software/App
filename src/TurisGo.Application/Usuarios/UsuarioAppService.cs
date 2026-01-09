@@ -286,5 +286,69 @@ namespace TurisGo.Usuarios
             return ObjectMapper.Map<Usuario, UsuarioDto>(usuario);
         }
 
+        // 1.4. Cambiar contraseña
+
+        [Authorize]
+        public async Task CambiarPasswordAsync(CambiarPasswordDto input)
+        {
+
+            // Validar que el usuario esté autenticado
+            if (!CurrentUser.Id.HasValue)
+            {
+                throw new AbpAuthorizationException("Usuario no autenticado.");
+            }
+
+            var identityUserId = CurrentUser.Id.Value;
+
+            // Verificar que el usduario exista en AbpUsers
+            var usuario = await _usuarioRepository
+                .FirstOrDefaultAsync(u => u.IdentityUserId == identityUserId);
+
+            if (usuario == null)
+            {
+                throw new EntityNotFoundException(
+                    typeof(Usuario),
+                    $"No se encontró el perfil del usuario con IdentityUserId: {identityUserId}"
+                );
+            }
+
+            // Verificar que el usuario este activo
+            if (!usuario.EstaActivo)
+            {
+                throw new BusinessException("El usuario no está activo.");
+            }
+
+            // Obtener el usuario de IdentityUser
+            var identityUser = await _userManager.GetByIdAsync(identityUserId);
+
+            var esPasswordValido = await _userManager.CheckPasswordAsync(
+                identityUser,
+                input.PasswordActual
+            );
+
+            if (!esPasswordValido)
+            {
+                throw new BusinessException("La contraseña actual es incorrecta.");
+            }
+
+            // Cambiar la contraseña
+            var resultado = await _userManager.ChangePasswordAsync(
+                identityUser,
+                input.PasswordActual,
+                input.NuevoPassword
+            );
+
+            if (!resultado.Succeeded)
+            {
+                var errores = string.Join(", ", resultado.Errors.Select(e => e.Description));
+                throw new UserFriendlyException(
+                    $"Error al cambiar la contraseña: {errores}"
+                );
+            }
+
+            // Actualizar el usuario en IdentityUser
+            await _userManager.UpdateAsync(identityUser);
+        }
+
     }
 }
