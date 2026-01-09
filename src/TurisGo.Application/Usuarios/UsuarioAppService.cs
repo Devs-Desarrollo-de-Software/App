@@ -412,5 +412,36 @@ namespace TurisGo.Usuarios
             }
         }
 
+        [AllowAnonymous]
+        // --------------- 1.6. Consultar perfil publico de usuario ---------------
+        public async Task<PerfilPublicoDto> ObtenerPerfilPublicoAsync(string nombreUsuario)
+        {
+            // Validar entrada
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                throw new AbpValidationException("El nombre de usuario no puede estar vacío.");
+            }
+
+            // Buscar por nombre de usuario
+            var usuario = await _usuarioRepository
+                .FirstOrDefaultAsync(u => u.NombreUsuario == nombreUsuario);
+
+            if (usuario == null)
+            {
+                throw new EntityNotFoundException(
+                    typeof(Usuario),
+                    $"No se encontró el usuario con nombre de usuario: {nombreUsuario}"
+                );
+            }
+
+            // Verificar que el usuario esté activo
+            if (!usuario.EstaActivo)
+            {
+                throw new BusinessException("El usuario no está activo.");
+            }
+
+            return ObjectMapper.Map<Usuario, PerfilPublicoDto>(usuario);
+        }
+
     }
 }

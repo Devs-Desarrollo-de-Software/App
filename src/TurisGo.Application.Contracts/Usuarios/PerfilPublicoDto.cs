@@ -8,7 +8,7 @@ using Volo.Abp.Application.Dtos;
 namespace TurisGo.Usuarios
 {
     // DTO para exponer el perfil público de un usuario (sin información sensible)
-    public class PerfilPublicoDto : EntityDto<Guid>
+    public class PerfilPublicoDto
     {
         public string NombreCompleto { get; set; }
         public string NombreUsuario { get; set; }
