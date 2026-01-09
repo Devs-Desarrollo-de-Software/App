@@ -107,6 +107,31 @@ namespace TurisGo.Usuarios
             );
         }
 
+        [Fact]
+        public void SetFotoPerfil_WithNull_ClearsPhoto()
+        {
+            // Arrange
+            var usuario = CreateValidUsuario();
+            usuario.SetFotoPerfil("https://example.com/photo.jpg");
+
+            // Act
+            usuario.SetFotoPerfil(null);
+
+            // Assert
+            usuario.FotoPerfilUrl.ShouldBeNull();
+        }
+
+        [Fact]
+        public void SetEmail_WithNullEmail_ThrowsValidationException()
+        {
+            // Arrange
+            var usuario = CreateValidUsuario();
+
+            // Act & Assert
+            Should.Throw<AbpValidationException>(() =>
+                usuario.SetEmail(null)
+            );
+        }
     }
     
 }

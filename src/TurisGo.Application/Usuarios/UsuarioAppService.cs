@@ -6,10 +6,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TurisGo.EntityFrameworkCore;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Authorization;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.Identity;
+
 
 namespace TurisGo.Usuarios
 {
@@ -20,17 +25,20 @@ namespace TurisGo.Usuarios
         private readonly IdentityUserManager _userManager;
         private readonly IIdentityUserRepository _identityUserRepository;
         private readonly ILookupNormalizer _lookupNormalizer;
+        private readonly IDbContextProvider<TurisGoDbContext> _dbContextProvider;
 
         public UsuarioAppService(
             Volo.Abp.Domain.Repositories.IRepository<Usuario, Guid> usuarioRepository,
             IdentityUserManager userManager,
             IIdentityUserRepository identityUserRepository,
-            ILookupNormalizer lookupNormalizer)
+            ILookupNormalizer lookupNormalizer,
+            IDbContextProvider<TurisGoDbContext> dbContextProvider)
         {
             _usuarioRepository = usuarioRepository;
             _userManager = userManager;
             _identityUserRepository = identityUserRepository;
             _lookupNormalizer = lookupNormalizer;
+            _dbContextProvider = dbContextProvider;
         }
 
         [Authorize(Roles = "admin")]
@@ -111,6 +119,171 @@ namespace TurisGo.Usuarios
             // Mapear a DTO y retornar DTO
             return ObjectMapper.Map<Usuario, UsuarioDto>(usuario);
 
+        }
+
+
+        // 1.3. Obtener el perfil del usuario actual
+        [Authorize]
+        public async Task<UsuarioDto> ObtenerPerfilActualAsync()
+        {
+            // Obtener el ID del IdentityUser del token JWT
+            if (!CurrentUser.Id.HasValue)
+            {
+                throw new AbpAuthorizationException("Usuario no autenticado.");
+            }
+
+            var identityUserId = CurrentUser.Id.Value;
+
+            // Buscar el usuario en AppUsuarios por IdentityUserId
+            var usuario = await _usuarioRepository.
+                FirstOrDefaultAsync(u => u.IdentityUserId == identityUserId);
+
+            if (usuario == null)
+            {
+                throw new EntityNotFoundException(
+                    typeof(Usuario),
+                    $"No se encontró el perfil del usuario con IdentityUserId: {identityUserId}"
+                );
+            }
+
+            // Verificar que el usuario esté activo
+            if (!usuario.EstaActivo)
+            {
+                throw new BusinessException("El usuario no está activo.");
+            }
+
+            return ObjectMapper.Map<Usuario, UsuarioDto>(usuario);
+        }
+
+        // 1.3. Actualizar datos de perfil (nombre, email, foto)
+        [Authorize]
+        public async Task<UsuarioDto> ActualizarPerfilAsync(ActualizarPerfilDto input)
+        {
+            if (!CurrentUser.Id.HasValue)
+            {
+                throw new AbpAuthorizationException("Usuario no autenticado.");
+            }
+
+            var identityUserId = CurrentUser.Id.Value;
+            var usuario = await _usuarioRepository
+                .FirstOrDefaultAsync(u => u.IdentityUserId == identityUserId);
+
+            if (usuario == null)
+            {
+                throw new EntityNotFoundException(
+                    typeof(Usuario),
+                    $"No se encontró el perfil del usuario con IdentityUserId: {identityUserId}"
+                );
+            }
+
+            // Variable para saber si hay algo que actualizar
+            bool hayActualizaciones = false;
+
+            // Solo actualizar nombre si viene informado y no está vacío
+            if (!string.IsNullOrWhiteSpace(input.NombreCompleto))
+            {
+                usuario.SetNombreCompleto(input.NombreCompleto.Trim());
+                hayActualizaciones = true;
+            }
+
+            // Solo actualizar email si viene informado y no está vacío
+            if (!string.IsNullOrWhiteSpace(input.Email) && input.Email != usuario.Email)
+            {
+                var emailTrimmed = input.Email.Trim();
+
+                // Validar que el email no esté en uso
+                var emailEnUso = await _usuarioRepository
+                    .AnyAsync(u => u.Email == emailTrimmed && u.Id != usuario.Id);
+
+                if (emailEnUso)
+                {
+                    throw new BusinessException(
+                        $"El correo electrónico '{emailTrimmed}' ya está en uso");
+                }
+
+                // Verificar en AbpUsers
+                var normalizedEmail = _lookupNormalizer.NormalizeEmail(emailTrimmed);
+                var usuarioConEmail = await _identityUserRepository
+                    .FindByNormalizedEmailAsync(normalizedEmail);
+
+                if (usuarioConEmail != null && usuarioConEmail.Id != identityUserId)
+                {
+                    throw new BusinessException(
+                        $"El correo electrónico '{emailTrimmed}' ya está en uso");
+                }
+
+                // Actualizar email
+                usuario.SetEmail(emailTrimmed);
+
+                // Actualizar en AbpUsers
+                var identityUser = await _userManager.GetByIdAsync(identityUserId);
+                var setEmailResult = await _userManager.SetEmailAsync(identityUser, emailTrimmed);
+
+                if (!setEmailResult.Succeeded)
+                {
+                    var errors = string.Join(", ", setEmailResult.Errors.Select(e => e.Description));
+                    throw new UserFriendlyException(
+                        $"Error al actualizar el correo electrónico: {errors}"
+                    );
+                }
+
+                await _userManager.UpdateAsync(identityUser);
+                hayActualizaciones = true;
+            }
+
+            // Para la foto: permitir actualizar incluso si es null (para eliminar la foto)
+            // Pero solo si es diferente del valor actual
+            if (input.FotoPerfilUrl != usuario.FotoPerfilUrl)
+            {
+                usuario.SetFotoPerfil(input.FotoPerfilUrl);
+                hayActualizaciones = true;
+            }
+
+            // Solo guardar si hubo cambios
+            if (hayActualizaciones)
+            {
+                await _usuarioRepository.UpdateAsync(usuario, autoSave: true);
+            }
+
+            return ObjectMapper.Map<Usuario, UsuarioDto>(usuario);
+        }
+
+        // 1.3. Actualizar preferencias de notificación
+        [Authorize]
+        public async Task<UsuarioDto> ActualizarPreferenciasAsync(ActualizarPreferenciasDto input) 
+        {
+            // Obtener el usuario actual
+            if (!CurrentUser.Id.HasValue)
+            {
+                throw new AbpAuthorizationException("Usuario no autenticado.");
+            }
+
+            var identityUserId = CurrentUser.Id.Value;
+
+            var usuario = await _usuarioRepository
+                .FirstOrDefaultAsync(u => u.IdentityUserId == identityUserId);
+
+            if (usuario == null)
+            {
+                throw new EntityNotFoundException(
+                    typeof(Usuario),
+                    $"No se encontró el perfil del usuario con IdentityUserId: {identityUserId}"
+                );
+            }
+
+            // Crear nuevo Value Object de preferencias
+            var nuevasPreferencias = new PreferenciasNotificacion(
+                input.RecibirEnPantalla,
+                input.RecibirPorEmail,
+                input.Frecuencia
+            );
+
+            // Actualizar las preferencias del usuario
+            usuario.ActualizarPreferencias(nuevasPreferencias);
+
+            await _usuarioRepository.UpdateAsync(usuario, autoSave: true);
+
+            return ObjectMapper.Map<Usuario, UsuarioDto>(usuario);
         }
 
     }

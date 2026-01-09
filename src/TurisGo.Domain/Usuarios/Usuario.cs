@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.Validation;
 
@@ -20,21 +21,21 @@ namespace TurisGo.Usuarios
         public bool EstaActivo { get; private set; }
 
         // Constructor protegido para EF Core
-        protected Usuario() 
-        { 
+        protected Usuario()
+        {
             Preferencias = new PreferenciasNotificacion();
             EstaActivo = true;
-        }    
+        }
 
         public Usuario(Guid id, string nombreCompleto, string nombreUsuario, Guid identityUserId,
-            string email,TipoRol rol, string? fotoPerfil = null) : base(id)
+            string email, TipoRol rol, string? fotoPerfil = null) : base(id)
         {
             SetNombreCompleto(nombreCompleto);
             SetNombreUsuario(nombreUsuario);
             SetEmail(email);
             SetTipoRol(rol);
             Preferencias = new PreferenciasNotificacion();
-            FotoPerfilUrl = fotoPerfil;
+            SetFotoPerfil(fotoPerfil);
             IdentityUserId = identityUserId;
             EstaActivo = true;
 
@@ -77,7 +78,7 @@ namespace TurisGo.Usuarios
             {
                 throw new AbpValidationException("El email no puede estar vacio.");
             }
-            
+
             if (!email.Contains("@") || !email.Contains("."))
             {
                 throw new AbpValidationException("El email no es válido.");
@@ -95,15 +96,24 @@ namespace TurisGo.Usuarios
             Rol = rol;
         }
 
-        public void ActualizarPreferencias(PreferenciasNotificacion preferencias)
+        public void ActualizarPreferencias(PreferenciasNotificacion nuevasPreferencias)
         {
-           if (preferencias == null)
-            {
-                throw new AbpValidationException("Las preferencias no pueden ser nulas.");
-            }
+            Check.NotNull(nuevasPreferencias, nameof(nuevasPreferencias));
 
-            Preferencias = preferencias;
+            Preferencias.RecibirEnPantalla = nuevasPreferencias.RecibirEnPantalla;
+            Preferencias.RecibirPorEmail = nuevasPreferencias.RecibirPorEmail;
+            Preferencias.Frecuencia = nuevasPreferencias.Frecuencia;
         }
 
+        public void SetFotoPerfil(string? fotoPerfilUrl)
+        {
+            if (fotoPerfilUrl?.Length > 500)
+            {
+                throw new AbpValidationException("La URL de la foto de perfil no puede exceder 500 caracteres.");
+            }
+
+            FotoPerfilUrl = fotoPerfilUrl?.Trim();
+
+        }
     }
 }
