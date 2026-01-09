@@ -350,5 +350,67 @@ namespace TurisGo.Usuarios
             await _userManager.UpdateAsync(identityUser);
         }
 
+        // --------------------- 1.5. Eliminar cuenta propia ---------------------
+
+        [Authorize]
+        public async Task EliminarCuentaPropia(EliminarCuentaDto input)
+        {
+
+            // Validar que el usuario esté autenticado
+            if(!CurrentUser.Id.HasValue)
+            {
+                throw new AbpAuthorizationException("Usuario no autenticado.");
+            }
+
+            var identityUserId = CurrentUser.Id.Value;
+
+            // Obtener el usuario de IdentityUser
+            var identityUser = await _userManager.GetByIdAsync(identityUserId);
+
+            // Verificar la contraseña para confirmar la eliminacion
+            var esPasswordValido = await _userManager.CheckPasswordAsync(
+                identityUser,
+                input.Password
+            );
+
+            if(!esPasswordValido)
+            {
+                throw new BusinessException("La contraseña es incorrecta.");
+            }
+
+            // Buscar el usuario en AppUsuarios
+            var usuario = await _usuarioRepository
+                .FirstOrDefaultAsync(u => u.IdentityUserId == identityUserId);
+
+            if(usuario == null)
+            {
+                throw new EntityNotFoundException(
+                    typeof(Usuario),
+                    $"No se encontró el perfil del usuario con IdentityUserId: {identityUserId}"
+                );
+            }
+
+            // Marcar como inactivo el usuario en AppUsuarios y AbpUsers antes de eliminar
+            identityUser.SetIsActive(false);
+            await _userManager.UpdateAsync(identityUser);
+
+            usuario.Desactivar(); 
+            await _usuarioRepository.UpdateAsync(usuario, autoSave: true);
+
+            // 1. Primero eliminar el usuario de AppUsuarios
+            await _usuarioRepository.DeleteAsync(usuario, autoSave: true);
+
+            // 2. Luego eliminar el usuario de AbpUsers
+            var resultado = await _userManager.DeleteAsync(identityUser);
+
+            if(!resultado.Succeeded)
+            {
+                var errores = string.Join(", ", resultado.Errors.Select(e => e.Description));
+                throw new UserFriendlyException(
+                    $"Error al eliminar la cuenta: {errores}"
+                );
+            }
+        }
+
     }
 }

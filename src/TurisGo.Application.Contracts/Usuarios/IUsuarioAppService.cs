@@ -20,5 +20,8 @@ namespace TurisGo.Usuarios
 
         // 1.4 Cambiar contraseña
         Task CambiarPasswordAsync(CambiarPasswordDto input);
+
+        // 1.5. Eliminar cuenta propia
+        Task EliminarCuentaPropia(EliminarCuentaDto input);
     }
 }

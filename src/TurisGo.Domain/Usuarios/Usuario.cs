@@ -115,5 +115,10 @@ namespace TurisGo.Usuarios
             FotoPerfilUrl = fotoPerfilUrl?.Trim();
 
         }
+
+        public void Desactivar()
+        {
+            EstaActivo = false;
+        }
     }
 }
