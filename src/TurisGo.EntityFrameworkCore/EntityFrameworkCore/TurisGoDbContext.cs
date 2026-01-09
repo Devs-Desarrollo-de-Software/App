@@ -21,6 +21,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using TurisGo.Experiencias;
+using TurisGo.Favoritos;
 
 
 namespace TurisGo.EntityFrameworkCore;
@@ -38,6 +39,7 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
     public DbSet<Calificacion> Calificaciones { get; set; }
     public DbSet<Experiencia> Experiencias { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Favorito> Favoritos { get; set; }
 
     #region Entities from the modules
 
@@ -91,6 +93,7 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
         builder.ConfigureOpenIddict();
         builder.ConfigureBlobStoring();
 
+        // --------------------- DESTINO ---------------------
 
         builder.Entity<Destino>(b =>
         {
@@ -114,6 +117,8 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
             });
         });
 
+        // --------------------- CALIFICACION ---------------------
+
         builder.Entity<Calificacion>(b =>
         {
             b.ToTable(TurisGoConsts.DbTablePrefix + "Calificaciones", TurisGoConsts.DbSchema);
@@ -132,6 +137,8 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
 
         });
 
+        // --------------------- EXPERIENCIA ---------------------
+
         builder.Entity<Experiencia>(b =>
         {
             b.ToTable(TurisGoConsts.DbTablePrefix + "Experiencias", TurisGoConsts.DbSchema);
@@ -143,6 +150,8 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
             b.Property(x => x.Descripcion).IsRequired().HasMaxLength(500);
 
         });
+
+        // --------------------- USUARIO ---------------------
 
         builder.Entity<Usuario>(b =>
         {
@@ -202,7 +211,25 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
 
         });
 
+        // --------------------- FAVORITO ---------------------
+
+        builder.Entity<Favorito>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Favoritos", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.UserId).IsRequired();
+            b.Property(x => x.DestinoId).IsRequired();
+
+            b.HasIndex(x => new { x.UserId, x.DestinoId }).IsUnique();
+
+            b.HasQueryFilter(e =>
+                !_currentUser.IsAuthenticated ||
+                (_currentUser.Id.HasValue && e.UserId == _currentUser.Id.Value));
+        });
+
     }
+        // ---------------------------------------------------------------
 
     protected override bool ShouldFilterEntity<TEntity>(IMutableEntityType entityType)
     {

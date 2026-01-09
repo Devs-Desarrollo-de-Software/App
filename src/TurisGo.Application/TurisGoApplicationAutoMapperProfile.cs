@@ -2,6 +2,7 @@ using AutoMapper;
 using TurisGo.Calificaciones;
 using TurisGo.Destinos;
 using TurisGo.Experiencias;
+using TurisGo.Favoritos;
 using TurisGo.Usuarios;
 
 namespace TurisGo;
@@ -10,22 +11,22 @@ public class TurisGoApplicationAutoMapperProfile : Profile
 {
     public TurisGoApplicationAutoMapperProfile()
     {
-        /* You can configure your AutoMapper mapping configuration here.
-         * Alternatively, you can split your mapping configurations
-         * into multiple profile classes for a better organization. */
-
+        // ---------------- Destinos -----------------------------
         CreateMap<Destino, DestinoDto>();
         CreateMap<CreateUpdateDestinoDto, Destino>()
             .ForMember(dest => dest.Coordenada,
             opt => opt.MapFrom(src => new Coordenada(src.Coordenada.Latitud, src.Coordenada.Longitud)));
         CreateMap<Coordenada, CoordenadaDto>().ReverseMap();
 
+        // --------------- Calificaciones ---------------------
         CreateMap<Calificacion,CalificacionDto>();
         CreateMap<CreateCalificacionDto, Calificacion>();
 
+        // ----------------- Experiencias --------------------
         CreateMap<Experiencia, ExperienciaDto>();
         CreateMap<CreateExperienciaDto, Experiencia>();
 
+        // --------------------- Usuarios ------------------------
         CreateMap<Usuario, UsuarioDto>();
             
         // Mapeo para el perfil público del usuario
@@ -33,6 +34,10 @@ public class TurisGoApplicationAutoMapperProfile : Profile
 
         CreateMap<PreferenciasNotificacion, PreferenciasNotificacionDto>()
             .ReverseMap(); // Permite mapear en ambas direcciones
+
+        // --------------------- Favoritos ------------------------
+
+        CreateMap<Favorito, FavoritoDto>(); 
 
     }
 }
