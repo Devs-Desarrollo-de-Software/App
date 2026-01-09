@@ -23,5 +23,8 @@ namespace TurisGo.Usuarios
 
         // 1.5. Eliminar cuenta propia
         Task EliminarCuentaPropia(EliminarCuentaDto input);
+
+        // 1.6. Obtener perfil publico de otros usuarios
+        Task<PerfilPublicoDto> ObtenerPerfilPublicoAsync(string nombreUsuario);
     }
 }

@@ -13,7 +13,7 @@ using Volo.Abp.Modularity;
 using Volo.Abp.Users;
 using Volo.Abp.Validation;
 using Xunit;
-using Volo.Abp.Authorization;
+
 
 
 namespace TurisGo.Usuarios
@@ -248,6 +248,51 @@ namespace TurisGo.Usuarios
             // Act & Assert - Sin establecer CurrentUser.Id
             await Should.ThrowAsync<EntityNotFoundException>(
                 _usuarioAppService.EliminarCuentaPropia(eliminarDto)
+            );
+        }
+
+        // ----------------- Operacion 1.6. Consultar perfil de otro usuario -----------------
+
+        [Fact]
+        public async Task ObtenerPerfilPublico_WithValidUserName_RetornPerfilPublic()
+        {
+            // Arrange
+            var input = CreateValidCrearUsuarioDto();
+            var usuario = await _usuarioAppService.RegistrarUsuarioAsync(input);
+
+            // Act
+            var perfilPublico = await _usuarioAppService
+                .ObtenerPerfilPublicoAsync(input.NombreUsuario);
+
+            // Assert
+            perfilPublico.ShouldNotBeNull();
+            perfilPublico.NombreCompleto.ShouldBe(input.NombreCompleto);
+            perfilPublico.NombreUsuario.ShouldBe(input.NombreUsuario);
+            perfilPublico.FotoPerfilUrl.ShouldBe(input.FotoPerfilUrl);
+
+        }
+
+        [Fact]
+        public async Task ObtenerPerfilPublico_ConNombreUsuarioInexistente_ThrowsEntityNotFoundException()
+        {
+            // Arrange
+            var nombreUsuarioInexistente = "usuarioquenoxiste123";
+
+            // Act & Assert
+            await Should.ThrowAsync<EntityNotFoundException>(
+                _usuarioAppService.ObtenerPerfilPublicoAsync(nombreUsuarioInexistente)
+            );
+        }
+
+        [Fact]
+        public async Task ObtenerPerfilPublico_WithEmptyUserName_ThrowsValidationException()
+        {
+            // Arrange
+            var nombreUsuarioVacio = "";
+
+            // Act & Assert
+            await Should.ThrowAsync<Abp.Runtime.Validation.AbpValidationException>(
+                _usuarioAppService.ObtenerPerfilPublicoAsync(nombreUsuarioVacio)
             );
         }
     }
