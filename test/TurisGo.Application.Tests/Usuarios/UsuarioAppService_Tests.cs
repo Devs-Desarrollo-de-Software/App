@@ -13,6 +13,7 @@ using Volo.Abp.Modularity;
 using Volo.Abp.Users;
 using Volo.Abp.Validation;
 using Xunit;
+using Volo.Abp.Authorization;
 
 
 namespace TurisGo.Usuarios
@@ -230,6 +231,23 @@ namespace TurisGo.Usuarios
             // Act & Assert
             await Should.ThrowAsync<AbpValidationException>(
                 _usuarioAppService.CambiarPasswordAsync(cambiarContrasenaDto)
+            );
+        }
+
+        // ------------------ Operacion 1.5. Eliminar cuenta propia ------------------
+
+        [Fact]
+        public async Task EliminarCuentaPropia_Without_ThrowsAuthorizationException()
+        {
+            // Arrange
+            var eliminarDto = new EliminarCuentaDto
+            {
+                Password = "Password123!"
+            };
+
+            // Act & Assert - Sin establecer CurrentUser.Id
+            await Should.ThrowAsync<EntityNotFoundException>(
+                _usuarioAppService.EliminarCuentaPropia(eliminarDto)
             );
         }
     }

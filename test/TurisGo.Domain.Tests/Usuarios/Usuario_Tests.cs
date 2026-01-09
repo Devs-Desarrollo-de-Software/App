@@ -132,6 +132,17 @@ namespace TurisGo.Usuarios
                 usuario.SetEmail(null)
             );
         }
+
+        [Fact]
+        public void Desactivar_Should_ChangeEstaActivoToFalse()
+        {
+            // Arrange
+            var usuario = CreateValidUsuario();
+            // Act
+            usuario.Desactivar();
+            // Assert
+            usuario.EstaActivo.ShouldBeFalse();
+        }
     }
     
 }
