@@ -180,5 +180,57 @@ namespace TurisGo.Usuarios
             );
         }
 
+        // ------------------ Operacion 1.4 Cambiar contraseña ------------------
+
+        [Fact]
+        public async Task CambiarContrasenaAsync_WithIncorrectCurrentPassword_ThrowsBusinessException()
+        {
+            // Arrange
+            var cambiarContrasenaDto = new CambiarPasswordDto
+            {
+                PasswordActual = "ContrasenaIncorrecta123!",
+                NuevoPassword = "NuevaPassword123!",
+                ConfirmarNuevoPassword = "NuevaPassword123!"
+            };
+
+            // Act & Assert
+            await Should.ThrowAsync<EntityNotFoundException>(
+                _usuarioAppService.CambiarPasswordAsync(cambiarContrasenaDto)
+            );
+        }
+
+        [Fact]
+        public async Task CambiarContrasenaAsync_WithMismatchedPasswords_ThrowsValidationException()
+        {
+            // Arrange
+            var cambiarContrasenaDto = new CambiarPasswordDto
+            {
+                PasswordActual = "Password123!",
+                NuevoPassword = "NuevaPassword123!",
+                ConfirmarNuevoPassword = "DiferentePassword123!"
+            };
+
+            // Act & Assert
+            await Should.ThrowAsync<AbpValidationException>(
+                _usuarioAppService.CambiarPasswordAsync(cambiarContrasenaDto)
+            );
+        }
+
+        [Fact]
+        public async Task CambiarContrasenaAsync_WithWeakPassword_ThrowsUserFriendlyException()
+        {
+            // Arrange
+            var cambiarContrasenaDto = new CambiarPasswordDto
+            {
+                PasswordActual = "Password123!",
+                NuevoPassword = "123", // Contraseña débil
+                ConfirmarNuevoPassword = "123"
+            };
+
+            // Act & Assert
+            await Should.ThrowAsync<AbpValidationException>(
+                _usuarioAppService.CambiarPasswordAsync(cambiarContrasenaDto)
+            );
+        }
     }
 }
