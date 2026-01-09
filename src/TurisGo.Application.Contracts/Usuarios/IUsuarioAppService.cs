@@ -12,5 +12,11 @@ namespace TurisGo.Usuarios
 
         // 1.1 Registrar nuevo usuario
         Task<UsuarioDto> RegistrarUsuarioAsync(CrearUsuarioDto input);
+
+        // 1.3. Actualizar perfil de usuario
+        Task<UsuarioDto> ObtenerPerfilActualAsync();
+        Task<UsuarioDto> ActualizarPerfilAsync(ActualizarPerfilDto input);
+        Task<UsuarioDto> ActualizarPreferenciasAsync(ActualizarPreferenciasDto input);
+
     }
 }

@@ -9,9 +9,9 @@ namespace TurisGo.Usuarios
 {
     public class PreferenciasNotificacion : ValueObject
     {
-        public bool RecibirEnPantalla { get; private set; }
-        public bool RecibirPorEmail { get; private set; }
-        public FrecuenciaNotificacion Frecuencia { get; private set; }
+        public bool RecibirEnPantalla { get;  set; }
+        public bool RecibirPorEmail { get;  set; }
+        public FrecuenciaNotificacion Frecuencia { get;  set; }
 
         public PreferenciasNotificacion() {
             //Valores por defecto

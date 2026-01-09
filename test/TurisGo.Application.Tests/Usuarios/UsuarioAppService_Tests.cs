@@ -1,4 +1,5 @@
-﻿using Abp.Domain.Repositories;
+﻿using Volo.Abp.Domain.Entities;
+using Abp.Domain.Repositories;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
+using Volo.Abp.Users;
 using Volo.Abp.Validation;
 using Xunit;
 
@@ -22,6 +24,7 @@ namespace TurisGo.Usuarios
         private readonly Volo.Abp.Domain.Repositories.IRepository<Usuario, Guid> _usuarioRepository;
         private readonly IdentityUserManager _identityUserManager;
         private readonly IIdentityUserRepository _identityUserRepository;
+        private readonly ICurrentUser _currentUser;    
 
         public UsuarioAppService_Tests()
         {
@@ -29,6 +32,7 @@ namespace TurisGo.Usuarios
             _usuarioRepository = GetRequiredService<Volo.Abp.Domain.Repositories.IRepository<Usuario, Guid>>();
             _identityUserManager = GetRequiredService<IdentityUserManager>();
             _identityUserRepository = GetRequiredService<IIdentityUserRepository>();
+            _currentUser = GetRequiredService<ICurrentUser>();
         }
 
         // Helper method
@@ -45,6 +49,8 @@ namespace TurisGo.Usuarios
             };
         }
 
+
+        // ----------- Operacion 1.1. Registrar nuevo usuario ----------------
         [Fact]
         public async Task RegistrarUsuarioAsync_WithValidData_ReturnsUsuarioDto()
         {
@@ -130,5 +136,49 @@ namespace TurisGo.Usuarios
                 _usuarioAppService.RegistrarUsuarioAsync(input)
             );
         }
+
+        // ----------------- Operacion 1.3. Actualizar perfil de usuario -----------------
+
+        [Fact]
+        public async Task ObtenerPerfilActualAsync_WithoutAuthentication_ThrowsAbpAuthorizationException()
+        {
+            // Act & Assert - Sin establecer CurrentUser.Id
+            await Should.ThrowAsync<EntityNotFoundException>(
+                _usuarioAppService.ObtenerPerfilActualAsync()
+            );
+        }
+
+        [Fact]
+        public async Task ActualizarPerfilAsync_WithoutAuthentication_ThrowsAbpAuthorizationException()
+        {
+            // Arrange
+            var updateInput = new ActualizarPerfilDto
+            {
+                NombreCompleto = "Test"
+            };
+
+            // Act & Assert - Sin establecer CurrentUser.Id
+            await Should.ThrowAsync<EntityNotFoundException>(
+                _usuarioAppService.ActualizarPerfilAsync(updateInput)
+            );
+        }
+
+        [Fact]
+        public async Task ActualizarPreferenciasAsync_WithoutAuthentication_ThrowsAbpAuthorizationException()
+        {
+            // Arrange
+            var updateInput = new ActualizarPreferenciasDto
+            {
+                RecibirEnPantalla = true,
+                RecibirPorEmail = false,
+                Frecuencia = FrecuenciaNotificacion.Inmediata
+            };
+
+            // Act & Assert - Sin establecer CurrentUser.Id
+            await Should.ThrowAsync<EntityNotFoundException>(
+                _usuarioAppService.ActualizarPreferenciasAsync(updateInput)
+            );
+        }
+
     }
 }
