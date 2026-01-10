@@ -14,5 +14,8 @@ namespace TurisGo.Favoritos
 
         // 6.2. Eliminar destino de lista de favoritos
         Task DeleteAsync(Guid favoritoId);
+
+        // 6.3. Consultar lista personal de favoritos
+        Task<ListaFavoritosDto> GetListAsync();
     }
 }
