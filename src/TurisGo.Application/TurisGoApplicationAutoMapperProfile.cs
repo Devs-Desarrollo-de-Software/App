@@ -37,7 +37,8 @@ public class TurisGoApplicationAutoMapperProfile : Profile
 
         // --------------------- Favoritos ------------------------
 
-        CreateMap<Favorito, FavoritoDto>(); 
+        CreateMap<Favorito, FavoritoDto>();
+        CreateMap<Favorito, FavoritoConDestinoDto>();
 
     }
 }

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using TurisGo.Destinos;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Users;
 
 namespace TurisGo.Favoritos
 {
@@ -77,6 +78,48 @@ namespace TurisGo.Favoritos
 
             // Eliminar favorito
             await _favoritoRepository.DeleteAsync(favorito, autoSave: true);
+        }
+
+        // 6.3. Listar favoritos por usuario
+        public async Task<ListaFavoritosDto> GetListAsync()
+        {
+            // Validar si es usuario esta autenticado
+            if (!CurrentUser.IsAuthenticated)
+            {
+                throw new UnauthorizedAccessException("Debe estar autenticado para ver favoritos.");
+            }
+
+            var userId = CurrentUser.Id!.Value;
+
+            // Obtener la lista de favoritos del usuario
+            var queryable = await _favoritoRepository.GetQueryableAsync();
+
+           var favoritos = await AsyncExecuter.ToListAsync(
+                queryable.Where(f => f.UserId == userId)
+                .Include(f => f.Destino)
+                .OrderByDescending(f => f.CreationTime)
+            );
+
+            // Mapear a DTOs
+            var favoritosDto = ObjectMapper.Map<List<Favorito>, List<FavoritoConDestinoDto>>(favoritos);
+
+            // Retorna lista vacia si no hay favoritos
+            if (favoritosDto == null)
+            {
+                return new ListaFavoritosDto
+                {
+                    UserId = userId,
+                    Favoritos = new List<FavoritoConDestinoDto>()
+                };
+            }
+
+            // Retornar
+            return new ListaFavoritosDto
+            {
+                UserId = userId,
+                Favoritos = favoritosDto
+            };
+
         }
     }
 }

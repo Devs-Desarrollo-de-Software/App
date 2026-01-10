@@ -171,6 +171,38 @@ namespace TurisGo.Favoritos
             exception.Message.ShouldContain("no existe");
         }
 
-        
+        // 6.3. Consultar lista personal de favoritos
+        [Fact]
+        public async Task GetListAsync_Should_Return_User_Favoritos()
+        {
+            // Arrange
+            var destino1 = await CreateTestDestinoAsync("Nueva York");
+            var destino2 = await CreateTestDestinoAsync("Roma");
+            var input1 = new CrearFavoritoDto { DestinoId = destino1.Id };
+            var input2 = new CrearFavoritoDto { DestinoId = destino2.Id };
+            await _service.AgregarFavoritoAsync(input1);
+            await _service.AgregarFavoritoAsync(input2);
+            // Act
+            var listaFavoritos = await _service.GetListAsync();
+            // Assert
+            listaFavoritos.ShouldNotBeNull();
+            listaFavoritos.Favoritos.Count.ShouldBe(2);
+
+            listaFavoritos.Favoritos.Any(f => f.Destino.Id == destino1.Id).ShouldBeTrue();
+            listaFavoritos.Favoritos.Any(f => f.Destino.Id == destino2.Id).ShouldBeTrue();
+
+        }
+
+        [Fact]
+        public async Task GetListAsync_Should_Return_Empty_List_When_No_Favoritos()
+        {
+            // Act
+            var listaFavoritos = await _service.GetListAsync();
+
+            // Assert
+            listaFavoritos.ShouldNotBeNull();   
+            listaFavoritos.Favoritos.Count.ShouldBe(0);
+
+        }
     }
 }

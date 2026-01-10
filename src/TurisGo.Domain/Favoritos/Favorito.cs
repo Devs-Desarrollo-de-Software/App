@@ -13,6 +13,7 @@ namespace TurisGo.Favoritos
     {
         public Guid UserId { get; set; }   // Para filtrar por usuario
         public Guid DestinoId { get; set; }
+        public virtual Destino Destino { get; set; } // Propiedad de navegación
 
         protected Favorito() { } // Constructor protegido para EF Core
 
