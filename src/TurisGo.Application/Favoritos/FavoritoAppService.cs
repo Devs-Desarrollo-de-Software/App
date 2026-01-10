@@ -60,5 +60,23 @@ namespace TurisGo.Favoritos
             // Retornar
             return ObjectMapper.Map<Favorito, FavoritoDto>(nuevoFavorito);
         }
+
+        // 6.2. Eliminar destino de lista de favoritos
+        public async Task DeleteAsync(Guid favoritoId)
+        {
+            // Validar si es usuario esta autenticado
+            if (!CurrentUser.IsAuthenticated)
+                throw new UnauthorizedAccessException("Debe estar autenticado para eliminar favoritos.");
+
+            var userId = CurrentUser.Id!.Value;
+
+            // Validar si existe el favorito y pertenece al usuario
+            var favorito = await _favoritoRepository.FindAsync(favoritoId);
+            if (favorito == null || favorito.UserId != userId)
+                throw new UserFriendlyException("El favorito especificado no existe o no pertenece al usuario.");
+
+            // Eliminar favorito
+            await _favoritoRepository.DeleteAsync(favorito, autoSave: true);
+        }
     }
 }

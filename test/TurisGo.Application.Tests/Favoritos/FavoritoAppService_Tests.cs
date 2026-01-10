@@ -136,5 +136,41 @@ namespace TurisGo.Favoritos
             exception.Message.ShouldContain("no existe");
         }
 
+        // 6.2. Eliminar destino de lista de favoritos
+        [Fact]
+        public async Task DeleteAsync_Should_Remove_Favorito_Successfully()
+        {
+            // Arrange
+            var destino = await CreateTestDestinoAsync("París");
+            var input = new CrearFavoritoDto
+            {
+                DestinoId = destino.Id
+            };
+            var favorito = await _service.AgregarFavoritoAsync(input);
+
+            // Act
+            await _service.DeleteAsync(favorito.Id);
+
+            // Assert
+            var favoritoEnDb = await _favoritoRepository.FindAsync(favorito.Id);
+            favoritoEnDb.ShouldBeNull();
+
+        }
+
+        [Fact]
+        public async Task DeleteAsync_Should_Throw_Exception_When_Favorito_Not_Found()
+        {
+            // Arrange
+            var favoritoIdInexistente = Guid.NewGuid();
+
+            // Act & Assert
+            var exception = await Should.ThrowAsync<UserFriendlyException>(
+                async () => await _service.DeleteAsync(favoritoIdInexistente)
+            );
+
+            exception.Message.ShouldContain("no existe");
+        }
+
+        
     }
 }

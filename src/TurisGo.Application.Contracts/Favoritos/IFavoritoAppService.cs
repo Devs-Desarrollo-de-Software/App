@@ -11,5 +11,8 @@ namespace TurisGo.Favoritos
     {
         // 6.1. Agregar destino a lista de favoritos
         Task<FavoritoDto> AgregarFavoritoAsync(CrearFavoritoDto input);
+
+        // 6.2. Eliminar destino de lista de favoritos
+        Task DeleteAsync(Guid favoritoId);
     }
 }
