@@ -22,6 +22,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using TurisGo.Experiencias;
 using TurisGo.Favoritos;
+using TurisGo.Notificaciones;
 
 
 namespace TurisGo.EntityFrameworkCore;
@@ -40,6 +41,7 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
     public DbSet<Experiencia> Experiencias { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Favorito> Favoritos { get; set; }
+    public DbSet<Notificacion> Notificaciones { get; set; }
 
     #region Entities from the modules
 
@@ -228,8 +230,48 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
                 (_currentUser.Id.HasValue && e.UserId == _currentUser.Id.Value));
         });
 
+        // ------------------- NOTIFICACIONES ----------------------
+
+        builder.Entity<Notificacion>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Notificaciones", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.UserId).IsRequired();
+            b.Property(x => x.DestinoId).IsRequired();
+            b.Property(x => x.Titulo).IsRequired().HasMaxLength(200);
+            b.Property(x => x.Mensaje).IsRequired().HasMaxLength(1000);
+            b.Property(x => x.Tipo).HasConversion<int>();
+            b.Property(x => x.Leida).IsRequired().HasDefaultValue(false);
+            b.Property(x => x.FechaLectura).IsRequired(false);
+            b.Property(x => x.EnviadaPorMail).IsRequired().HasDefaultValue(false);
+            b.Property(x => x.FechaEnvioMail).IsRequired(false);
+            b.Property(x => x.NombreDestino).IsRequired().HasMaxLength(200);
+
+            b.HasIndex(x => x.UserId)
+            .HasDatabaseName("IX_Notificaciones_UserId");
+
+            b.HasIndex(x => new { x.UserId, x.Leida })
+            .HasDatabaseName("IX_Notificaciones_UserId_Leida");
+
+            b.HasIndex(x => new { x.UserId, x.DestinoId })
+            .HasDatabaseName("IX_Notificaciones_UserId_DestinoId");
+
+            b.HasIndex(x => x.CreationTime)
+            .HasDatabaseName("IX_Notificaciones_CreationTime");
+
+            b.HasIndex(x => x.EnviadaPorMail)
+            .HasDatabaseName("IX_Notificaciones_EnviadaPorMail")
+            .HasFilter("[EnviadaPorMail] = 0");
+
+            b.HasQueryFilter(e =>
+            !_currentUser.IsAuthenticated ||
+            (_currentUser.Id.HasValue && e.UserId == _currentUser.Id.Value));
+
+        });
+
     }
-        // ---------------------------------------------------------------
+        
 
     protected override bool ShouldFilterEntity<TEntity>(IMutableEntityType entityType)
     {
