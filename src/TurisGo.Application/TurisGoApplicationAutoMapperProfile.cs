@@ -3,6 +3,7 @@ using TurisGo.Calificaciones;
 using TurisGo.Destinos;
 using TurisGo.Experiencias;
 using TurisGo.Favoritos;
+using TurisGo.Notificaciones;
 using TurisGo.Usuarios;
 
 namespace TurisGo;
@@ -39,6 +40,12 @@ public class TurisGoApplicationAutoMapperProfile : Profile
 
         CreateMap<Favorito, FavoritoDto>();
         CreateMap<Favorito, FavoritoConDestinoDto>();
+
+        // ------------------ Notificaciones -----------------------
+
+        CreateMap<Notificacion, NotificacionDto>()
+            .ForMember(dest => dest.FechaCreacion,
+                opt => opt.MapFrom(src => src.CreationTime));
 
     }
 }
