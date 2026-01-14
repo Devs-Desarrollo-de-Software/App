@@ -121,92 +121,74 @@ namespace TurisGo.Calificaciones
 
         }
 
-        // 5.4 Consultar promedio de calificaciones 
-        [AllowAnonymous]    // Permitir que cualquier usuario consulte.
+        // 5.4 Consultar promedio de calificaciones de un destino (GLOBAL)
+        [Authorize]
         public async Task<PromedioCalificacionDto> GetPromedioAsync(Guid destinoId)
         {
             if (destinoId == Guid.Empty)
-            {
                 throw new AbpValidationException("El ID del destino no puede ser nulo.");
-            }
 
             var queryable = await _repository.GetQueryableAsync();
 
-            var calificaciones = await AsyncExecuter.ToListAsync(
-                queryable
-                    .IgnoreQueryFilters()
-                    .Where(c => c.DestinoId == destinoId)
-            );
+            // Ignoramos el filtro global SOLO para el cálculo agregado
+            var calificacionesQuery = queryable
+                .IgnoreQueryFilters()
+                .Where(c => c.DestinoId == destinoId);
 
-                if (!calificaciones.Any())
-                {
-                    return new PromedioCalificacionDto
-                    {
-                        DestinoId = destinoId,
-                        PromedioCalificacion = 0,
-                        TotalCalificaciones = 0
-                    };
-                }
+            var totalCalificaciones = await AsyncExecuter.CountAsync(calificacionesQuery);
 
-                // Calcular el promedio
-                var promedio = calificaciones.Average(c => c.Puntuacion);
-                var total = calificaciones.Count;
-
+            if (totalCalificaciones == 0)
+            {
                 return new PromedioCalificacionDto
                 {
                     DestinoId = destinoId,
-                    PromedioCalificacion = Math.Round(promedio, 2),
-                    TotalCalificaciones = total
+                    PromedioCalificacion = 0,
+                    TotalCalificaciones = 0
                 };
+            }
+
+            var promedio = await AsyncExecuter.AverageAsync(
+                calificacionesQuery,
+                c => c.Puntuacion
+            );
+
+            return new PromedioCalificacionDto
+            {
+                DestinoId = destinoId,
+                PromedioCalificacion = Math.Round(promedio, 2),
+                TotalCalificaciones = totalCalificaciones
+            };
         }
 
-        // 5.5 Listar comentarios propios de un destino
-        public async Task<ListarComentariosDto> GetListComentariosAsync (Guid destinoId)
+
+
+        // 5.5 Listar comentarios propios de un destino (privados)
+        public async Task<ListarComentariosDto> GetListComentariosAsync(Guid destinoId)
         {
             if (destinoId == Guid.Empty)
-            {
                 throw new AbpValidationException("El ID del destino no puede ser nulo.");
-            }
 
             if (!_currentUser.IsAuthenticated)
-            {
-                throw new AbpAuthorizationException("Debe estar autenticado para ver comentarios.");
-            }
+                throw new AbpAuthorizationException("Debe estar autenticado.");
 
-            var userId = _currentUser.Id!.Value;
             var queryable = await _repository.GetQueryableAsync();
 
-            var calificaciones = await AsyncExecuter.ToListAsync(
+            var comentarios = await AsyncExecuter.ToListAsync(
                 queryable
                     .Where(c => c.DestinoId == destinoId)
                     .OrderByDescending(c => c.CreationTime)
             );
 
-            if (!calificaciones.Any())
-            {
-                return new ListarComentariosDto
-                {
-                    DestinoId = destinoId,
-                    Comentarios = new List<ComentarioDto>()
-                };
-            }
-
-            // El usuario solo ve su propio nombre
-            var currentUserName = _currentUser.UserName ?? "Usuario";
-
-            var comentarios = calificaciones.Select(c => new ComentarioDto
-            {
-                NombreUsuario = currentUserName,
-                Puntuacion = c.Puntuacion,
-                Comentario = c.Comentario ?? string.Empty
-            }).ToList();
-
             return new ListarComentariosDto
             {
                 DestinoId = destinoId,
-                Comentarios = comentarios
+                Comentarios = comentarios.Select(c => new ComentarioDto
+                {
+                    Puntuacion = c.Puntuacion,
+                    Comentario = c.Comentario,
+                    CreationTime = c.CreationTime
+                }).ToList()
             };
-
         }
 
         // 5.3 Eliminar calificacion propia
