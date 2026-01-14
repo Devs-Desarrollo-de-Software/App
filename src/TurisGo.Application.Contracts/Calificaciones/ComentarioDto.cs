@@ -8,8 +8,8 @@ namespace TurisGo.Calificaciones
 {
     public class ComentarioDto
     {
-        public string NombreUsuario { get; set; }
         public int Puntuacion { get; set; }
-        public string Comentario {  get; set; }
+        public string? Comentario { get; set; }
+        public DateTime CreationTime { get; set; }
     }
 }
