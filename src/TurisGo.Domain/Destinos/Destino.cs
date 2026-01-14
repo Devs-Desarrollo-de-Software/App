@@ -29,7 +29,7 @@ namespace TurisGo.Destinos
             }
             if (poblacion < 0)
             {
-                throw new ArgumentNullException("La poblacion no debe ser negativa", nameof(poblacion));
+                throw new ArgumentOutOfRangeException("La poblacion no debe ser negativa", nameof(poblacion));
             } 
             if (coordenada is null)
             {

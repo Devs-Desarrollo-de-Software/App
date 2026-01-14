@@ -9,16 +9,6 @@ using Volo.Abp.Validation;
 
 namespace TurisGo.Destinos
 {
-
-    public class CoordenadaDto
-    {
-        [Range(-90,90, ErrorMessage = "La latitud debe estar entre -90 y 90.")]
-        public double Latitud {  get; set; }
-
-        [Range(-180,180, ErrorMessage = "La longitud debe estar entre -180 y 180.")]
-        public double Longitud { get; set; }
-    }
-
     public class CreateUpdateDestinoDto
     {
 
