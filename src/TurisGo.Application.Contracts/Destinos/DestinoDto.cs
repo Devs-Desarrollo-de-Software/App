@@ -13,6 +13,6 @@ namespace TurisGo.Destinos
         public string? Pais { get; set; }
         public int Poblacion { get; set; }
         public string? Imagen { get; set; }
-
+        public CoordenadaDto Coordenada { get; set; }
     }
 }

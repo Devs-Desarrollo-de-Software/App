@@ -17,5 +17,15 @@ namespace TurisGo.Destinos
         CreateUpdateDestinoDto
         >
     {
+        Task<List<CityDto>> BuscarCiudadesPorNombreAsync(string nombre);
+
+        Task<List<CityDto>> FiltrarCiudadesAsync(
+            string paisPrefix = null,
+            int poblacionMin = 0,
+            string regionPrefix = null);
+
+        Task<CityDetailDto> ObtenerDetalleCiudadAsync(int cityId);
+
+        Task<DestinoDto> GuardarDestinoDesdeApiAsync(int cityId);
     }
 }
