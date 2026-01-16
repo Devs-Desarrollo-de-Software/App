@@ -6,9 +6,10 @@
 
   <div class="search-bar">
     <div class="input-group">
-      <label>{{ '::Destination' | abpLocalization }}</label>
+      <label for="destination">{{ '::Destination' | abpLocalization }}</label>
       <input
         type="text"
+        id="destination"
         class="form-control"
         [placeholder]="'::Destination' | abpLocalization"
         [(ngModel)]="nombreCiudad"
@@ -17,9 +18,10 @@
       />
     </div>
     <div class="input-group">
-      <label>{{ '::Country' | abpLocalization }}</label>
+      <label for="country">{{ '::Country' | abpLocalization }}</label>
       <input
         type="text"
+        id="country"
         class="form-control"
         [placeholder]="'::Country' | abpLocalization"
         [(ngModel)]="nombrePais"
@@ -27,12 +29,36 @@
         (input)="onSearchInput()"
       />
     </div>
-    <button class="btn btn-primary" (click)="onSearch()">
-      <i class="fas fa-search"></i> {{ '::Search' | abpLocalization }}
-    </button>
-    <button class="btn btn-secondary" (click)="clearSearch()">
-      <i class="fas fa-times"></i> {{ '::Clear' | abpLocalization }}
-    </button>
+    <div class="input-group">
+      <label for="region">{{ '::Region' | abpLocalization }}</label>
+      <input
+        type="text"
+        id="region"
+        class="form-control"
+        [placeholder]="'::Region' | abpLocalization"
+        [(ngModel)]="nombreRegion"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+    <div class="input-group">
+      <label for="minPopulation">{{ '::MinPopulation' | abpLocalization }}</label>
+      <input
+        type="number"
+        id="minPopulation"
+        class="form-control"
+        placeholder="0"
+        [(ngModel)]="minPoblacion"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+    <div class="buttons">
+      <button class="btn btn-primary" (click)="onSearch()">
+        <i class="fas fa-search"></i> {{ '::Search' | abpLocalization }}
+      </button>
+      <button class="btn btn-secondary" (click)="clearSearch()">
+        <i class="fas fa-times"></i> {{ '::Clear' | abpLocalization }}
+      </button>
+    </div>
   </div>
 
   <!-- Loading indicator -->
@@ -88,6 +114,9 @@
 
         <button class="btn-view-map" (click)="verEnMapa(ciudad)">
           <i class="fas fa-map"></i> {{ '::ViewOnMap' | abpLocalization }}
+        </button>
+        <button class="btn btn-success btn-save" (click)="guardarDestino(ciudad)">
+          <i class="fas fa-save"></i> {{ '::Save' | abpLocalization }}
         </button>
       </div>
     </div>

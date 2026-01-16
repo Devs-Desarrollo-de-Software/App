@@ -40,24 +40,27 @@ namespace TurisGo.Destinos
         {
             if (string.IsNullOrWhiteSpace(nombre))
                 throw new AbpValidationException("El nombre de la ciudad no puede estar vacio.");
-            
-            return await _citySearchService.SearchCitiesByNameAsync(nombre);
+
+            // Normalizar: primera letra mayúscula, resto minúscula
+            var nombreNormalizado = NormalizarTexto(nombre);
+
+            return await _citySearchService.SearchCitiesByNameAsync(nombreNormalizado);
         }
 
         [HttpGet]
         [Route("api/app/destino/buscar-ciudades-por-filtro")]
-        public async Task<List<CityDto>> FiltrarCiudadesAsync(string paisPrefix = null, int poblacionMin = 0, string regionPrefix = null)
+        public async Task<List<CityDto>> FiltrarCiudadesAsync(string paisPrefix = null, int poblacionMin = 0, string regionPrefix = null, string nombreCiudad = null)
         {
-            // Si no viene ningun filtro, devolemos lista vacia.
-            if (paisPrefix.IsNullOrEmpty() && regionPrefix.IsNullOrEmpty() && poblacionMin <= 0)
-            {
-                return new List<CityDto>(); // Retorna lista vacia.
-            }
-
+            // Validamos solo que la población no sea negativa
             if (poblacionMin < 0)
                 throw new AbpValidationException("La poblacion no debe ser negativa.");
 
-            return await _citySearchService.FilterCitiesAsync(paisPrefix, poblacionMin, regionPrefix);
+            // Normalizar los filtros de texto (case-insensitive)
+            var paisNormalizado = NormalizarTexto(paisPrefix);
+            var regionNormalizada = NormalizarTexto(regionPrefix);
+            var ciudadNormalizada = NormalizarTexto(nombreCiudad);
+
+            return await _citySearchService.FilterCitiesAsync(paisNormalizado, poblacionMin, regionNormalizada, ciudadNormalizada);
         }
 
         [HttpGet]
@@ -112,8 +115,27 @@ namespace TurisGo.Destinos
             return $"https://placehold.co/600x400?text={Uri.EscapeDataString(city.Name)}";
         }
 
+        /// <summary>
+        /// Normaliza texto para búsquedas case-insensitive
+        /// Convierte a formato: Primera letra mayúscula, resto minúscula
+        /// Ej: "cOlON" -> "Colon", "ARGENTINA" -> "Argentina"
+        /// </summary>
+        private string NormalizarTexto(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto))
+                return null;
 
+            texto = texto.Trim();
+
+            // Convertir primera letra a mayúscula, resto a minúscula
+            return char.ToUpper(texto[0]) + texto.Substring(1).ToLower();
+        }
+
+        [HttpGet]
+        [Route("api/app/destino/populares")]
+        public async Task<List<CityDto>> GetDestinosPopularesAsync()
+        {
+            return await _citySearchService.GetPopularCitiesAsync();
+        }
     }
-
 }
-        
