@@ -22,10 +22,12 @@ namespace TurisGo.Destinos
         Task<List<CityDto>> FiltrarCiudadesAsync(
             string paisPrefix = null,
             int poblacionMin = 0,
-            string regionPrefix = null);
+            string regionPrefix = null,
+            string nombreCiudad = null);
 
         Task<CityDetailDto> ObtenerDetalleCiudadAsync(int cityId);
 
         Task<DestinoDto> GuardarDestinoDesdeApiAsync(int cityId);
+        Task<List<CityDto>> GetDestinosPopularesAsync();
     }
 }

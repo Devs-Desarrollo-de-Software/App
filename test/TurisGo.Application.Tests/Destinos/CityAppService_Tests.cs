@@ -91,7 +91,7 @@ namespace TurisGo.Destinos
         {
             //Arrange
             _mockCityService
-                .Setup(x => x.SearchCitiesByNameAsync("CiudadInventada"))
+                .Setup(x => x.SearchCitiesByNameAsync("Ciudadinventada"))
                 .ReturnsAsync(new List<CityDto>());
 
             //Act
@@ -100,6 +100,42 @@ namespace TurisGo.Destinos
             //Assert
             result.ShouldNotBeNull();
 
+        }
+
+        [Fact]
+        public async Task SearchByName_Should_Normalize_Input_CaseInsensitive()
+        {
+            //Arrange
+            var cities = new List<CityDto>
+            {
+                new CityDto
+                {
+                    Name = "Colon",
+                    Country = "Argentina",
+                    Population = 24000,
+                    Latitude = -32.22,
+                    Longitude = -61.09
+                }
+            };
+
+            // El servicio debe recibir "Colon" (normalizado)
+            _mockCityService
+                .Setup(x => x.SearchCitiesByNameAsync("Colon"))
+                .ReturnsAsync(cities);
+
+            //Act - Enviamos "CoLoN" pero debe normalizarse a "Colon"
+            var result = await _destinoAppService.BuscarCiudadesPorNombreAsync("CoLoN");
+
+            //Assert
+            result.ShouldNotBeNull();
+            result.Count.ShouldBe(1);
+            result[0].Name.ShouldBe("Colon");
+
+            // Verificamos que se llamó con el texto normalizado
+            _mockCityService.Verify(
+                x => x.SearchCitiesByNameAsync("Colon"),
+                Times.Once
+            );
         }
 
         [Fact]
@@ -121,11 +157,17 @@ namespace TurisGo.Destinos
         // --------------- Pruebas para el metodo FilterCities() --------------------------
 
         [Fact]
-        public async Task Filter_Should_Throw_When_No_Filters_Provided()
+        public async Task Filter_Should_Return_EmptyList_When_No_Filters_Provided()
         {
-            
+            // Arrange
+            _mockCityService
+                .Setup(x => x.FilterCitiesAsync(null, 0, null, null))
+                .ReturnsAsync(new List<CityDto>());
+
+            // Act
             var result = await _destinoAppService.FiltrarCiudadesAsync(null, 0, null);
 
+            // Assert
             result.ShouldNotBeNull();
             result.ShouldBeEmpty();
 
@@ -143,9 +185,9 @@ namespace TurisGo.Destinos
         [Fact]
         public async Task Filter_Should_Call_ICitySearchService_With_Correct_Parameters()
         {
-            // Arrange
+            // Arrange - Espera "Ar" normalizado (primera mayúscula, resto minúscula)
             _mockCityService
-                .Setup(x => x.FilterCitiesAsync("AR", 1000000, null))
+                .Setup(x => x.FilterCitiesAsync("Ar", 1000000, null, null))
                 .ReturnsAsync(new List<CityDto>());
 
             // Act
@@ -153,7 +195,7 @@ namespace TurisGo.Destinos
 
             // Assert
             _mockCityService.Verify(
-                x => x.FilterCitiesAsync("AR", 1000000, null),
+                x => x.FilterCitiesAsync("Ar", 1000000, null, null),
                 Times.Once
                 );
         }
@@ -161,9 +203,9 @@ namespace TurisGo.Destinos
         [Fact]
         public async Task Filter_Should_Return_Empty_List_When_No_Result()
         {
-            // Arrange
+            // Arrange - Espera "Xx" normalizado
             _mockCityService
-                .Setup(x => x.FilterCitiesAsync("XX", 0, null))
+                .Setup(x => x.FilterCitiesAsync("Xx", 0, null, null))
                 .ReturnsAsync(new List<CityDto>());
 
             // Act
@@ -177,10 +219,12 @@ namespace TurisGo.Destinos
         [Fact]
         public async Task Filter_Should_Throw_Api_Fails()
         {
+            // Arrange - Espera "Ar" normalizado
             _mockCityService
-                .Setup(x => x.FilterCitiesAsync("AR", 1000000, null))
+                .Setup(x => x.FilterCitiesAsync("Ar", 1000000, null, null))
                 .ThrowsAsync(new HttpRequestException("API error"));
 
+            // Act & Assert
             await Should.ThrowAsync<HttpRequestException>(() =>
 
                 _destinoAppService.FiltrarCiudadesAsync("AR", 1000000, null)
@@ -196,13 +240,86 @@ namespace TurisGo.Destinos
             };
 
             _mockCityService
-                .Setup(x => x.FilterCitiesAsync(null, 0, "cor"))
+                .Setup(x => x.FilterCitiesAsync(null, 0, "Cor", null))
                 .ReturnsAsync(cities);
 
             var result = await _destinoAppService.FiltrarCiudadesAsync(null, 0, "cor");
 
             result.ShouldNotBeEmpty();
 
+        }
+
+        [Fact]
+        public async Task Filter_Should_Normalize_Country_CaseInsensitive()
+        {
+            // Arrange
+            var cities = new List<CityDto>
+            {
+                new CityDto { Name = "Buenos Aires", Country = "Argentina", Population = 2890000 }
+            };
+
+            // Mock espera "Argentina" normalizado
+            _mockCityService
+                .Setup(x => x.FilterCitiesAsync("Argentina", 0, null, null))
+                .ReturnsAsync(cities);
+
+            // Act - Enviamos "ARGENTINA" en mayúsculas
+            var result = await _destinoAppService.FiltrarCiudadesAsync("ARGENTINA", 0, null);
+
+            // Assert
+            result.ShouldNotBeEmpty();
+            _mockCityService.Verify(
+                x => x.FilterCitiesAsync("Argentina", 0, null, null),
+                Times.Once
+            );
+        }
+
+        [Fact]
+        public async Task Filter_Should_Normalize_Region_CaseInsensitive()
+        {
+            // Arrange
+            var cities = new List<CityDto>
+            {
+                new CityDto { Name = "Colon", Country = "Argentina", Population = 24000 }
+            };
+
+            _mockCityService
+                .Setup(x => x.FilterCitiesAsync("Argentina", 0, "Entre rios", null))
+                .ReturnsAsync(cities);
+
+            // Act - Enviamos "ENTRE RIOS" en mayúsculas
+            var result = await _destinoAppService.FiltrarCiudadesAsync("Argentina", 0, "ENTRE RIOS");
+
+            // Assert
+            result.ShouldNotBeEmpty();
+            _mockCityService.Verify(
+                x => x.FilterCitiesAsync("Argentina", 0, "Entre rios", null),
+                Times.Once
+            );
+        }
+
+        [Fact]
+        public async Task Filter_Should_Normalize_CityName_CaseInsensitive()
+        {
+            // Arrange
+            var cities = new List<CityDto>
+            {
+                new CityDto { Name = "Cordoba", Country = "Argentina", Population = 1300000 }
+            };
+
+            _mockCityService
+                .Setup(x => x.FilterCitiesAsync(null, 0, null, "Cordoba"))
+                .ReturnsAsync(cities);
+
+            // Act - Enviamos "cOrDoBa" mezclado
+            var result = await _destinoAppService.FiltrarCiudadesAsync(null, 0, null, "cOrDoBa");
+
+            // Assert
+            result.ShouldNotBeEmpty();
+            _mockCityService.Verify(
+                x => x.FilterCitiesAsync(null, 0, null, "Cordoba"),
+                Times.Once
+            );
         }
 
         // ---------------------------- Pruebas para el metodo GetDetailsAsync --------------------------
@@ -235,7 +352,7 @@ namespace TurisGo.Destinos
             // Act
             var result = await _destinoAppService.ObtenerDetalleCiudadAsync(3435910);
 
-            // Arrange
+            // Assert
             result.ShouldNotBeNull();
             result.Id.ShouldBe(3435910);
             result.Name.ShouldBe("Buenos Aires");
@@ -243,8 +360,8 @@ namespace TurisGo.Destinos
             result.CountryCode.ShouldBe("AR");
             result.Region.ShouldBe("Buenos Aires F.D.");
             result.RegionCode.ShouldBe("C");
-            result.Latitude.ShouldBe(-34, 61315);
-            result.Longitude.ShouldBe(-58, 37723);
+            result.Latitude.ShouldBe(-34.61315);
+            result.Longitude.ShouldBe(-58.37723);
             result.Population.ShouldBe(2890151);
             result.WikiDataId.ShouldBe("Q1486");
             result.TimeZone.ShouldBe("America/Argentina/Buenos_Aires");

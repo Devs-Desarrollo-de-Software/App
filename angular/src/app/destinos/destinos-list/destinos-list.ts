@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CoreModule } from '@abp/ng.core';
-import { DestinoService, CityDto } from 'src/app/proxy/destinos';
+import { ToasterService } from '@abp/ng.theme.shared';
+import { DestinoService, CityDto, DestinoDto } from 'src/app/proxy/destinos';
 import { finalize } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -17,16 +18,17 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export class DestinosList implements OnInit, OnDestroy {
   // Inyección de dependencias usando la nueva sintaxis de inject()
   private readonly destinoService = inject(DestinoService);
+  private readonly toaster = inject(ToasterService);
 
   /**
    * Texto que escribe el usuario para buscar por nombre
-   */
-  nombreCiudad = '';
-
-  /**
-   * Texto que escribe el usuario para buscar por país
+   * (Nota: El backend usa 'paisPrefix' y 'regionPrefix', aquí usamos nombreCiudad para filtrar por nombre si está presente
+   * o si se quiere usar el endpoint de buscar por nombre. Pero para cumplir requerimientos usaremos filtrarCiudades)
    */
   nombrePais = '';
+  minPoblacion: number | null = null;
+  nombreRegion = '';
+  nombreCiudad = ''; // Restore nombreCiudad
 
   /**
    * Resultado de la búsqueda
@@ -45,6 +47,9 @@ export class DestinosList implements OnInit, OnDestroy {
   private searchSubject = new Subject<void>();
 
   ngOnInit(): void {
+    // Cargar destinos populares al inicio
+    this.loadPopularDestinations();
+
     // Configurar debounce para búsqueda automática (opcional)
     this.searchSubject
       .pipe(
@@ -80,55 +85,59 @@ export class DestinosList implements OnInit, OnDestroy {
   /**
    * Ejecuta la búsqueda real
    */
+  /**
+   * Ejecuta la búsqueda real usando los filtros avanzados
+   */
   private performSearch(): void {
-    const termCiudad = this.nombreCiudad.trim();
     const termPais = this.nombrePais.trim();
+    const termRegion = this.nombreRegion.trim();
+    const minPop = this.minPoblacion || 0;
+    const termCiudad = this.nombreCiudad ? this.nombreCiudad.trim() : '';
 
-    // Si ambos están vacíos, limpiamos resultados
-    if (!termCiudad && !termPais) {
-      this.ciudades = [];
-      this.errorMessage = null;
-      return;
+    // Si todo esta vacio, cargar populares
+    if (!termPais && !termRegion && minPop <= 0 && !termCiudad) {
+       this.loadPopularDestinations();
+       return;
     }
 
     this.loading = true;
     this.errorMessage = null;
 
-    // Si hay nombre de ciudad, buscar por nombre
-    if (termCiudad) {
-      this.destinoService
-        .buscarCiudadesPorNombre(termCiudad)
-        .pipe(
-          finalize(() => {
-            this.loading = false;
-          })
-        )
-        .subscribe({
-          next: (result: CityDto[]) => {
-            // Si también hay filtro de país, filtrar los resultados
-            if (termPais) {
-              this.ciudades = result.filter(ciudad =>
-                ciudad.country?.toLowerCase().includes(termPais.toLowerCase())
-              );
-            } else {
-              this.ciudades = result || [];
-            }
+    this.destinoService.filtrarCiudades(termPais, minPop, termRegion, termCiudad)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (result) => {
+           this.ciudades = result;
 
-            if (this.ciudades.length === 0 && result.length > 0) {
-              this.errorMessage = `No se encontraron ciudades en el país "${termPais}"`;
-            }
+           if (this.ciudades.length === 0) {
+              this.errorMessage = 'No se encontraron ciudades con esos criterios.';
+           }
+        },
+        error: (err) => {
+           console.error(err);
+           this.errorMessage = 'Ocurrió un error al buscar.';
+        }
+      });
+  }
+
+  guardarDestino(ciudad: CityDto): void {
+      if (!ciudad.id) {
+          this.toaster.error('No se pudo obtener el ID de la ciudad');
+          return;
+      }
+
+      this.destinoService.guardarDestinoDesdeApi(ciudad.id).subscribe({
+          next: (destino) => {
+              this.toaster.success(`Destino ${destino.nombre} guardado correctamente!`);
           },
-          error: error => {
-            console.error('Error al buscar ciudades:', error);
-            this.ciudades = [];
-            this.errorMessage = 'Ocurrió un error al buscar ciudades. Intenta nuevamente.';
-          },
-        });
-    } else {
-      // Si solo hay país pero no ciudad, mostrar mensaje
-      this.loading = false;
-      this.errorMessage = 'Por favor, ingresa el nombre de una ciudad para buscar.';
-    }
+          error: (err: any) => {
+              if (err.error && err.error.code === 'DestinoYaExiste') {
+                  this.toaster.warn('Este destino ya está guardado en tu lista.');
+              } else {
+                  this.toaster.error('Error al guardar el destino.');
+              }
+          }
+      });
   }
 
   /**
@@ -137,8 +146,26 @@ export class DestinosList implements OnInit, OnDestroy {
   clearSearch(): void {
     this.nombreCiudad = '';
     this.nombrePais = '';
-    this.ciudades = [];
+    this.nombreRegion = '';
+    this.minPoblacion = null;
     this.errorMessage = null;
+    this.loadPopularDestinations();
+  }
+
+  private loadPopularDestinations(): void {
+    this.loading = true;
+    // @ts-ignore: El metodo existe en el servicio actualizado manualmente
+    this.destinoService.getDestinosPopularesAsync()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (result) => {
+          this.ciudades = result;
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage = 'Error al cargar destinos populares.';
+        }
+      });
   }
 
   /**

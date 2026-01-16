@@ -1,6 +1,7 @@
 import type { AuditedEntityDto } from '@abp/ng.core';
 
 export interface CityDto {
+  id: number;
   name?: string;
   country?: string;
   population: number;
@@ -26,4 +27,20 @@ export interface DestinoDto extends AuditedEntityDto<string> {
   pais?: string;
   poblacion: number;
   imagen?: string;
+}
+
+export interface CityDetailDto {
+  id: number;
+  name?: string;
+  country?: string;
+  countryCode?: string;
+  region?: string;
+  regionCode?: string;
+  latitude: number;
+  longitude: number;
+  population: number;
+  wikiDataId?: string;
+  timeZone?: string;
+  elevationMeters?: number;
+  type?: string;
 }
