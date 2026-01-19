@@ -1,0 +1,34 @@
+<div class="calificacion-promedio-container" [ngClass]="sizeClass">
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-state">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ '::ErrorLoadingRating' | abpLocalization }}</span>
+  </div>
+
+  <!-- Promedio de calificaciones -->
+  <div *ngIf="!loading && !error" class="promedio-content">
+    <div class="stars-display">
+      <i
+        *ngFor="let estrella of estrellas"
+        class="fas fa-star"
+        [ngClass]="obtenerClaseEstrella(estrella)"
+      ></i>
+    </div>
+
+    <div *ngIf="showLabel" class="rating-info">
+      <span class="promedio-numero">{{ promedio | number: '1.1-1' }}</span>
+      <span class="total-reviews" *ngIf="totalCalificaciones > 0">
+        ({{ totalCalificaciones }}
+        {{ totalCalificaciones === 1 ? ('::Review' | abpLocalization) : ('::Reviews' | abpLocalization) }})
+      </span>
+      <span class="no-reviews" *ngIf="totalCalificaciones === 0">
+        {{ '::NoReviews' | abpLocalization }}
+      </span>
+    </div>
+  </div>
+</div>

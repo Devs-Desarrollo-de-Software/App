@@ -15,9 +15,15 @@ namespace TurisGo.Destinos
         public string Imagen { get; private set; } = null!;
 
         public Coordenada Coordenada { get; private set; }
+
+        /// <summary>
+        /// ID de la ciudad en la API externa (GeoDB Cities)
+        /// </summary>
+        public int ApiCityId { get; private set; }
+
         protected Destino() { }
 
-        public Destino(Guid id, string nombre, string pais, int poblacion, string imagen, Coordenada coordenada) : base(id)
+        public Destino(Guid id, string nombre, string pais, int poblacion, string imagen, Coordenada coordenada, int apiCityId = 0) : base(id)
         {
             if (nombre.IsNullOrEmpty())
             {
@@ -30,17 +36,18 @@ namespace TurisGo.Destinos
             if (poblacion < 0)
             {
                 throw new ArgumentOutOfRangeException("La poblacion no debe ser negativa", nameof(poblacion));
-            } 
+            }
             if (coordenada is null)
             {
                 throw new ArgumentNullException("Las coordenadas no debe ser nula", nameof (coordenada));
             }
-  
+
             Nombre = nombre;
             Pais = pais;
             Poblacion = poblacion;
             Imagen = imagen;
             Coordenada = coordenada;
+            ApiCityId = apiCityId;
         }
 
     } 

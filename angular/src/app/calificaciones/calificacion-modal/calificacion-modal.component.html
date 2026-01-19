@@ -1,0 +1,53 @@
+<div class="modal-backdrop" *ngIf="isVisible" (click)="onBackdropClick($event)">
+  <div class="modal-container">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2>{{ destinoNombre }}</h2>
+      <button class="btn-close" (click)="cerrarModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+      <!-- Promedio de calificaciones -->
+      <div class="promedio-section">
+        <app-calificacion-promedio
+          [destinoId]="destinoId"
+          [size]="'large'"
+          [showLabel]="true"
+        ></app-calificacion-promedio>
+      </div>
+
+      <!-- Formulario de calificación -->
+      <div *ngIf="mostrarFormulario" class="form-section">
+        <app-calificacion-form
+          [destinoId]="destinoId"
+          [destinoNombre]="destinoNombre"
+          (calificacionCreada)="onCalificacionCreada()"
+        ></app-calificacion-form>
+      </div>
+
+      <!-- Mensaje si ya calificó -->
+      <div *ngIf="!mostrarFormulario" class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <p>{{ '::ReviewSubmittedSuccessfully' | abpLocalization }}</p>
+        <button class="btn btn-link" (click)="mostrarFormularioNuevamente()">
+          {{ '::EditReview' | abpLocalization }}
+        </button>
+      </div>
+
+      <!-- Lista de comentarios -->
+      <div class="comentarios-section">
+        <app-comentarios-list [destinoId]="destinoId"></app-comentarios-list>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cerrarModal()">
+        <i class="fas fa-times"></i> {{ '::Close' | abpLocalization }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="comentarios-list-container">
+  <div class="list-header">
+    <h4>{{ '::MyReviews' | abpLocalization }}</h4>
+    <small class="text-muted">{{ '::OnlyYouCanSeeYourReviews' | abpLocalization }}</small>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+    <span>{{ '::LoadingReviews' | abpLocalization }}</span>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-state">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ '::ErrorLoadingReviews' | abpLocalization }}</span>
+  </div>
+
+  <!-- Lista de comentarios -->
+  <div *ngIf="!loading && !error" class="comentarios-list">
+    <!-- Empty state -->
+    <div *ngIf="comentarios.length === 0" class="empty-state">
+      <i class="fas fa-comments"></i>
+      <p>{{ '::NoReviewsYet' | abpLocalization }}</p>
+      <small>{{ '::BeTheFirstToReview' | abpLocalization }}</small>
+    </div>
+
+    <!-- Comentarios -->
+    <div *ngFor="let comentario of comentarios" class="comentario-card">
+      <div class="comentario-header">
+        <div class="rating-stars">
+          <i
+            *ngFor="let estrella of estrellas"
+            class="fas fa-star"
+            [ngClass]="obtenerClaseEstrella(comentario, estrella)"
+          ></i>
+        </div>
+        <span class="fecha">{{ formatearFecha(comentario.creationTime) }}</span>
+      </div>
+
+      <div *ngIf="comentario.comentario" class="comentario-body">
+        <p>{{ comentario.comentario }}</p>
+      </div>
+
+      <div *ngIf="!comentario.comentario" class="sin-comentario">
+        <em>{{ '::NoCommentProvided' | abpLocalization }}</em>
+      </div>
+    </div>
+  </div>
+</div>

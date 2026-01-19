@@ -24,5 +24,12 @@ function configureRoutes() {
       order: 2,
       layout: eLayoutType.application,
     },
+    {
+      path: '/mis-calificaciones',
+      name: 'Mis Calificaciones',
+      iconClass: 'fas fa-star',
+      order: 3,
+      layout: eLayoutType.application,
+    },
   ]);
 }

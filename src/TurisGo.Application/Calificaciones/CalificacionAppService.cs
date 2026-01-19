@@ -1,5 +1,6 @@
 ﻿using Abp.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,15 +30,18 @@ namespace TurisGo.Calificaciones
         private readonly ICurrentUser _currentUser;
         private readonly IRepository<Calificacion, Guid> _repository;
         private readonly IRepository<IdentityUser, Guid> _userRepository;
+        private readonly IRepository<Destino, Guid> _destinoRepository;
 
         public CalificacionAppService(
-            IRepository<Calificacion, Guid> repository,                                  
+            IRepository<Calificacion, Guid> repository,
             ICurrentUser currentUser,
-            IRepository<IdentityUser, Guid> userRepository)
+            IRepository<IdentityUser, Guid> userRepository,
+            IRepository<Destino, Guid> destinoRepository)
         {
-            _currentUser = currentUser;   
+            _currentUser = currentUser;
             _repository = repository;
             _userRepository = userRepository;
+            _destinoRepository = destinoRepository;
         }
 
 
@@ -90,9 +94,18 @@ namespace TurisGo.Calificaciones
             var totalCount = await AsyncExecuter.CountAsync(queryable);
             var calificaciones = await AsyncExecuter.ToListAsync(query);
 
+            var calificacionesDto = ObjectMapper.Map<List<Calificacion>, List<CalificacionDto>>(calificaciones);
+
+            // Agregar el nombre del destino a cada calificación
+            foreach (var calificacionDto in calificacionesDto)
+            {
+                var destino = await _destinoRepository.GetAsync(calificacionDto.DestinoId);
+                calificacionDto.DestinoNombre = destino.Nombre;
+            }
+
             return new PagedResultDto<CalificacionDto>(
                 totalCount,
-                ObjectMapper.Map<List<Calificacion>, List<CalificacionDto>>(calificaciones)
+                calificacionesDto
             );
         }
 
@@ -123,6 +136,8 @@ namespace TurisGo.Calificaciones
 
         // 5.4 Consultar promedio de calificaciones de un destino (GLOBAL)
         [Authorize]
+        [HttpGet]
+        [Route("promedio/{destinoId}")]
         public async Task<PromedioCalificacionDto> GetPromedioAsync(Guid destinoId)
         {
             if (destinoId == Guid.Empty)
@@ -162,7 +177,9 @@ namespace TurisGo.Calificaciones
 
 
 
-        // 5.5 Listar comentarios propios de un destino (privados)
+        // 5.5 Listar comentarios de un destino (privados - solo del usuario autenticado)
+        [HttpGet]
+        [Route("list-comentarios/{destinoId}")]
         public async Task<ListarComentariosDto> GetListComentariosAsync(Guid destinoId)
         {
             if (destinoId == Guid.Empty)
@@ -171,11 +188,13 @@ namespace TurisGo.Calificaciones
             if (!_currentUser.IsAuthenticated)
                 throw new AbpAuthorizationException("Debe estar autenticado.");
 
+            var userId = _currentUser.Id!.Value;
             var queryable = await _repository.GetQueryableAsync();
 
+            // Filtrar solo comentarios del usuario autenticado (privacidad)
             var comentarios = await AsyncExecuter.ToListAsync(
                 queryable
-                    .Where(c => c.DestinoId == destinoId)
+                    .Where(c => c.DestinoId == destinoId && c.UserId == userId)
                     .OrderByDescending(c => c.CreationTime)
             );
 

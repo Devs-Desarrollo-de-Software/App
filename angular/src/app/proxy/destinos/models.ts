@@ -27,6 +27,8 @@ export interface DestinoDto extends AuditedEntityDto<string> {
   pais?: string;
   poblacion: number;
   imagen?: string;
+  coordenada?: CoordenadaDto;
+  apiCityId?: number;
 }
 
 export interface CityDetailDto {

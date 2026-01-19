@@ -2,16 +2,19 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CoreModule } from '@abp/ng.core';
-import { ToasterService } from '@abp/ng.theme.shared';
+import { ToasterService, Confirmation, ConfirmationService } from '@abp/ng.theme.shared';
 import { DestinoService, CityDto, DestinoDto } from 'src/app/proxy/destinos';
 import { finalize } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { CalificacionPromedioComponent } from 'src/app/calificaciones/calificacion-promedio/calificacion-promedio.component';
+import { CalificacionModalComponent } from 'src/app/calificaciones/calificacion-modal/calificacion-modal.component';
+import { DestinoDetalleModalComponent } from '../destino-detalle-modal/destino-detalle-modal.component';
 
 @Component({
   selector: 'app-destinos-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, CoreModule],
+  imports: [CommonModule, FormsModule, CoreModule, CalificacionPromedioComponent, CalificacionModalComponent, DestinoDetalleModalComponent],
   templateUrl: './destinos-list.html',
   styleUrls: ['./destinos-list.scss'],
 })
@@ -19,6 +22,7 @@ export class DestinosList implements OnInit, OnDestroy {
   // Inyección de dependencias usando la nueva sintaxis de inject()
   private readonly destinoService = inject(DestinoService);
   private readonly toaster = inject(ToasterService);
+  private readonly confirmation = inject(ConfirmationService);
 
   /**
    * Texto que escribe el usuario para buscar por nombre
@@ -42,11 +46,33 @@ export class DestinosList implements OnInit, OnDestroy {
   errorMessage: string | null = null;
 
   /**
+   * Mapa para trackear IDs de destinos guardados (city.id -> destino.id)
+   */
+  destinosGuardadosMap = new Map<number, string>();
+
+  /**
+   * Control del modal de calificaciones
+   */
+  modalVisible = false;
+  modalDestinoId: string = '';
+  modalDestinoNombre: string = '';
+
+  /**
+   * Control del modal de detalles
+   */
+  detalleModalVisible = false;
+  detalleCityId: number = 0;
+  detalleCityName: string = '';
+
+  /**
    * Subject para implementar debounce en la búsqueda
    */
   private searchSubject = new Subject<void>();
 
   ngOnInit(): void {
+    // Cargar destinos guardados del usuario
+    this.cargarDestinosGuardados();
+
     // Cargar destinos populares al inicio
     this.loadPopularDestinations();
 
@@ -59,6 +85,30 @@ export class DestinosList implements OnInit, OnDestroy {
       .subscribe(() => {
         this.performSearch();
       });
+  }
+
+  /**
+   * Carga los destinos guardados del usuario para mapear city.id -> destino.id
+   */
+  private cargarDestinosGuardados(): void {
+    const input = {
+      skipCount: 0,
+      maxResultCount: 1000,
+    };
+
+    this.destinoService.getList(input).subscribe({
+      next: (result) => {
+        // Mapear cada destino guardado: apiCityId -> destinoId
+        result.items.forEach((destino: any) => {
+          if (destino.apiCityId && destino.id) {
+            this.destinosGuardadosMap.set(destino.apiCityId, destino.id);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error al cargar destinos guardados:', err);
+      },
+    });
   }
 
   ngOnDestroy(): void {
@@ -129,6 +179,10 @@ export class DestinosList implements OnInit, OnDestroy {
       this.destinoService.guardarDestinoDesdeApi(ciudad.id).subscribe({
           next: (destino) => {
               this.toaster.success(`Destino ${destino.nombre} guardado correctamente!`);
+              // Guardar el ID del destino para poder mostrar calificaciones
+              if (destino.id && ciudad.id) {
+                  this.destinosGuardadosMap.set(ciudad.id, destino.id);
+              }
           },
           error: (err: any) => {
               if (err.error && err.error.code === 'DestinoYaExiste') {
@@ -138,6 +192,85 @@ export class DestinosList implements OnInit, OnDestroy {
               }
           }
       });
+  }
+
+  /**
+   * Obtiene el ID del destino guardado para una ciudad
+   */
+  getDestinoId(ciudad: CityDto): string | undefined {
+      return ciudad.id ? this.destinosGuardadosMap.get(ciudad.id) : undefined;
+  }
+
+  /**
+   * Abre el modal de calificaciones para un destino
+   */
+  abrirModalCalificaciones(ciudad: CityDto): void {
+      const destinoId = this.getDestinoId(ciudad);
+      if (destinoId) {
+          this.modalDestinoId = destinoId;
+          this.modalDestinoNombre = ciudad.name || '';
+          this.modalVisible = true;
+      } else {
+          this.toaster.warn('Primero debes guardar este destino para poder calificarlo.');
+      }
+  }
+
+  /**
+   * Cierra el modal de calificaciones
+   */
+  cerrarModalCalificaciones(): void {
+      this.modalVisible = false;
+      this.modalDestinoId = '';
+      this.modalDestinoNombre = '';
+  }
+
+  /**
+   * Elimina un destino guardado
+   */
+  eliminarDestino(ciudad: CityDto): void {
+      const destinoId = this.getDestinoId(ciudad);
+      if (!destinoId) {
+          this.toaster.warn('Este destino no está guardado.');
+          return;
+      }
+
+      this.confirmation.warn('::AreYouSureToDelete', '::AreYouSure').subscribe((status) => {
+          if (status === Confirmation.Status.confirm) {
+              this.destinoService.delete(destinoId).subscribe({
+                  next: () => {
+                      this.toaster.success(`Destino ${ciudad.name} eliminado correctamente.`);
+                      // Remover del mapa
+                      if (ciudad.id) {
+                          this.destinosGuardadosMap.delete(ciudad.id);
+                      }
+                  },
+                  error: (err) => {
+                      console.error(err);
+                      this.toaster.error('Error al eliminar el destino.');
+                  }
+              });
+          }
+      });
+  }
+
+  /**
+   * Abre el modal de detalles de una ciudad
+   */
+  abrirModalDetalles(ciudad: CityDto): void {
+      if (ciudad.id) {
+          this.detalleCityId = ciudad.id;
+          this.detalleCityName = ciudad.name || '';
+          this.detalleModalVisible = true;
+      }
+  }
+
+  /**
+   * Cierra el modal de detalles
+   */
+  cerrarModalDetalles(): void {
+      this.detalleModalVisible = false;
+      this.detalleCityId = 0;
+      this.detalleCityName = '';
   }
 
   /**
