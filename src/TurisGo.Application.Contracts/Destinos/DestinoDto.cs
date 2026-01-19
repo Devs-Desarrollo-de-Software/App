@@ -14,5 +14,6 @@ namespace TurisGo.Destinos
         public int Poblacion { get; set; }
         public string? Imagen { get; set; }
         public CoordenadaDto Coordenada { get; set; }
+        public int ApiCityId { get; set; }
     }
 }

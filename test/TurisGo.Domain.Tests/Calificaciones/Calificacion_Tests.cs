@@ -303,13 +303,11 @@ namespace TurisGo.Calificaciones
             // Arrange & Act
             var dto = new ComentarioDto
             {
-                NombreUsuario = "usuario123",
                 Puntuacion = 5,
                 Comentario = "Excelente lugar"
             };
 
             // Assert
-            dto.NombreUsuario.ShouldBe("usuario123");
             dto.Puntuacion.ShouldBe(5);
             dto.Comentario.ShouldBe("Excelente lugar");
         }
@@ -324,13 +322,11 @@ namespace TurisGo.Calificaciones
             {
                 new ComentarioDto
                 {
-                    NombreUsuario = "user1",
                     Puntuacion = 5,
                     Comentario = "Excelente"
                 },
                 new ComentarioDto
                 {
-                    NombreUsuario = "user2",
                     Puntuacion = 4,
                     Comentario = "Muy bueno"
                 }

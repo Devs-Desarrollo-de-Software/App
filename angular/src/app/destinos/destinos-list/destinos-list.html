@@ -86,6 +86,15 @@
       <div class="card-body">
         <h3 class="city-name">{{ ciudad.name }}</h3>
 
+        <!-- Promedio de calificaciones (solo si el destino está guardado) -->
+        <div *ngIf="getDestinoId(ciudad)" class="rating-section">
+          <app-calificacion-promedio
+            [destinoId]="getDestinoId(ciudad)!"
+            [size]="'small'"
+            [showLabel]="true"
+          ></app-calificacion-promedio>
+        </div>
+
         <div class="info-item">
           <span class="info-label">
             <i class="fas fa-globe"></i>
@@ -112,15 +121,59 @@
           >
         </div>
 
+        <button class="btn-view-details" (click)="abrirModalDetalles(ciudad)">
+          <i class="fas fa-info-circle"></i> {{ '::ViewDetails' | abpLocalization }}
+        </button>
+
         <button class="btn-view-map" (click)="verEnMapa(ciudad)">
           <i class="fas fa-map"></i> {{ '::ViewOnMap' | abpLocalization }}
         </button>
-        <button class="btn btn-success btn-save" (click)="guardarDestino(ciudad)">
+
+        <!-- Botón de guardar (si no está guardado) -->
+        <button
+          *ngIf="!getDestinoId(ciudad)"
+          class="btn btn-success btn-save"
+          (click)="guardarDestino(ciudad)"
+        >
           <i class="fas fa-save"></i> {{ '::Save' | abpLocalization }}
+        </button>
+
+        <!-- Botón de calificar (si ya está guardado) -->
+        <button
+          *ngIf="getDestinoId(ciudad)"
+          class="btn btn-primary btn-rate"
+          (click)="abrirModalCalificaciones(ciudad)"
+        >
+          <i class="fas fa-star"></i> {{ '::RateDestination' | abpLocalization }}
+        </button>
+
+        <!-- Botón de eliminar (si ya está guardado) -->
+        <button
+          *ngIf="getDestinoId(ciudad)"
+          class="btn btn-danger btn-delete"
+          (click)="eliminarDestino(ciudad)"
+        >
+          <i class="fas fa-trash"></i> {{ '::Delete' | abpLocalization }}
         </button>
       </div>
     </div>
   </div>
+
+  <!-- Modal de calificaciones -->
+  <app-calificacion-modal
+    [destinoId]="modalDestinoId"
+    [destinoNombre]="modalDestinoNombre"
+    [isVisible]="modalVisible"
+    (close)="cerrarModalCalificaciones()"
+  ></app-calificacion-modal>
+
+  <!-- Modal de detalles -->
+  <app-destino-detalle-modal
+    [cityId]="detalleCityId"
+    [cityName]="detalleCityName"
+    [isVisible]="detalleModalVisible"
+    (close)="cerrarModalDetalles()"
+  ></app-destino-detalle-modal>
 
   <!-- No results message -->
   <div

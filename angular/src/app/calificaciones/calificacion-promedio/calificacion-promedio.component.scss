@@ -1,0 +1,100 @@
+.calificacion-promedio-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .loading-state,
+  .error-state {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .error-state {
+    color: #dc3545;
+  }
+
+  .promedio-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .stars-display {
+      display: flex;
+      gap: 2px;
+
+      i {
+        &.star-filled {
+          color: #ffc107;
+        }
+
+        &.star-half {
+          color: #ffc107;
+          position: relative;
+
+          &::before {
+            content: '\f089'; // half-star icon
+          }
+        }
+
+        &.star-empty {
+          color: #ddd;
+        }
+      }
+    }
+
+    .rating-info {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.9rem;
+
+      .promedio-numero {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .total-reviews {
+        color: #666;
+      }
+
+      .no-reviews {
+        color: #999;
+        font-style: italic;
+      }
+    }
+  }
+
+  // Tamaños
+  &.size-small {
+    .promedio-content .stars-display i {
+      font-size: 0.9rem;
+    }
+
+    .promedio-content .rating-info {
+      font-size: 0.8rem;
+    }
+  }
+
+  &.size-medium {
+    .promedio-content .stars-display i {
+      font-size: 1.1rem;
+    }
+
+    .promedio-content .rating-info {
+      font-size: 0.9rem;
+    }
+  }
+
+  &.size-large {
+    .promedio-content .stars-display i {
+      font-size: 1.5rem;
+    }
+
+    .promedio-content .rating-info {
+      font-size: 1.1rem;
+    }
+  }
+}

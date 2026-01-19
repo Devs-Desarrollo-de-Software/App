@@ -1,0 +1,155 @@
+.comentarios-list-container {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.list-header {
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 12px;
+
+  h4 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.loading-state,
+.error-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 1rem;
+
+  i {
+    font-size: 1.5rem;
+  }
+}
+
+.error-state {
+  color: #dc3545;
+
+  i {
+    color: #dc3545;
+  }
+}
+
+.comentarios-list {
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: #999;
+
+    i {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      color: #ccc;
+    }
+
+    p {
+      margin: 0 0 8px 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    small {
+      font-size: 0.9rem;
+      color: #bbb;
+    }
+  }
+
+  .comentario-card {
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-left: 3px solid #007bff;
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .comentario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .rating-stars {
+        display: flex;
+        gap: 4px;
+
+        i {
+          font-size: 1rem;
+
+          &.star-filled {
+            color: #ffc107;
+          }
+
+          &.star-empty {
+            color: #ddd;
+          }
+        }
+      }
+
+      .fecha {
+        font-size: 0.85rem;
+        color: #888;
+        font-weight: 500;
+      }
+    }
+
+    .comentario-body {
+      p {
+        margin: 0;
+        color: #555;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        word-wrap: break-word;
+      }
+    }
+
+    .sin-comentario {
+      em {
+        color: #999;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .comentarios-list-container {
+    padding: 16px;
+  }
+
+  .list-header h4 {
+    font-size: 1.1rem;
+  }
+
+  .comentario-card {
+    .comentario-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  }
+}

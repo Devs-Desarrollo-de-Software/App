@@ -5,10 +5,33 @@ export interface CalificacionDto extends AuditedEntityDto<string> {
   comentario?: string;
   destinoId?: string;
   userId?: string;
+  destinoNombre?: string;
 }
 
-export interface CreateUpdateCalificacionDto {
+export interface PromedioCalificacionDto {
   destinoId: string;
+  promedioCalificacion: number;
+  totalCalificaciones: number;
+}
+
+export interface ComentarioDto {
+  puntuacion: number;
+  comentario?: string;
+  creationTime: string;
+}
+
+export interface ListarComentariosDto {
+  destinoId: string;
+  comentarios: ComentarioDto[];
+}
+
+export interface CreateCalificacionDto {
+  destinoId: string;
+  puntuacion: number;
+  comentario?: string;
+}
+
+export interface UpdateCalificacionDto {
   puntuacion: number;
   comentario?: string;
 }

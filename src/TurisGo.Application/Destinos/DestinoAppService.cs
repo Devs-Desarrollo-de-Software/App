@@ -84,14 +84,16 @@ namespace TurisGo.Destinos
             // 1️⃣ Obtener info desde API externa
             var city = await _citySearchService.GetCityDetailsAsync(cityId);
 
-            // 2️⃣ Verificar si ya existe en la base
+            // 2️⃣ Verificar si ya existe en la base (por usuario)
+            var userId = CurrentUser.Id;
             var existente = await Repository.FirstOrDefaultAsync(
-                x => x.Nombre == city.Name && x.Pais == city.Country);
+                x => x.Nombre == city.Name && x.Pais == city.Country && x.CreatorId == userId);
 
+            // Si ya existe para este usuario, devolver el existente
             if (existente != null)
-                throw new BusinessException("DestinoYaExiste")
-                    .WithData("Nombre", city.Name)
-                    .WithData("Pais", city.Country);
+            {
+                return ObjectMapper.Map<Destino, DestinoDto>(existente);
+            }
 
             // 3️⃣ Crear entidad de dominio
             var destino = new Destino(
@@ -100,7 +102,8 @@ namespace TurisGo.Destinos
                 city.Country,
                 city.Population,
                 ObtenerImagenPorDefecto(city), // ver método abajo
-                new Coordenada(city.Latitude, city.Longitude)
+                new Coordenada(city.Latitude, city.Longitude),
+                cityId  // Guardar el ID de la API externa
             );
 
             // 4️⃣ Guardar en DB interna

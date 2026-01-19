@@ -23,4 +23,8 @@ export const APP_ROUTES: Routes = [
     path: 'destinos',
     loadChildren: () => import('./destinos/destinos.routes').then(m => m.DESTINOS_ROUTES),
   },
+  {
+    path: 'mis-calificaciones',
+    loadChildren: () => import('./calificaciones/calificaciones.routes').then(m => m.CALIFICACIONES_ROUTES),
+  },
 ];
