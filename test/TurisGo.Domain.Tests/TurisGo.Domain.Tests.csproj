@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\TurisGo.Application.Contracts\TurisGo.Application.Contracts.csproj" />
     <ProjectReference Include="..\..\src\TurisGo.Domain\TurisGo.Domain.csproj" />
     <ProjectReference Include="..\TurisGo.TestBase\TurisGo.TestBase.csproj" />
   </ItemGroup>

@@ -37,3 +37,16 @@
     background-image: url('/assets/images/getting-started/x.svg');
   }
 }
+
+/* Ocultar el enlace de registro en la página de login de ABP */
+a[href*="/account/register"],
+a[routerlink*="/account/register"],
+a[href*="register"] {
+  display: none !important;
+}
+
+/* Ocultar específicamente el texto "Are you a new user? Register" */
+.login-form p:has(a[href*="register"]),
+.account-form p:has(a[href*="register"]) {
+  display: none !important;
+}

@@ -1,49 +1,50 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using OpenIddict.Server;
+using OpenIddict.Server.AspNetCore;
+using OpenIddict.Validation.AspNetCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Extensions.DependencyInjection;
-using OpenIddict.Validation.AspNetCore;
-using OpenIddict.Server.AspNetCore;
+using System.Text.Json;
+using System.Threading.Tasks;
 using TurisGo.EntityFrameworkCore;
-using TurisGo.MultiTenancy;
 using TurisGo.HealthChecks;
-using Microsoft.OpenApi.Models;
+using TurisGo.MultiTenancy;
 using Volo.Abp;
-using Volo.Abp.Studio;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.Autofac;
-using Volo.Abp.Localization;
-using Volo.Abp.Modularity;
-using Volo.Abp.UI.Navigation.Urls;
-using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
-using Microsoft.AspNetCore.Hosting;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.Autofac;
 using Volo.Abp.Identity;
+using Volo.Abp.Localization;
+using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
-using Volo.Abp.Swashbuckle;
-using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.Security.Claims;
-using Volo.Abp.AspNetCore.Mvc.AntiForgery;
-using OpenIddict.Server;
-using System.Text.Json;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
+using Volo.Abp.Studio;
+using Volo.Abp.Studio.Client.AspNetCore;
+using Volo.Abp.Swashbuckle;
+using Volo.Abp.UI.Navigation.Urls;
+using Volo.Abp.VirtualFileSystem;
 
 
 namespace TurisGo;
@@ -123,6 +124,34 @@ public class TurisGoHttpApiHostModule : AbpModule
             });
         }
 
+        //  Evitar redirecciones HTML en APIs: devolver 401/403
+        context.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = ctx =>
+            {
+                if (EsApiRequest(ctx.Request))
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                }
+
+                ctx.Response.Redirect(ctx.RedirectUri);
+                return Task.CompletedTask;
+            };
+
+            options.Events.OnRedirectToAccessDenied = ctx =>
+            {
+                if (EsApiRequest(ctx.Request))
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    return Task.CompletedTask;
+                }
+
+                ctx.Response.Redirect(ctx.RedirectUri);
+                return Task.CompletedTask;
+            };
+        });
+
         ConfigureAuthentication(context, configuration); // agrege configuration
         ConfigureUrls(configuration);
         ConfigureBundles();
@@ -133,6 +162,12 @@ public class TurisGoHttpApiHostModule : AbpModule
         ConfigureCors(context, configuration);
     }
 
+    private static bool EsApiRequest(HttpRequest request)
+    {
+        return request.Path.StartsWithSegments("/api")
+            || request.Path.StartsWithSegments("/swagger");
+    }
+
     private void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
     {
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
@@ -141,39 +176,6 @@ public class TurisGoHttpApiHostModule : AbpModule
             options.IsDynamicClaimsEnabled = true;
         });
 
-        //Agregue esto!
-
-        context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.Authority = configuration["AuthServer:Authority"];
-                options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
-                options.Audience = "TurisGo";
-
-
-                // Configura eventos para devolver JSON en lugar de HTML
-                options.Events = new JwtBearerEvents
-                {
-                    OnChallenge = context =>
-                    {
-                        context.HandleResponse();
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        context.Response.ContentType = "application/json";
-
-                        var result = JsonSerializer.Serialize(new
-                        {
-                            error = new
-                            {
-                                code = "unauthorized",
-                                message = "Se requiere autenticaciÛn. Debe proporcionar un token Bearer v·lido.",
-                                details = "No se proporcionÛ un token de acceso o el token es inv·lido."
-                            }
-                        });
-
-                        return context.Response.WriteAsync(result);
-                    }
-                };
-            });   //Hasta aca!
             
     }
 
@@ -321,6 +323,26 @@ public class TurisGoHttpApiHostModule : AbpModule
         {
             app.UseErrorPage();
         }
+
+        app.Use(async (httpContext, next) =>
+        {
+            await next();
+
+            if (httpContext.Response.StatusCode == 401 && !httpContext.Response.HasStarted)
+            {
+                httpContext.Response.ContentType = "application/json";
+                var result = JsonSerializer.Serialize(new
+                {
+                    error = new
+                    {
+                        code = "unauthorized",
+                        message = "Se requiere autenticaci√≥n. Debe proporcionar un token Bearer v√°lido.",
+                        details = "No se proporcion√≥ un token de acceso o el token es inv√°lido."
+                    }
+                });
+                await httpContext.Response.WriteAsync(result);
+            }
+        });
 
         app.UseRouting();
         app.MapAbpStaticAssets();

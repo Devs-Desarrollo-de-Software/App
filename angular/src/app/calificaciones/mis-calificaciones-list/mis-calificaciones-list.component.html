@@ -1,0 +1,120 @@
+<div class="mis-calificaciones-container">
+  <div class="page-header">
+    <h1>{{ '::MyReviews' | abpLocalization }}</h1>
+    <p class="subtitle">{{ '::ManageYourReviews' | abpLocalization }}</p>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+    <span>{{ '::Loading' | abpLocalization }}</span>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error && !loading" class="error-state">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ '::ErrorLoadingReviews' | abpLocalization }}</span>
+    <button class="btn btn-primary" (click)="cargarCalificaciones()">
+      {{ '::Retry' | abpLocalization }}
+    </button>
+  </div>
+
+  <!-- Lista de calificaciones -->
+  <div *ngIf="!loading && !error" class="calificaciones-list">
+    <!-- Empty state -->
+    <div *ngIf="calificaciones.length === 0" class="empty-state">
+      <i class="fas fa-star"></i>
+      <h3>{{ '::NoReviewsYet' | abpLocalization }}</h3>
+      <p>{{ '::NoReviewsDescription' | abpLocalization }}</p>
+    </div>
+
+    <!-- Calificaciones -->
+    <div *ngFor="let calificacion of calificaciones" class="calificacion-card">
+      <!-- Modo de visualización -->
+      <div *ngIf="!calificacion.editando" class="view-mode">
+        <div class="card-header">
+          <div class="destino-info">
+            <h3 class="destino-nombre">{{ calificacion.destinoNombre || 'Destino' }}</h3>
+            <span class="fecha">{{ formatearFecha(calificacion.creationTime) }}</span>
+          </div>
+          <div class="actions">
+            <button class="btn-icon btn-edit" (click)="iniciarEdicion(calificacion)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon btn-delete" (click)="eliminarCalificacion(calificacion)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="rating-stars">
+            <i
+              *ngFor="let estrella of estrellas"
+              class="fas fa-star"
+              [ngClass]="obtenerClaseEstrella(calificacion, estrella)"
+            ></i>
+            <span class="rating-number">{{ calificacion.puntuacion }}/5</span>
+          </div>
+
+          <div *ngIf="calificacion.comentario" class="comentario">
+            <p>{{ calificacion.comentario }}</p>
+          </div>
+
+          <div *ngIf="!calificacion.comentario" class="sin-comentario">
+            <em>{{ '::NoCommentProvided' | abpLocalization }}</em>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modo de edición -->
+      <div *ngIf="calificacion.editando" class="edit-mode">
+        <div class="card-header">
+          <h3>{{ '::EditingReview' | abpLocalization }}</h3>
+        </div>
+
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">{{ '::YourRating' | abpLocalization }}</label>
+            <div class="stars-container">
+              <i
+                *ngFor="let estrella of estrellas"
+                class="fas fa-star"
+                [ngClass]="obtenerClaseEstrella(calificacion, estrella)"
+                (click)="seleccionarPuntuacion(calificacion, estrella)"
+                (mouseenter)="hoverEstrella(calificacion, estrella)"
+                (mouseleave)="resetHover(calificacion)"
+              ></i>
+            </div>
+            <span class="rating-text" *ngIf="calificacion.puntuacionEdit">
+              {{ calificacion.puntuacionEdit }} {{ '::Stars' | abpLocalization }}
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{{ '::YourComment' | abpLocalization }}</label>
+            <textarea
+              class="form-control"
+              rows="4"
+              maxlength="1000"
+              [(ngModel)]="calificacion.comentarioEdit"
+              [placeholder]="'::ShareYourExperience' | abpLocalization"
+            ></textarea>
+            <span class="character-count">
+              {{ calificacion.comentarioEdit?.length || 0 }}/1000
+            </span>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-secondary" (click)="cancelarEdicion(calificacion)">
+              <i class="fas fa-times"></i> {{ '::Cancel' | abpLocalization }}
+            </button>
+            <button class="btn btn-primary" (click)="guardarEdicion(calificacion)">
+              <i class="fas fa-save"></i> {{ '::Save' | abpLocalization }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -20,10 +20,10 @@ using TurisGo.Usuarios;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-
-
-
-
+using TurisGo.Experiencias;
+using TurisGo.Favoritos;
+using TurisGo.Notificaciones;
+using TurisGo.Metricas;
 
 
 namespace TurisGo.EntityFrameworkCore;
@@ -39,6 +39,11 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
     public DbSet<Destino> Destinos { get; set; }
     public DbSet<Calificacion> Calificaciones { get; set; }
+    public DbSet<Experiencia> Experiencias { get; set; }
+    public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Favorito> Favoritos { get; set; }
+    public DbSet<Notificacion> Notificaciones { get; set; }
+    public DbSet<MetricaApiExterna> MetricasApiExterna { get; set; }
 
     #region Entities from the modules
 
@@ -92,14 +97,7 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
         builder.ConfigureOpenIddict();
         builder.ConfigureBlobStoring();
 
-        /* Configure your own tables/entities inside here */
-
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(TurisGoConsts.DbTablePrefix + "YourEntities", TurisGoConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        // --------------------- DESTINO ---------------------
 
         builder.Entity<Destino>(b =>
         {
@@ -123,6 +121,8 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
             });
         });
 
+        // --------------------- CALIFICACION ---------------------
+
         builder.Entity<Calificacion>(b =>
         {
             b.ToTable(TurisGoConsts.DbTablePrefix + "Calificaciones", TurisGoConsts.DbSchema);
@@ -137,11 +137,175 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
 
             b.HasQueryFilter(e =>
                 !_currentUser.IsAuthenticated ||
-                e.UserId == _currentUser.Id);
+                (_currentUser.Id.HasValue && e.UserId == _currentUser.Id.Value));
 
         });
-    }
 
+        // --------------------- EXPERIENCIA ---------------------
+
+        builder.Entity<Experiencia>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Experiencias", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.UserId).IsRequired();
+            b.Property(x => x.DestinoId).IsRequired();
+            b.Property(x => x.Titulo).IsRequired().HasMaxLength(100);
+            b.Property(x => x.Descripcion).IsRequired().HasMaxLength(500);
+
+        });
+
+        // --------------------- USUARIO ---------------------
+
+        builder.Entity<Usuario>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Usuarios", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.NombreCompleto).IsRequired().HasMaxLength(100);
+            b.Property(x => x.NombreUsuario).IsRequired().HasMaxLength(50);
+            b.Property(x => x.IdentityUserId).IsRequired();
+            b.Property(x => x.Email).IsRequired().HasMaxLength(100);
+            b.Property(x => x.FotoPerfilUrl).HasMaxLength(int.MaxValue);
+            b.Property(x => x.Rol).IsRequired().HasConversion<int>();
+            b.Property(x => x.EstaActivo).IsRequired().HasDefaultValue(true);
+
+            b.OwnsOne(x => x.Preferencias, pb =>
+            {
+                pb.Property(p => p.RecibirEnPantalla)
+                  .HasColumnName("RecibirEnPantalla")
+                  .IsRequired()
+                  .HasDefaultValue(true);
+
+                pb.Property(p => p.RecibirPorEmail)
+                  .HasColumnName("RecibirPorEmail")
+                  .IsRequired()
+                  .HasDefaultValue(false);
+
+                pb.Property(p => p.Frecuencia)
+                  .HasColumnName("Frecuencia")
+                  .IsRequired()
+                  .HasConversion<int>()
+                  .HasDefaultValue(FrecuenciaNotificacion.Inmediata);
+            });
+
+            // Indices
+            b.HasIndex(x => x.NombreUsuario)
+                .IsUnique()
+                .HasDatabaseName("IX_Usuarios_NombreUsuario");
+
+            b.HasIndex(x => x.Email)
+                .IsUnique()
+                .HasDatabaseName("IX_Usuarios_Email");
+
+            b.HasIndex(x => x.IdentityUserId)
+                .IsUnique()
+                .HasDatabaseName("IX_Usuarios_IdentityUserId");
+
+            b.HasIndex(x => x.EstaActivo)
+                .HasDatabaseName("IX_Usuarios_EstaActivo");
+
+
+            // Relacion con IdentityUser
+            b.HasOne<IdentityUser>()
+                .WithMany()
+                .HasForeignKey(e => e.IdentityUserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+        });
+
+        // --------------------- FAVORITO ---------------------
+
+        builder.Entity<Favorito>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Favoritos", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.UserId).IsRequired();
+            b.Property(x => x.DestinoId).IsRequired();
+
+            b.HasIndex(x => new { x.UserId, x.DestinoId }).IsUnique();
+
+            b.HasQueryFilter(e =>
+                !_currentUser.IsAuthenticated ||
+                (_currentUser.Id.HasValue && e.UserId == _currentUser.Id.Value));
+        });
+
+        // ------------------- NOTIFICACIONES ----------------------
+
+        builder.Entity<Notificacion>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "Notificaciones", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.UserId).IsRequired();
+            b.Property(x => x.DestinoId).IsRequired();
+            b.Property(x => x.Titulo).IsRequired().HasMaxLength(200);
+            b.Property(x => x.Mensaje).IsRequired().HasMaxLength(1000);
+            b.Property(x => x.Tipo).HasConversion<int>();
+            b.Property(x => x.Leida).IsRequired().HasDefaultValue(false);
+            b.Property(x => x.FechaLectura).IsRequired(false);
+            b.Property(x => x.EnviadaPorMail).IsRequired().HasDefaultValue(false);
+            b.Property(x => x.FechaEnvioMail).IsRequired(false);
+            b.Property(x => x.NombreDestino).IsRequired().HasMaxLength(200);
+
+            b.HasIndex(x => x.UserId)
+            .HasDatabaseName("IX_Notificaciones_UserId");
+
+            b.HasIndex(x => new { x.UserId, x.Leida })
+            .HasDatabaseName("IX_Notificaciones_UserId_Leida");
+
+            b.HasIndex(x => new { x.UserId, x.DestinoId })
+            .HasDatabaseName("IX_Notificaciones_UserId_DestinoId");
+
+            b.HasIndex(x => x.CreationTime)
+            .HasDatabaseName("IX_Notificaciones_CreationTime");
+
+            b.HasIndex(x => x.EnviadaPorMail)
+            .HasDatabaseName("IX_Notificaciones_EnviadaPorMail")
+            .HasFilter("[EnviadaPorMail] = 0");
+
+            b.HasQueryFilter(e =>
+            !_currentUser.IsAuthenticated ||
+            (_currentUser.Id.HasValue && e.UserId == _currentUser.Id.Value));
+
+        });
+
+        // --------------------- METRICAS API EXTERNA ---------------------
+
+        builder.Entity<MetricaApiExterna>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "MetricasApiExterna", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.NombreApi).IsRequired().HasMaxLength(50);
+            b.Property(x => x.Endpoint).IsRequired().HasMaxLength(500);
+            b.Property(x => x.MetodoHttp).IsRequired().HasMaxLength(10);
+            b.Property(x => x.ParametrosConsulta).IsRequired(false).HasMaxLength(2000);
+            b.Property(x => x.CodigoEstadoHttp).IsRequired();
+            b.Property(x => x.TiempoRespuestaMs).IsRequired();
+            b.Property(x => x.Exitosa).IsRequired();
+            b.Property(x => x.MensajeError).HasMaxLength(1000);
+            b.Property(x => x.CantidadResultados).IsRequired(false);
+
+            // Índices
+            b.HasIndex(x => x.NombreApi)
+                .HasDatabaseName("IX_MetricasApiExterna_NombreApi");
+
+            b.HasIndex(x => x.CreationTime)
+                .HasDatabaseName("IX_MetricasApiExterna_CreationTime");
+
+            b.HasIndex(x => x.Exitosa)
+                .HasDatabaseName("IX_MetricasApiExterna_Exitosa");
+
+            b.HasIndex(x => new { x.NombreApi, x.CreationTime })
+                .HasDatabaseName("IX_MetricasApiExterna_NombreApi_CreationTime");
+        });
+
+    }
+        
+    // Indica que entidades deben tener filtros automaticos por usuario
     protected override bool ShouldFilterEntity<TEntity>(IMutableEntityType entityType)
     {
         if (typeof(IUserOwned).IsAssignableFrom(typeof(TEntity)))

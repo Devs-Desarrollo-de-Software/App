@@ -12,6 +12,7 @@ namespace TurisGo.Calificaciones
         public int Puntuacion { get; set; }
         public string? Comentario { get; set; }
         public Guid DestinoId { get; set; }
-        public Guid UserId { get; set; }                        
+        public Guid UserId { get; set; }
+        public string? DestinoNombre { get; set; }
     }
 }
