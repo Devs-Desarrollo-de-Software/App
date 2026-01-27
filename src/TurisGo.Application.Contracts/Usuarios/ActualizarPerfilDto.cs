@@ -14,9 +14,6 @@ namespace TurisGo.Usuarios
 
         [EmailAddress(ErrorMessage = "El email no tiene un formato válido")]
         public string Email { get; set; }
-
-        [StringLength(500, ErrorMessage = "La URL de la foto no puede exceder 500 caracteres")]
-        [Url(ErrorMessage = "La URL de la foto no es válida")]
         public string? FotoPerfilUrl { get; set; }
 
     }

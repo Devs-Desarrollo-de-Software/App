@@ -33,6 +33,7 @@ namespace TurisGo.Experiencias
             _userRepository = userRepository;
         }
 
+        // -------------- 4.1. Crear una nueva experiencia en un destino. ----------- 
         public async Task<ExperienciaDto> CreateAsync (CreateExperienciaDto input)
         {
             var userId = CurrentUser.Id!.Value;
@@ -69,6 +70,8 @@ namespace TurisGo.Experiencias
 
         }
 
+        // ----------- 4.2. Editar una experiencia propia. --------------
+
         public async Task<ExperienciaDto> UpdateAsync(Guid id, UpdateExperienciaDto input)
         {
 
@@ -98,6 +101,7 @@ namespace TurisGo.Experiencias
 
         }
 
+        // ------- 4.3. Eliminar una experiencia propia. ----------
         public async Task DeleteAsync(Guid id)
         {
             var userId = CurrentUser.Id!.Value;
@@ -113,6 +117,8 @@ namespace TurisGo.Experiencias
             await _repository.DeleteAsync(experiencia, autoSave: true);
 
         }
+
+        // ----------- 4.4. Consultar experiencias de otros usuarios en un destino -----------
 
         [AllowAnonymous] // Cualquiera puede ver las experiencias
         public async Task<ListarExperienciasDto> GetListExperienciasAsync(Guid destinoId)
@@ -162,23 +168,24 @@ namespace TurisGo.Experiencias
 
         }
 
-       
+        // 4.5. Filtrar experiencias por valoración (positiva/negativa/neutral).
+        // 4.6. Buscar experiencias por palabras clave (en título o descripción).
+        // Ambos filtros son opcionales y combinables.
         public async Task<PagedResultDto<ExperienciaDto>> GetListAsync (GetExperienciasListDto input)
         {
-
             var userId = CurrentUser.Id!.Value;
 
             var queryable = await _repository.GetQueryableAsync();
 
             var query = queryable.Where(e => e.UserId == userId);
 
-            // 4.5. Filtrar experiencias por valoración.
+            // 4.5. Filtrar experiencias por valoración (opcional)
             if (input.Valoracion.HasValue)
             {
                 query = query.Where(e => e.Valoracion == input.Valoracion.Value);
             }
 
-            // 4.6. Buscar experiencias por palabra clave en título o descripción.
+            // 4.6. Buscar experiencias por palabra clave en título o descripción (opcional)
             if (string.IsNullOrEmpty(input.PalabraClave) == false)
             {
                 query = query.Where(e => e.Titulo.Contains(input.PalabraClave) ||
@@ -205,10 +212,7 @@ namespace TurisGo.Experiencias
                 totalCount,
                 experienciaDtos
             );
-
         }
-
-
 
 
     }

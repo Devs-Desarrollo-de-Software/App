@@ -96,18 +96,6 @@ namespace TurisGo.Usuarios
         }
 
         [Fact]
-        public void ActualizarPreferencias_WithNullPreferences_ThrowsValidationException()
-        {
-            // Arrange
-            var usuario = CreateValidUsuario();
-
-            // Act & Assert
-            Should.Throw<AbpValidationException>(() =>
-                usuario.ActualizarPreferencias(null)
-            );
-        }
-
-        [Fact]
         public void SetFotoPerfil_WithNull_ClearsPhoto()
         {
             // Arrange

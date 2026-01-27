@@ -1,0 +1,94 @@
+<div class="editar-usuario-container">
+  <div class="page-header">
+    <button class="btn-back" (click)="volver()">
+      <i class="fas fa-arrow-left"></i>
+      Volver
+    </button>
+    <h1>Editar Usuario</h1>
+  </div>
+
+  <div class="form-card" *ngIf="!loading">
+    <form [formGroup]="usuarioForm" (ngSubmit)="guardar()">
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Nombre Completo *</label>
+          <input
+            type="text"
+            formControlName="nombreCompleto"
+            class="form-control"
+            placeholder="Ej: Juan Pérez"
+          />
+          <div
+            class="error-message"
+            *ngIf="
+              usuarioForm.get('nombreCompleto')?.invalid &&
+              usuarioForm.get('nombreCompleto')?.touched
+            "
+          >
+            El nombre completo es requerido
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Email *</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="form-control"
+            placeholder="ejemplo@correo.com"
+          />
+          <div
+            class="error-message"
+            *ngIf="
+              usuarioForm.get('email')?.invalid && usuarioForm.get('email')?.touched
+            "
+          >
+            El email es requerido y debe ser válido
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Rol *</label>
+          <select formControlName="rol" class="form-control">
+            <option [ngValue]="TipoRol.Usuario">Usuario</option>
+            <option [ngValue]="TipoRol.Administrador">Administrador</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Estado</label>
+          <div class="checkbox-group">
+            <input type="checkbox" formControlName="estaActivo" id="estaActivo" />
+            <label for="estaActivo">Usuario activo</label>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label>URL Foto de Perfil</label>
+          <input
+            type="text"
+            formControlName="fotoPerfilUrl"
+            class="form-control"
+            placeholder="https://ejemplo.com/foto.jpg"
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="volver()">Cancelar</button>
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="usuarioForm.invalid || loading"
+        >
+          <i class="fas fa-save"></i>
+          Guardar Cambios
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+</div>

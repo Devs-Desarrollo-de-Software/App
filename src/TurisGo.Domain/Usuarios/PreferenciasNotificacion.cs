@@ -13,14 +13,16 @@ namespace TurisGo.Usuarios
         public bool RecibirPorEmail { get;  set; }
         public FrecuenciaNotificacion Frecuencia { get;  set; }
 
+
+        // Constructor por defecto - inicializa con valores predeterminados
+        // Notificaciones en pantalla activadas, email desactivado, frecuencia inmediata
         public PreferenciasNotificacion() {
-            //Valores por defecto
             RecibirEnPantalla = true;
             RecibirPorEmail = false;
             Frecuencia = FrecuenciaNotificacion.Inmediata;
         }
 
-        // Constructor con parámetros
+        // Constructor con parámetros para crear preferencias personalizadas
         public PreferenciasNotificacion(
             bool recibirEnPantalla,
             bool recibirPorEmail,
@@ -31,7 +33,8 @@ namespace TurisGo.Usuarios
             Frecuencia = frecuencia;
         }
 
-        // Método para actualizar (crea una nueva instancia porque es inmutable)
+        // Crea una nueva instancia con preferencias actualizadas
+        // Sigue el patrón de inmutabilidad de Value Objects
         public PreferenciasNotificacion Actualizar(
             bool recibirEnPantalla,
             bool recibirPorEmail,
@@ -44,7 +47,8 @@ namespace TurisGo.Usuarios
             );
         }
 
-        // Implementación requerida de ValueObject
+        // Implementación requerida por ValueObject para comparación por valor
+        // Define qué propiedades determinan la igualdad entre instancias
         protected override IEnumerable<object> GetAtomicValues()
         {
             yield return RecibirEnPantalla;

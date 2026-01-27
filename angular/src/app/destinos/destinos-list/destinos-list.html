@@ -11,7 +11,7 @@
         type="text"
         id="destination"
         class="form-control"
-        [placeholder]="'::Destination' | abpLocalization"
+        placeholder="Madrid, Paris, ..."
         [(ngModel)]="nombreCiudad"
         (keyup.enter)="onSearch()"
         (input)="onSearchInput()"
@@ -23,7 +23,7 @@
         type="text"
         id="country"
         class="form-control"
-        [placeholder]="'::Country' | abpLocalization"
+        placeholder="Argentina, Chile, ..."
         [(ngModel)]="nombrePais"
         (keyup.enter)="onSearch()"
         (input)="onSearchInput()"
@@ -49,6 +49,8 @@
         placeholder="0"
         [(ngModel)]="minPoblacion"
         (keyup.enter)="onSearch()"
+        min="0"
+        step="1"
       />
     </div>
     <div class="buttons">
@@ -86,15 +88,6 @@
       <div class="card-body">
         <h3 class="city-name">{{ ciudad.name }}</h3>
 
-        <!-- Promedio de calificaciones (solo si el destino está guardado) -->
-        <div *ngIf="getDestinoId(ciudad)" class="rating-section">
-          <app-calificacion-promedio
-            [destinoId]="getDestinoId(ciudad)!"
-            [size]="'small'"
-            [showLabel]="true"
-          ></app-calificacion-promedio>
-        </div>
-
         <div class="info-item">
           <span class="info-label">
             <i class="fas fa-globe"></i>
@@ -121,6 +114,34 @@
           >
         </div>
 
+        <!-- Promedio de calificaciones (solo si el destino está guardado) -->
+        <div class="rating-section" *ngIf="getDestinoId(ciudad) && getPromedio(ciudad)">
+          <!-- Mostrar estrellas y promedio si hay calificaciones -->
+          <div class="rating-display" *ngIf="getPromedio(ciudad)!.totalCalificaciones > 0">
+            <div class="stars">
+              <i *ngFor="let estrella of getEstrellas(getPromedio(ciudad)!.promedioCalificacion)"
+                 class="fas fa-star"
+                 [class.filled]="estrella === 'full'"
+                 [class.half]="estrella === 'half'"></i>
+            </div>
+            <span class="rating-text">
+              <strong>{{ getPromedio(ciudad)!.promedioCalificacion.toFixed(1) }}</strong>
+              <span class="rating-count">({{ getPromedio(ciudad)!.totalCalificaciones }} calificación{{ getPromedio(ciudad)!.totalCalificaciones !== 1 ? 'es' : '' }})</span>
+            </span>
+          </div>
+
+          <!-- Mostrar mensaje cuando no hay calificaciones -->
+          <div class="rating-display no-ratings" *ngIf="getPromedio(ciudad)!.totalCalificaciones === 0">
+            <div class="stars">
+              <i *ngFor="let i of [1,2,3,4,5]" class="fas fa-star empty"></i>
+            </div>
+            <span class="rating-text">
+              <strong>0.0</strong>
+              <span class="no-ratings-text">{{ '::NoRatingsYet' | abpLocalization }}</span>
+            </span>
+          </div>
+        </div>
+
         <button class="btn-view-details" (click)="abrirModalDetalles(ciudad)">
           <i class="fas fa-info-circle"></i> {{ '::ViewDetails' | abpLocalization }}
         </button>
@@ -138,9 +159,9 @@
           <i class="fas fa-save"></i> {{ '::Save' | abpLocalization }}
         </button>
 
-        <!-- Botón de calificar (si ya está guardado) -->
+        <!-- Botón de calificar (si ya está guardado Y aún no ha sido calificado) -->
         <button
-          *ngIf="getDestinoId(ciudad)"
+          *ngIf="getDestinoId(ciudad) && !yaCalificado(ciudad)"
           class="btn btn-primary btn-rate"
           (click)="abrirModalCalificaciones(ciudad)"
         >
@@ -171,6 +192,7 @@
   <app-destino-detalle-modal
     [cityId]="detalleCityId"
     [cityName]="detalleCityName"
+    [destinoId]="detalleDestinoId"
     [isVisible]="detalleModalVisible"
     (close)="cerrarModalDetalles()"
   ></app-destino-detalle-modal>

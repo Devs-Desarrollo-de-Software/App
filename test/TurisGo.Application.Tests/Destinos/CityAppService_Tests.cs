@@ -26,8 +26,9 @@ namespace TurisGo.Destinos
             _mockCityService = new Mock<ICitySearchService>();
 
             var mockRepo = new Mock<IRepository<Destino, Guid>>();
+            var mockCalificacionRepo = new Mock<IRepository<TurisGo.Calificaciones.Calificacion, Guid>>();
 
-            _destinoAppService = new DestinoAppService(mockRepo.Object, _mockCityService.Object);
+            _destinoAppService = new DestinoAppService(mockRepo.Object, _mockCityService.Object, mockCalificacionRepo.Object);
 
         }
 

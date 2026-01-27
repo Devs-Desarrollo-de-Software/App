@@ -1,0 +1,172 @@
+<div class="usuarios-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <i class="fas fa-users"></i>
+        <h1>Gestión de Usuarios</h1>
+      </div>
+      <button class="btn-primary" (click)="registrarNuevoUsuario()">
+        <i class="fas fa-user-plus"></i>
+        Nuevo Usuario
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-card">
+    <div class="filters-row">
+      <div class="filter-group">
+        <label>Buscar</label>
+        <input
+          type="text"
+          [(ngModel)]="filtro"
+          placeholder="Nombre, usuario o email..."
+          class="form-control"
+          (keyup.enter)="aplicarFiltros()"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>Rol</label>
+        <select [(ngModel)]="rolFiltro" class="form-control">
+          <option [ngValue]="undefined">Todos</option>
+          <option [ngValue]="TipoRol.Usuario">Usuario</option>
+          <option [ngValue]="TipoRol.Administrador">Administrador</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Estado</label>
+        <select [(ngModel)]="estadoFiltro" class="form-control">
+          <option [ngValue]="undefined">Todos</option>
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn-secondary" (click)="aplicarFiltros()">
+          <i class="fas fa-search"></i>
+          Buscar
+        </button>
+        <button class="btn-outline" (click)="limpiarFiltros()">
+          <i class="fas fa-times"></i>
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-container" *ngIf="!loading">
+    <table class="usuarios-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th class="actions-column">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>
+            <div class="user-cell">
+              <div class="user-avatar">
+                <img
+                  *ngIf="usuario.fotoPerfilUrl"
+                  [src]="usuario.fotoPerfilUrl"
+                  [alt]="usuario.nombreCompleto"
+                />
+                <i *ngIf="!usuario.fotoPerfilUrl" class="fas fa-user-circle"></i>
+              </div>
+              <div class="user-info">
+                <div class="user-name">{{ usuario.nombreCompleto }}</div>
+                <div class="user-username">{{ '@' + usuario.nombreUsuario }}</div>
+              </div>
+            </div>
+          </td>
+          <td>{{ usuario.email }}</td>
+          <td>
+            <span class="badge" [ngClass]="getRolBadgeClass(usuario.rol)">
+              {{ getRolTexto(usuario.rol) }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="status-badge"
+              [ngClass]="usuario.estaActivo ? 'status-active' : 'status-inactive'"
+            >
+              {{ usuario.estaActivo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="actions-column">
+            <div class="action-buttons">
+              <button
+                class="btn-icon btn-edit"
+                (click)="editarUsuario(usuario.id)"
+                title="Editar usuario"
+              >
+                <i class="fas fa-edit"></i>
+              </button>
+              <button
+                class="btn-icon btn-delete"
+                (click)="eliminarUsuario(usuario)"
+                title="Eliminar usuario"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="usuarios.length === 0">
+          <td colspan="5" class="no-data">
+            <i class="fas fa-inbox"></i>
+            <p>No se encontraron usuarios</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="pagination-container" *ngIf="totalCount > pageSize && !loading">
+    <div class="pagination-info">
+      Mostrando {{ usuarios.length }} de {{ totalCount }} usuarios
+    </div>
+    <div class="pagination-controls">
+      <button
+        class="pagination-btn"
+        [disabled]="currentPage === 1"
+        (click)="cambiarPagina(currentPage - 1)"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <button
+        *ngFor="let page of paginasTotales"
+        class="pagination-btn"
+        [ngClass]="{ active: page === currentPage }"
+        (click)="cambiarPagina(page)"
+      >
+        {{ page }}
+      </button>
+
+      <button
+        class="pagination-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="cambiarPagina(currentPage + 1)"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

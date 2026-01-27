@@ -243,6 +243,71 @@ namespace TurisGo.Migrations
                     b.ToTable("AppFavoritos", (string)null);
                 });
 
+            modelBuilder.Entity("TurisGo.Metricas.MetricaApiExterna", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CantidadResultados")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CodigoEstadoHttp")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<string>("Endpoint")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("Exitosa")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MensajeError")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("MetodoHttp")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("NombreApi")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ParametrosConsulta")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<long>("TiempoRespuestaMs")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreationTime")
+                        .HasDatabaseName("IX_MetricasApiExterna_CreationTime");
+
+                    b.HasIndex("Exitosa")
+                        .HasDatabaseName("IX_MetricasApiExterna_Exitosa");
+
+                    b.HasIndex("NombreApi")
+                        .HasDatabaseName("IX_MetricasApiExterna_NombreApi");
+
+                    b.HasIndex("NombreApi", "CreationTime")
+                        .HasDatabaseName("IX_MetricasApiExterna_NombreApi_CreationTime");
+
+                    b.ToTable("AppMetricasApiExterna", (string)null);
+                });
+
             modelBuilder.Entity("TurisGo.Notificaciones.Notificacion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -395,8 +460,8 @@ namespace TurisGo.Migrations
                         .HasColumnName("ExtraProperties");
 
                     b.Property<string>("FotoPerfilUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("IdentityUserId")
                         .HasColumnType("uniqueidentifier");

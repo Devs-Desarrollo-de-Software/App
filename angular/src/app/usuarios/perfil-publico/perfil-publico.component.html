@@ -1,0 +1,139 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Buscador de usuario -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-search me-2"></i>
+            Buscar Perfil Público
+          </h5>
+        </div>
+        <div class="card-body">
+          <form #buscarForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-person"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Ingrese el nombre de usuario (ej: juanperez)"
+                name="nombreUsuario"
+                [(ngModel)]="nombreUsuarioBusqueda"
+                required
+                [disabled]="loading"
+              />
+              <button
+                class="btn btn-info text-white"
+                type="submit"
+                [disabled]="loading || !nombreUsuarioBusqueda.trim()"
+              >
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                <i *ngIf="!loading" class="bi bi-search me-1"></i>
+                {{ loading ? 'Buscando...' : 'Buscar' }}
+              </button>
+              <button
+                *ngIf="perfil || nombreUsuarioBusqueda"
+                class="btn btn-outline-secondary"
+                type="button"
+                (click)="limpiarBusqueda()"
+                [disabled]="loading"
+              >
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Loading spinner -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2 text-muted">Buscando usuario...</p>
+      </div>
+
+      <!-- Mensaje de error -->
+      <div *ngIf="!loading && mensajeError" class="alert alert-danger d-flex align-items-center">
+        <i class="bi bi-exclamation-circle-fill me-2"></i>
+        {{ mensajeError }}
+      </div>
+
+      <!-- Perfil público -->
+      <div *ngIf="!loading && perfil" class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-person-badge me-2"></i>
+            Perfil Público
+          </h4>
+        </div>
+        <div class="card-body">
+          <!-- Foto y datos básicos -->
+          <div class="text-center mb-4">
+            <div class="profile-image-container">
+              <img
+                *ngIf="perfil.fotoPerfilUrl"
+                [src]="perfil.fotoPerfilUrl"
+                alt="Foto de perfil"
+                class="rounded-circle img-thumbnail profile-image"
+                (error)="$any($event.target).src = ''"
+              />
+              <div
+                *ngIf="!perfil.fotoPerfilUrl"
+                class="rounded-circle img-thumbnail profile-image profile-image-placeholder"
+              >
+                <i class="bi bi-person-circle"></i>
+              </div>
+            </div>
+            <h3 class="mt-3 mb-1">{{ perfil.nombreCompleto }}</h3>
+            <p class="text-muted fs-5"><i class="bi bi-at"></i>{{ perfil.nombreUsuario }}</p>
+          </div>
+
+          <hr />
+
+          <!-- Información visible públicamente -->
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Información Pública:</strong> Esta es la información visible para todos los
+            usuarios del sistema. Los datos privados como email y preferencias no se muestran.
+          </div>
+
+          <div class="row">
+            <div class="col-12 mb-3">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-person-circle fs-4 text-primary me-3"></i>
+                <div>
+                  <small class="text-muted d-block">Nombre Completo</small>
+                  <strong class="fs-5">{{ perfil.nombreCompleto }}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 mb-3">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-person-badge fs-4 text-primary me-3"></i>
+                <div>
+                  <small class="text-muted d-block">Nombre de Usuario</small>
+                  <strong class="fs-5">{{ perfil.nombreUsuario }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado inicial (sin búsqueda) -->
+      <div *ngIf="!loading && !perfil && !nombreUsuarioBusqueda" class="card shadow-sm">
+        <div class="card-body text-center py-5">
+          <i class="bi bi-person-circle display-1 text-muted"></i>
+          <h5 class="mt-3 text-muted">Buscar Perfil de Usuario</h5>
+          <p class="text-muted">
+            Ingrese un nombre de usuario en el campo de búsqueda para ver su perfil público.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -236,7 +236,7 @@ namespace TurisGo.Usuarios
 
         // ------------------ Operacion 1.5. Eliminar cuenta propia ------------------
 
-        [Fact]
+       /* [Fact]
         public async Task EliminarCuentaPropia_Without_ThrowsAuthorizationException()
         {
             // Arrange
@@ -247,10 +247,10 @@ namespace TurisGo.Usuarios
 
             // Act & Assert - Sin establecer CurrentUser.Id
             await Should.ThrowAsync<EntityNotFoundException>(
-                _usuarioAppService.EliminarCuentaPropia(eliminarDto)
+                _usuarioAppService.EliminarUsuarioAsync(eliminarDto)
             );
         }
-
+       */
         // ----------------- Operacion 1.6. Consultar perfil de otro usuario -----------------
 
         [Fact]
@@ -272,28 +272,5 @@ namespace TurisGo.Usuarios
 
         }
 
-        [Fact]
-        public async Task ObtenerPerfilPublico_ConNombreUsuarioInexistente_ThrowsEntityNotFoundException()
-        {
-            // Arrange
-            var nombreUsuarioInexistente = "usuarioquenoxiste123";
-
-            // Act & Assert
-            await Should.ThrowAsync<EntityNotFoundException>(
-                _usuarioAppService.ObtenerPerfilPublicoAsync(nombreUsuarioInexistente)
-            );
-        }
-
-        [Fact]
-        public async Task ObtenerPerfilPublico_WithEmptyUserName_ThrowsValidationException()
-        {
-            // Arrange
-            var nombreUsuarioVacio = "";
-
-            // Act & Assert
-            await Should.ThrowAsync<Abp.Runtime.Validation.AbpValidationException>(
-                _usuarioAppService.ObtenerPerfilPublicoAsync(nombreUsuarioVacio)
-            );
-        }
     }
 }

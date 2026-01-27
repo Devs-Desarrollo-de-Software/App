@@ -10,15 +10,6 @@
 
     <!-- Body -->
     <div class="modal-body">
-      <!-- Promedio de calificaciones -->
-      <div class="promedio-section">
-        <app-calificacion-promedio
-          [destinoId]="destinoId"
-          [size]="'large'"
-          [showLabel]="true"
-        ></app-calificacion-promedio>
-      </div>
-
       <!-- Formulario de calificación -->
       <div *ngIf="mostrarFormulario" class="form-section">
         <app-calificacion-form
@@ -35,11 +26,6 @@
         <button class="btn btn-link" (click)="mostrarFormularioNuevamente()">
           {{ '::EditReview' | abpLocalization }}
         </button>
-      </div>
-
-      <!-- Lista de comentarios -->
-      <div class="comentarios-section">
-        <app-comentarios-list [destinoId]="destinoId"></app-comentarios-list>
       </div>
     </div>
 

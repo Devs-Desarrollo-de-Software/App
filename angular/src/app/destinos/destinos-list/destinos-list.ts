@@ -7,20 +7,24 @@ import { DestinoService, CityDto, DestinoDto } from 'src/app/proxy/destinos';
 import { finalize } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { CalificacionPromedioComponent } from 'src/app/calificaciones/calificacion-promedio/calificacion-promedio.component';
 import { CalificacionModalComponent } from 'src/app/calificaciones/calificacion-modal/calificacion-modal.component';
 import { DestinoDetalleModalComponent } from '../destino-detalle-modal/destino-detalle-modal.component';
+import { CalificacionService, PromedioCalificacionDto } from 'src/app/proxy/calificaciones';
 
+// Componente principal de búsqueda y gestión de destinos
+// Permite buscar ciudades desde la API externa GeoDB, guardarlas como destinos
+// y ver calificaciones promedio de cada destino
 @Component({
   selector: 'app-destinos-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, CoreModule, CalificacionPromedioComponent, CalificacionModalComponent, DestinoDetalleModalComponent],
+  imports: [CommonModule, FormsModule, CoreModule, CalificacionModalComponent, DestinoDetalleModalComponent],
   templateUrl: './destinos-list.html',
   styleUrls: ['./destinos-list.scss'],
 })
 export class DestinosList implements OnInit, OnDestroy {
-  // Inyección de dependencias usando la nueva sintaxis de inject()
+  // Servicios inyectados
   private readonly destinoService = inject(DestinoService);
+  private readonly calificacionService = inject(CalificacionService);
   private readonly toaster = inject(ToasterService);
   private readonly confirmation = inject(ConfirmationService);
 
@@ -51,6 +55,16 @@ export class DestinosList implements OnInit, OnDestroy {
   destinosGuardadosMap = new Map<number, string>();
 
   /**
+   * Mapa para guardar promedios de calificaciones (destino.id -> PromedioCalificacionDto)
+   */
+  promediosMap = new Map<string, PromedioCalificacionDto>();
+
+  /**
+   * Set de destinos que el usuario ya ha calificado (destino.id)
+   */
+  destinosCalificadosSet = new Set<string>();
+
+  /**
    * Control del modal de calificaciones
    */
   modalVisible = false;
@@ -63,6 +77,7 @@ export class DestinosList implements OnInit, OnDestroy {
   detalleModalVisible = false;
   detalleCityId: number = 0;
   detalleCityName: string = '';
+  detalleDestinoId: string = '';
 
   /**
    * Subject para implementar debounce en la búsqueda
@@ -72,6 +87,9 @@ export class DestinosList implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Cargar destinos guardados del usuario
     this.cargarDestinosGuardados();
+
+    // Cargar calificaciones del usuario para saber qué destinos ya calificó
+    this.cargarCalificacionesUsuario();
 
     // Cargar destinos populares al inicio
     this.loadPopularDestinations();
@@ -102,12 +120,63 @@ export class DestinosList implements OnInit, OnDestroy {
         result.items.forEach((destino: any) => {
           if (destino.apiCityId && destino.id) {
             this.destinosGuardadosMap.set(destino.apiCityId, destino.id);
+            // Cargar el promedio de calificaciones para este destino
+            this.cargarPromedioCalificacion(destino.id);
           }
         });
       },
       error: (err) => {
         console.error('Error al cargar destinos guardados:', err);
       },
+    });
+  }
+
+  /**
+   * Carga las calificaciones del usuario para saber qué destinos ya calificó
+   */
+  private cargarCalificacionesUsuario(): void {
+    const input = {
+      skipCount: 0,
+      maxResultCount: 1000,
+    };
+
+    this.calificacionService.getList(input).subscribe({
+      next: (result) => {
+        // Guardar los IDs de destinos que el usuario ya calificó
+        result.items.forEach((calificacion) => {
+          if (calificacion.destinoId) {
+            this.destinosCalificadosSet.add(calificacion.destinoId);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error al cargar calificaciones del usuario:', err);
+      }
+    });
+  }
+
+  /**
+   * Carga el promedio de calificaciones para un destino específico
+   */
+  private cargarPromedioCalificacion(destinoId: string): void {
+    this.calificacionService.getPromedio(destinoId).subscribe({
+      next: (promedio) => {
+        this.promediosMap.set(destinoId, promedio);
+      },
+      error: (err) => {
+        // Cualquier error (404, 400, 500, etc.) se trata como "sin calificaciones"
+        // Esto evita que se muestren errores al usuario
+        this.promediosMap.set(destinoId, {
+          destinoId: destinoId,
+          promedioCalificacion: 0,
+          totalCalificaciones: 0
+        });
+
+        // Solo logueamos en consola si no es un 404 (que es esperado)
+        if (err.status !== 404) {
+          console.warn('Error al cargar promedio de calificaciones:', err);
+        }
+      }
     });
   }
 
@@ -141,7 +210,12 @@ export class DestinosList implements OnInit, OnDestroy {
   private performSearch(): void {
     const termPais = this.nombrePais.trim();
     const termRegion = this.nombreRegion.trim();
-    const minPop = this.minPoblacion || 0;
+    // Asegurar que la población mínima no sea negativa
+    let minPop = this.minPoblacion || 0;
+    if (minPop < 0) {
+      minPop = 0;
+      this.minPoblacion = 0; // Actualizar el modelo para reflejar el cambio
+    }
     const termCiudad = this.nombreCiudad ? this.nombreCiudad.trim() : '';
 
     // Si todo esta vacio, cargar populares
@@ -182,6 +256,8 @@ export class DestinosList implements OnInit, OnDestroy {
               // Guardar el ID del destino para poder mostrar calificaciones
               if (destino.id && ciudad.id) {
                   this.destinosGuardadosMap.set(ciudad.id, destino.id);
+                  // Cargar el promedio de calificaciones para el nuevo destino
+                  this.cargarPromedioCalificacion(destino.id);
               }
           },
           error: (err: any) => {
@@ -219,9 +295,56 @@ export class DestinosList implements OnInit, OnDestroy {
    * Cierra el modal de calificaciones
    */
   cerrarModalCalificaciones(): void {
+      // Guardar el ID antes de limpiarlo para recargar el promedio
+      const destinoId = this.modalDestinoId;
+
       this.modalVisible = false;
       this.modalDestinoId = '';
       this.modalDestinoNombre = '';
+
+      // Recargar el promedio después de cerrar el modal (por si hubo cambios)
+      if (destinoId) {
+          this.cargarPromedioCalificacion(destinoId);
+          // Marcar este destino como calificado (el usuario acaba de calificarlo)
+          this.destinosCalificadosSet.add(destinoId);
+      }
+  }
+
+  /**
+   * Obtiene el promedio de calificaciones para un destino
+   */
+  getPromedio(ciudad: CityDto): PromedioCalificacionDto | undefined {
+      const destinoId = this.getDestinoId(ciudad);
+      return destinoId ? this.promediosMap.get(destinoId) : undefined;
+  }
+
+  /**
+   * Obtiene el array de estrellas para mostrar el promedio
+   * Retorna un array con 5 elementos: 'full', 'half', o 'empty'
+   */
+  getEstrellas(promedio: number): string[] {
+      const estrellas: string[] = [];
+      const promedioRedondeado = Math.round(promedio * 2) / 2; // Redondear a 0.5
+
+      for (let i = 1; i <= 5; i++) {
+          if (i <= promedioRedondeado) {
+              estrellas.push('full');
+          } else if (i - 0.5 === promedioRedondeado) {
+              estrellas.push('half');
+          } else {
+              estrellas.push('empty');
+          }
+      }
+
+      return estrellas;
+  }
+
+  /**
+   * Verifica si el usuario ya calificó este destino
+   */
+  yaCalificado(ciudad: CityDto): boolean {
+      const destinoId = this.getDestinoId(ciudad);
+      return destinoId ? this.destinosCalificadosSet.has(destinoId) : false;
   }
 
   /**
@@ -260,6 +383,7 @@ export class DestinosList implements OnInit, OnDestroy {
       if (ciudad.id) {
           this.detalleCityId = ciudad.id;
           this.detalleCityName = ciudad.name || '';
+          this.detalleDestinoId = this.getDestinoId(ciudad) || '';
           this.detalleModalVisible = true;
       }
   }
@@ -271,6 +395,7 @@ export class DestinosList implements OnInit, OnDestroy {
       this.detalleModalVisible = false;
       this.detalleCityId = 0;
       this.detalleCityName = '';
+      this.detalleDestinoId = '';
   }
 
   /**
@@ -287,8 +412,7 @@ export class DestinosList implements OnInit, OnDestroy {
 
   private loadPopularDestinations(): void {
     this.loading = true;
-    // @ts-ignore: El metodo existe en el servicio actualizado manualmente
-    this.destinoService.getDestinosPopularesAsync()
+    this.destinoService.getDestinosPopulares()
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (result) => {

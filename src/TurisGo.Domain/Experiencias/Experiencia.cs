@@ -10,13 +10,14 @@ namespace TurisGo.Experiencias
 {
     public class Experiencia : AuditedAggregateRoot<Guid>
     {
-        public Guid UserId { get; set; }
-        public Guid DestinoId { get; set; }
+        public Guid UserId { get; set; }    // ID del usuario que creó la experiencia
+        public Guid DestinoId { get; set; }     // ID del destino asociado a la experiencia
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
-        public TipoValoracion Valoracion { get; set; }
+        public TipoValoracion Valoracion { get; set; }      // Valoración de la experiencia (Positiva, Neutral, Negativa)
 
-        protected Experiencia () { }  // Constructor protegido para EF Core
+        
+        protected Experiencia () { }    // Constructor protegido para EF Core
 
         public Experiencia (Guid id, Guid userId, Guid destinoId, string titulo, string descripcion, TipoValoracion valoracion)
             : base(id)

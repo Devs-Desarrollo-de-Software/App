@@ -1,0 +1,15 @@
+<div class="custom-layout">
+  <!-- Sidebar -->
+  <app-custom-sidebar [collapsed]="sidebarCollapsed"></app-custom-sidebar>
+
+  <!-- Main content area -->
+  <div class="main-content" [class.sidebar-collapsed]="sidebarCollapsed">
+    <!-- Navbar -->
+    <app-custom-navbar (toggleSidebar)="toggleSidebar()"></app-custom-navbar>
+
+    <!-- Page content -->
+    <div class="content-container">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

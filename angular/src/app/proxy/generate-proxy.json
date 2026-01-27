@@ -886,6 +886,48 @@
               "name": "ICalificacionAppService",
               "methods": [
                 {
+                  "name": "CreateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Calificaciones.CreateCalificacionDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Calificaciones.CreateCalificacionDto",
+                      "typeSimple": "TurisGo.Calificaciones.CreateCalificacionDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Calificaciones.CalificacionDto",
+                    "typeSimple": "TurisGo.Calificaciones.CalificacionDto"
+                  }
+                },
+                {
+                  "name": "UpdateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Calificaciones.UpdateCalificacionDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Calificaciones.UpdateCalificacionDto",
+                      "typeSimple": "TurisGo.Calificaciones.UpdateCalificacionDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Calificaciones.CalificacionDto",
+                    "typeSimple": "TurisGo.Calificaciones.CalificacionDto"
+                  }
+                },
+                {
                   "name": "GetAsync",
                   "parametersOnMethod": [
                     {
@@ -920,48 +962,6 @@
                   }
                 },
                 {
-                  "name": "CreateAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "input",
-                      "typeAsString": "TurisGo.Calificaciones.CreateUpdateCalificacionDto, TurisGo.Application.Contracts",
-                      "type": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
-                      "typeSimple": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "TurisGo.Calificaciones.CalificacionDto",
-                    "typeSimple": "TurisGo.Calificaciones.CalificacionDto"
-                  }
-                },
-                {
-                  "name": "UpdateAsync",
-                  "parametersOnMethod": [
-                    {
-                      "name": "id",
-                      "typeAsString": "System.Guid, System.Private.CoreLib",
-                      "type": "System.Guid",
-                      "typeSimple": "string",
-                      "isOptional": false,
-                      "defaultValue": null
-                    },
-                    {
-                      "name": "input",
-                      "typeAsString": "TurisGo.Calificaciones.CreateUpdateCalificacionDto, TurisGo.Application.Contracts",
-                      "type": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
-                      "typeSimple": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
-                      "isOptional": false,
-                      "defaultValue": null
-                    }
-                  ],
-                  "returnValue": {
-                    "type": "TurisGo.Calificaciones.CalificacionDto",
-                    "typeSimple": "TurisGo.Calificaciones.CalificacionDto"
-                  }
-                },
-                {
                   "name": "DeleteAsync",
                   "parametersOnMethod": [
                     {
@@ -977,6 +977,40 @@
                     "type": "System.Void",
                     "typeSimple": "System.Void"
                   }
+                },
+                {
+                  "name": "GetPromedioAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "destinoId",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Calificaciones.PromedioCalificacionDto",
+                    "typeSimple": "TurisGo.Calificaciones.PromedioCalificacionDto"
+                  }
+                },
+                {
+                  "name": "GetListComentariosAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "destinoId",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Calificaciones.ListarComentariosDto",
+                    "typeSimple": "TurisGo.Calificaciones.ListarComentariosDto"
+                  }
                 }
               ]
             }
@@ -991,9 +1025,9 @@
               "parametersOnMethod": [
                 {
                   "name": "input",
-                  "typeAsString": "TurisGo.Calificaciones.CreateUpdateCalificacionDto, TurisGo.Application.Contracts",
-                  "type": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
-                  "typeSimple": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
+                  "typeAsString": "TurisGo.Calificaciones.CreateCalificacionDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Calificaciones.CreateCalificacionDto",
+                  "typeSimple": "TurisGo.Calificaciones.CreateCalificacionDto",
                   "isOptional": false,
                   "defaultValue": null
                 }
@@ -1003,8 +1037,8 @@
                   "nameOnMethod": "input",
                   "name": "input",
                   "jsonName": null,
-                  "type": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
-                  "typeSimple": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
+                  "type": "TurisGo.Calificaciones.CreateCalificacionDto",
+                  "typeSimple": "TurisGo.Calificaciones.CreateCalificacionDto",
                   "isOptional": false,
                   "defaultValue": null,
                   "constraintTypes": null,
@@ -1017,7 +1051,44 @@
                 "typeSimple": "TurisGo.Calificaciones.CalificacionDto"
               },
               "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.ICreateAppService<TurisGo.Calificaciones.CalificacionDto,TurisGo.Calificaciones.CreateUpdateCalificacionDto>"
+              "implementFrom": "TurisGo.Calificaciones.ICalificacionAppService"
+            },
+            "GetAsyncById": {
+              "uniqueName": "GetAsyncById",
+              "name": "GetAsync",
+              "httpMethod": "GET",
+              "url": "api/app/calificacion/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Calificaciones.CalificacionDto",
+                "typeSimple": "TurisGo.Calificaciones.CalificacionDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Calificaciones.ICalificacionAppService"
             },
             "GetListAsyncByInput": {
               "uniqueName": "GetListAsyncByInput",
@@ -1078,7 +1149,7 @@
                 "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Calificaciones.CalificacionDto>"
               },
               "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TurisGo.Calificaciones.CalificacionDto,TurisGo.Calificaciones.CalificacionDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
+              "implementFrom": "TurisGo.Calificaciones.ICalificacionAppService"
             },
             "UpdateAsyncByIdAndInput": {
               "uniqueName": "UpdateAsyncByIdAndInput",
@@ -1097,9 +1168,9 @@
                 },
                 {
                   "name": "input",
-                  "typeAsString": "TurisGo.Calificaciones.CreateUpdateCalificacionDto, TurisGo.Application.Contracts",
-                  "type": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
-                  "typeSimple": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
+                  "typeAsString": "TurisGo.Calificaciones.UpdateCalificacionDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Calificaciones.UpdateCalificacionDto",
+                  "typeSimple": "TurisGo.Calificaciones.UpdateCalificacionDto",
                   "isOptional": false,
                   "defaultValue": null
                 }
@@ -1121,8 +1192,8 @@
                   "nameOnMethod": "input",
                   "name": "input",
                   "jsonName": null,
-                  "type": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
-                  "typeSimple": "TurisGo.Calificaciones.CreateUpdateCalificacionDto",
+                  "type": "TurisGo.Calificaciones.UpdateCalificacionDto",
+                  "typeSimple": "TurisGo.Calificaciones.UpdateCalificacionDto",
                   "isOptional": false,
                   "defaultValue": null,
                   "constraintTypes": null,
@@ -1135,7 +1206,81 @@
                 "typeSimple": "TurisGo.Calificaciones.CalificacionDto"
               },
               "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IUpdateAppService<TurisGo.Calificaciones.CalificacionDto,System.Guid,TurisGo.Calificaciones.CreateUpdateCalificacionDto>"
+              "implementFrom": "TurisGo.Calificaciones.ICalificacionAppService"
+            },
+            "GetPromedioAsyncByDestinoId": {
+              "uniqueName": "GetPromedioAsyncByDestinoId",
+              "name": "GetPromedioAsync",
+              "httpMethod": "GET",
+              "url": "promedio/{destinoId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "destinoId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "destinoId",
+                  "name": "destinoId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Calificaciones.PromedioCalificacionDto",
+                "typeSimple": "TurisGo.Calificaciones.PromedioCalificacionDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Calificaciones.ICalificacionAppService"
+            },
+            "GetListComentariosAsyncByDestinoId": {
+              "uniqueName": "GetListComentariosAsyncByDestinoId",
+              "name": "GetListComentariosAsync",
+              "httpMethod": "GET",
+              "url": "api/app/calificacion/comentarios/{destinoId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "destinoId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "destinoId",
+                  "name": "destinoId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Calificaciones.ListarComentariosDto",
+                "typeSimple": "TurisGo.Calificaciones.ListarComentariosDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Calificaciones.ICalificacionAppService"
             },
             "DeleteAsyncById": {
               "uniqueName": "DeleteAsyncById",
@@ -1172,44 +1317,7 @@
                 "typeSimple": "System.Void"
               },
               "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IDeleteAppService<System.Guid>"
-            },
-            "GetAsyncById": {
-              "uniqueName": "GetAsyncById",
-              "name": "GetAsync",
-              "httpMethod": "GET",
-              "url": "api/app/calificacion/{id}",
-              "supportedVersions": [],
-              "parametersOnMethod": [
-                {
-                  "name": "id",
-                  "typeAsString": "System.Guid, System.Private.CoreLib",
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null
-                }
-              ],
-              "parameters": [
-                {
-                  "nameOnMethod": "id",
-                  "name": "id",
-                  "jsonName": null,
-                  "type": "System.Guid",
-                  "typeSimple": "string",
-                  "isOptional": false,
-                  "defaultValue": null,
-                  "constraintTypes": [],
-                  "bindingSourceId": "Path",
-                  "descriptorName": ""
-                }
-              ],
-              "returnValue": {
-                "type": "TurisGo.Calificaciones.CalificacionDto",
-                "typeSimple": "TurisGo.Calificaciones.CalificacionDto"
-              },
-              "allowAnonymous": false,
-              "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TurisGo.Calificaciones.CalificacionDto,TurisGo.Calificaciones.CalificacionDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
+              "implementFrom": "TurisGo.Calificaciones.ICalificacionAppService"
             }
           }
         },
@@ -1225,6 +1333,115 @@
               "type": "TurisGo.Destinos.IDestinoAppService",
               "name": "IDestinoAppService",
               "methods": [
+                {
+                  "name": "BuscarCiudadesPorNombreAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "nombre",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Collections.Generic.List<TurisGo.Destinos.CityDto>",
+                    "typeSimple": "[TurisGo.Destinos.CityDto]"
+                  }
+                },
+                {
+                  "name": "FiltrarCiudadesAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "paisPrefix",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": true,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "poblacionMin",
+                      "typeAsString": "System.Int32, System.Private.CoreLib",
+                      "type": "System.Int32",
+                      "typeSimple": "number",
+                      "isOptional": true,
+                      "defaultValue": 0
+                    },
+                    {
+                      "name": "regionPrefix",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": true,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "nombreCiudad",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": true,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Collections.Generic.List<TurisGo.Destinos.CityDto>",
+                    "typeSimple": "[TurisGo.Destinos.CityDto]"
+                  }
+                },
+                {
+                  "name": "ObtenerDetalleCiudadAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "cityId",
+                      "typeAsString": "System.Int32, System.Private.CoreLib",
+                      "type": "System.Int32",
+                      "typeSimple": "number",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Destinos.CityDetailDto",
+                    "typeSimple": "TurisGo.Destinos.CityDetailDto"
+                  }
+                },
+                {
+                  "name": "GuardarDestinoDesdeApiAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "cityId",
+                      "typeAsString": "System.Int32, System.Private.CoreLib",
+                      "type": "System.Int32",
+                      "typeSimple": "number",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Destinos.DestinoDto",
+                    "typeSimple": "TurisGo.Destinos.DestinoDto"
+                  }
+                },
+                {
+                  "name": "GetDestinosPopularesAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "limit",
+                      "typeAsString": "System.Int32, System.Private.CoreLib",
+                      "type": "System.Int32",
+                      "typeSimple": "number",
+                      "isOptional": true,
+                      "defaultValue": 10
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Collections.Generic.List<TurisGo.Destinos.CityDto>",
+                    "typeSimple": "[TurisGo.Destinos.CityDto]"
+                  }
+                },
                 {
                   "name": "GetAsync",
                   "parametersOnMethod": [
@@ -1357,7 +1574,215 @@
                 "typeSimple": "[TurisGo.Destinos.CityDto]"
               },
               "allowAnonymous": null,
-              "implementFrom": "TurisGo.Destinos.DestinoAppService"
+              "implementFrom": "TurisGo.Destinos.IDestinoAppService"
+            },
+            "FiltrarCiudadesAsyncByPaisPrefixAndPoblacionMinAndRegionPrefixAndNombreCiudad": {
+              "uniqueName": "FiltrarCiudadesAsyncByPaisPrefixAndPoblacionMinAndRegionPrefixAndNombreCiudad",
+              "name": "FiltrarCiudadesAsync",
+              "httpMethod": "GET",
+              "url": "api/app/destino/buscar-ciudades-por-filtro",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "paisPrefix",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": true,
+                  "defaultValue": null
+                },
+                {
+                  "name": "poblacionMin",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": true,
+                  "defaultValue": 0
+                },
+                {
+                  "name": "regionPrefix",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": true,
+                  "defaultValue": null
+                },
+                {
+                  "name": "nombreCiudad",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": true,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "paisPrefix",
+                  "name": "paisPrefix",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "poblacionMin",
+                  "name": "poblacionMin",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "regionPrefix",
+                  "name": "regionPrefix",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "nombreCiudad",
+                  "name": "nombreCiudad",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Collections.Generic.List<TurisGo.Destinos.CityDto>",
+                "typeSimple": "[TurisGo.Destinos.CityDto]"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "TurisGo.Destinos.IDestinoAppService"
+            },
+            "ObtenerDetalleCiudadAsyncByCityId": {
+              "uniqueName": "ObtenerDetalleCiudadAsyncByCityId",
+              "name": "ObtenerDetalleCiudadAsync",
+              "httpMethod": "GET",
+              "url": "api/app/destino/obtener-info-ciudad/{cityId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "cityId",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "cityId",
+                  "name": "cityId",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Destinos.CityDetailDto",
+                "typeSimple": "TurisGo.Destinos.CityDetailDto"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "TurisGo.Destinos.IDestinoAppService"
+            },
+            "GuardarDestinoDesdeApiAsyncByCityId": {
+              "uniqueName": "GuardarDestinoDesdeApiAsyncByCityId",
+              "name": "GuardarDestinoDesdeApiAsync",
+              "httpMethod": "POST",
+              "url": "api/app/destino/guardar-desde-api/{cityId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "cityId",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "cityId",
+                  "name": "cityId",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Destinos.DestinoDto",
+                "typeSimple": "TurisGo.Destinos.DestinoDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Destinos.IDestinoAppService"
+            },
+            "GetDestinosPopularesAsyncByLimit": {
+              "uniqueName": "GetDestinosPopularesAsyncByLimit",
+              "name": "GetDestinosPopularesAsync",
+              "httpMethod": "GET",
+              "url": "api/app/destino/populares",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "limit",
+                  "typeAsString": "System.Int32, System.Private.CoreLib",
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": true,
+                  "defaultValue": 10
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "limit",
+                  "name": "limit",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Collections.Generic.List<TurisGo.Destinos.CityDto>",
+                "typeSimple": "[TurisGo.Destinos.CityDto]"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "TurisGo.Destinos.IDestinoAppService"
             },
             "CreateAsyncByInput": {
               "uniqueName": "CreateAsyncByInput",
@@ -1587,6 +2012,1945 @@
               },
               "allowAnonymous": null,
               "implementFrom": "Volo.Abp.Application.Services.IReadOnlyAppService<TurisGo.Destinos.DestinoDto,TurisGo.Destinos.DestinoDto,System.Guid,Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto>"
+            }
+          }
+        },
+        "TurisGo.Experiencias.ExperienciaAppService": {
+          "controllerName": "Experiencia",
+          "controllerGroupName": "Experiencia",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TurisGo.Experiencias.ExperienciaAppService",
+          "interfaces": [
+            {
+              "type": "TurisGo.Experiencias.IExperienciaAppService",
+              "name": "IExperienciaAppService",
+              "methods": [
+                {
+                  "name": "CreateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Experiencias.CreateExperienciaDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Experiencias.CreateExperienciaDto",
+                      "typeSimple": "TurisGo.Experiencias.CreateExperienciaDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Experiencias.ExperienciaDto",
+                    "typeSimple": "TurisGo.Experiencias.ExperienciaDto"
+                  }
+                },
+                {
+                  "name": "UpdateAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "Id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Experiencias.UpdateExperienciaDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Experiencias.UpdateExperienciaDto",
+                      "typeSimple": "TurisGo.Experiencias.UpdateExperienciaDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Experiencias.ExperienciaDto",
+                    "typeSimple": "TurisGo.Experiencias.ExperienciaDto"
+                  }
+                },
+                {
+                  "name": "DeleteAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                },
+                {
+                  "name": "GetListExperienciasAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "destinoId",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Experiencias.ListarExperienciasDto",
+                    "typeSimple": "TurisGo.Experiencias.ListarExperienciasDto"
+                  }
+                },
+                {
+                  "name": "GetListAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Experiencias.GetExperienciasListDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Experiencias.GetExperienciasListDto",
+                      "typeSimple": "TurisGo.Experiencias.GetExperienciasListDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Experiencias.ExperienciaDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Experiencias.ExperienciaDto>"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "CreateAsyncByInput": {
+              "uniqueName": "CreateAsyncByInput",
+              "name": "CreateAsync",
+              "httpMethod": "POST",
+              "url": "api/app/experiencia",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Experiencias.CreateExperienciaDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Experiencias.CreateExperienciaDto",
+                  "typeSimple": "TurisGo.Experiencias.CreateExperienciaDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TurisGo.Experiencias.CreateExperienciaDto",
+                  "typeSimple": "TurisGo.Experiencias.CreateExperienciaDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Experiencias.ExperienciaDto",
+                "typeSimple": "TurisGo.Experiencias.ExperienciaDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Experiencias.IExperienciaAppService"
+            },
+            "UpdateAsyncByIdAndInput": {
+              "uniqueName": "UpdateAsyncByIdAndInput",
+              "name": "UpdateAsync",
+              "httpMethod": "PUT",
+              "url": "api/app/experiencia/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Experiencias.UpdateExperienciaDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Experiencias.UpdateExperienciaDto",
+                  "typeSimple": "TurisGo.Experiencias.UpdateExperienciaDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TurisGo.Experiencias.UpdateExperienciaDto",
+                  "typeSimple": "TurisGo.Experiencias.UpdateExperienciaDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Experiencias.ExperienciaDto",
+                "typeSimple": "TurisGo.Experiencias.ExperienciaDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Experiencias.IExperienciaAppService"
+            },
+            "DeleteAsyncById": {
+              "uniqueName": "DeleteAsyncById",
+              "name": "DeleteAsync",
+              "httpMethod": "DELETE",
+              "url": "api/app/experiencia/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Experiencias.IExperienciaAppService"
+            },
+            "GetListExperienciasAsyncByDestinoId": {
+              "uniqueName": "GetListExperienciasAsyncByDestinoId",
+              "name": "GetListExperienciasAsync",
+              "httpMethod": "GET",
+              "url": "api/app/experiencia/experiencias/{destinoId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "destinoId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "destinoId",
+                  "name": "destinoId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Experiencias.ListarExperienciasDto",
+                "typeSimple": "TurisGo.Experiencias.ListarExperienciasDto"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "TurisGo.Experiencias.IExperienciaAppService"
+            },
+            "GetListAsyncByInput": {
+              "uniqueName": "GetListAsyncByInput",
+              "name": "GetListAsync",
+              "httpMethod": "GET",
+              "url": "api/app/experiencia",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Experiencias.GetExperienciasListDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Experiencias.GetExperienciasListDto",
+                  "typeSimple": "TurisGo.Experiencias.GetExperienciasListDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "Valoracion",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "PalabraClave",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Sorting",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Experiencias.ExperienciaDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Experiencias.ExperienciaDto>"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Experiencias.IExperienciaAppService"
+            }
+          }
+        },
+        "TurisGo.Favoritos.FavoritoAppService": {
+          "controllerName": "Favorito",
+          "controllerGroupName": "Favorito",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TurisGo.Favoritos.FavoritoAppService",
+          "interfaces": [
+            {
+              "type": "TurisGo.Favoritos.IFavoritoAppService",
+              "name": "IFavoritoAppService",
+              "methods": [
+                {
+                  "name": "AgregarFavoritoAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Favoritos.CrearFavoritoDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Favoritos.CrearFavoritoDto",
+                      "typeSimple": "TurisGo.Favoritos.CrearFavoritoDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Favoritos.FavoritoDto",
+                    "typeSimple": "TurisGo.Favoritos.FavoritoDto"
+                  }
+                },
+                {
+                  "name": "DeleteAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "favoritoId",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                },
+                {
+                  "name": "GetListAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "TurisGo.Favoritos.ListaFavoritosDto",
+                    "typeSimple": "TurisGo.Favoritos.ListaFavoritosDto"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "AgregarFavoritoAsyncByInput": {
+              "uniqueName": "AgregarFavoritoAsyncByInput",
+              "name": "AgregarFavoritoAsync",
+              "httpMethod": "POST",
+              "url": "api/app/favorito/agregar-favorito",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Favoritos.CrearFavoritoDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Favoritos.CrearFavoritoDto",
+                  "typeSimple": "TurisGo.Favoritos.CrearFavoritoDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TurisGo.Favoritos.CrearFavoritoDto",
+                  "typeSimple": "TurisGo.Favoritos.CrearFavoritoDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Favoritos.FavoritoDto",
+                "typeSimple": "TurisGo.Favoritos.FavoritoDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Favoritos.IFavoritoAppService"
+            },
+            "DeleteAsyncByFavoritoId": {
+              "uniqueName": "DeleteAsyncByFavoritoId",
+              "name": "DeleteAsync",
+              "httpMethod": "DELETE",
+              "url": "api/app/favorito",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "favoritoId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "favoritoId",
+                  "name": "favoritoId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Favoritos.IFavoritoAppService"
+            },
+            "GetListAsync": {
+              "uniqueName": "GetListAsync",
+              "name": "GetListAsync",
+              "httpMethod": "GET",
+              "url": "api/app/favorito",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "TurisGo.Favoritos.ListaFavoritosDto",
+                "typeSimple": "TurisGo.Favoritos.ListaFavoritosDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Favoritos.IFavoritoAppService"
+            }
+          }
+        },
+        "TurisGo.Metricas.MetricaApiAppService": {
+          "controllerName": "MetricaApi",
+          "controllerGroupName": "MetricaApi",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TurisGo.Metricas.MetricaApiAppService",
+          "interfaces": [
+            {
+              "type": "TurisGo.Metricas.IMetricaApiAppService",
+              "name": "IMetricaApiAppService",
+              "methods": [
+                {
+                  "name": "ObtenerMetricasAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Metricas.ObtenerMetricasInput, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Metricas.ObtenerMetricasInput",
+                      "typeSimple": "TurisGo.Metricas.ObtenerMetricasInput",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Collections.Generic.List<TurisGo.Metricas.MetricaApiDto>",
+                    "typeSimple": "[TurisGo.Metricas.MetricaApiDto]"
+                  }
+                },
+                {
+                  "name": "ObtenerEstadisticasAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "nombreApi",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "fechaDesde",
+                      "typeAsString": "System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.DateTime?",
+                      "typeSimple": "string?",
+                      "isOptional": true,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "fechaHasta",
+                      "typeAsString": "System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.DateTime?",
+                      "typeSimple": "string?",
+                      "isOptional": true,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Metricas.EstadisticasApiExternaDto",
+                    "typeSimple": "TurisGo.Metricas.EstadisticasApiExternaDto"
+                  }
+                },
+                {
+                  "name": "ObtenerMetricasFallidasAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "nombreApi",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": true,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "fechaDesde",
+                      "typeAsString": "System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.DateTime?",
+                      "typeSimple": "string?",
+                      "isOptional": true,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "fechaHasta",
+                      "typeAsString": "System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                      "type": "System.DateTime?",
+                      "typeSimple": "string?",
+                      "isOptional": true,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Collections.Generic.List<TurisGo.Metricas.MetricaApiDto>",
+                    "typeSimple": "[TurisGo.Metricas.MetricaApiDto]"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "ObtenerMetricasAsyncByInput": {
+              "uniqueName": "ObtenerMetricasAsyncByInput",
+              "name": "ObtenerMetricasAsync",
+              "httpMethod": "GET",
+              "url": "api/app/metrica-api/metricas",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Metricas.ObtenerMetricasInput, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Metricas.ObtenerMetricasInput",
+                  "typeSimple": "TurisGo.Metricas.ObtenerMetricasInput",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "NombreApi",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "FechaDesde",
+                  "jsonName": null,
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "FechaHasta",
+                  "jsonName": null,
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "SoloFallidas",
+                  "jsonName": null,
+                  "type": "System.Boolean",
+                  "typeSimple": "boolean",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "System.Collections.Generic.List<TurisGo.Metricas.MetricaApiDto>",
+                "typeSimple": "[TurisGo.Metricas.MetricaApiDto]"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Metricas.IMetricaApiAppService"
+            },
+            "ObtenerEstadisticasAsyncByNombreApiAndFechaDesdeAndFechaHasta": {
+              "uniqueName": "ObtenerEstadisticasAsyncByNombreApiAndFechaDesdeAndFechaHasta",
+              "name": "ObtenerEstadisticasAsync",
+              "httpMethod": "GET",
+              "url": "api/app/metrica-api/estadisticas",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "nombreApi",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "fechaDesde",
+                  "typeAsString": "System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": true,
+                  "defaultValue": null
+                },
+                {
+                  "name": "fechaHasta",
+                  "typeAsString": "System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": true,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "nombreApi",
+                  "name": "nombreApi",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "fechaDesde",
+                  "name": "fechaDesde",
+                  "jsonName": null,
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "fechaHasta",
+                  "name": "fechaHasta",
+                  "jsonName": null,
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Metricas.EstadisticasApiExternaDto",
+                "typeSimple": "TurisGo.Metricas.EstadisticasApiExternaDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Metricas.IMetricaApiAppService"
+            },
+            "ObtenerMetricasFallidasAsyncByNombreApiAndFechaDesdeAndFechaHasta": {
+              "uniqueName": "ObtenerMetricasFallidasAsyncByNombreApiAndFechaDesdeAndFechaHasta",
+              "name": "ObtenerMetricasFallidasAsync",
+              "httpMethod": "GET",
+              "url": "api/app/metrica-api/metricas-fallidas",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "nombreApi",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": true,
+                  "defaultValue": null
+                },
+                {
+                  "name": "fechaDesde",
+                  "typeAsString": "System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": true,
+                  "defaultValue": null
+                },
+                {
+                  "name": "fechaHasta",
+                  "typeAsString": "System.Nullable`1[[System.DateTime, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": true,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "nombreApi",
+                  "name": "nombreApi",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "fechaDesde",
+                  "name": "fechaDesde",
+                  "jsonName": null,
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "fechaHasta",
+                  "name": "fechaHasta",
+                  "jsonName": null,
+                  "type": "System.DateTime?",
+                  "typeSimple": "string?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Query",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Collections.Generic.List<TurisGo.Metricas.MetricaApiDto>",
+                "typeSimple": "[TurisGo.Metricas.MetricaApiDto]"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Metricas.IMetricaApiAppService"
+            }
+          }
+        },
+        "TurisGo.Notificaciones.NotificacionAppService": {
+          "controllerName": "Notificacion",
+          "controllerGroupName": "Notificacion",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TurisGo.Notificaciones.NotificacionAppService",
+          "interfaces": [
+            {
+              "type": "TurisGo.Notificaciones.INotificacionAppService",
+              "name": "INotificacionAppService",
+              "methods": [
+                {
+                  "name": "NotificarCambioDestinoAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "destinoId",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "titulo",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "mensaje",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "tipo",
+                      "typeAsString": "TurisGo.Notificaciones.TipoNotificacion, TurisGo.Domain.Shared",
+                      "type": "TurisGo.Notificaciones.TipoNotificacion",
+                      "typeSimple": "enum",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Notificaciones.NotificacionResultDto",
+                    "typeSimple": "TurisGo.Notificaciones.NotificacionResultDto"
+                  }
+                },
+                {
+                  "name": "GetListAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Notificaciones.GetNotificacionesInput, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Notificaciones.GetNotificacionesInput",
+                      "typeSimple": "TurisGo.Notificaciones.GetNotificacionesInput",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Notificaciones.NotificacionDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Notificaciones.NotificacionDto>"
+                  }
+                },
+                {
+                  "name": "MarcarComoLeidaAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "leida",
+                      "typeAsString": "System.Boolean, System.Private.CoreLib",
+                      "type": "System.Boolean",
+                      "typeSimple": "boolean",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                },
+                {
+                  "name": "GetConteoNoLeidasAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "System.Int32",
+                    "typeSimple": "number"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "NotificarCambioDestinoAsyncByDestinoIdAndTituloAndMensajeAndTipo": {
+              "uniqueName": "NotificarCambioDestinoAsyncByDestinoIdAndTituloAndMensajeAndTipo",
+              "name": "NotificarCambioDestinoAsync",
+              "httpMethod": "POST",
+              "url": "api/app/notificacion/notificar-cambio-destino/{destinoId}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "destinoId",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "titulo",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "mensaje",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "tipo",
+                  "typeAsString": "TurisGo.Notificaciones.TipoNotificacion, TurisGo.Domain.Shared",
+                  "type": "TurisGo.Notificaciones.TipoNotificacion",
+                  "typeSimple": "enum",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "destinoId",
+                  "name": "destinoId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "titulo",
+                  "name": "titulo",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "mensaje",
+                  "name": "mensaje",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "tipo",
+                  "name": "tipo",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Notificaciones.NotificacionResultDto",
+                "typeSimple": "TurisGo.Notificaciones.NotificacionResultDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Notificaciones.INotificacionAppService"
+            },
+            "GetListAsyncByInput": {
+              "uniqueName": "GetListAsyncByInput",
+              "name": "GetListAsync",
+              "httpMethod": "GET",
+              "url": "api/app/notificacion",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Notificaciones.GetNotificacionesInput, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Notificaciones.GetNotificacionesInput",
+                  "typeSimple": "TurisGo.Notificaciones.GetNotificacionesInput",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "SoloNoLeidas",
+                  "jsonName": null,
+                  "type": "System.Boolean?",
+                  "typeSimple": "boolean?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "TipoFiltro",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Sorting",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Notificaciones.NotificacionDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Notificaciones.NotificacionDto>"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Notificaciones.INotificacionAppService"
+            },
+            "MarcarComoLeidaAsyncByIdAndLeida": {
+              "uniqueName": "MarcarComoLeidaAsyncByIdAndLeida",
+              "name": "MarcarComoLeidaAsync",
+              "httpMethod": "POST",
+              "url": "api/app/notificacion/{id}/marcar-como-leida",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "leida",
+                  "typeAsString": "System.Boolean, System.Private.CoreLib",
+                  "type": "System.Boolean",
+                  "typeSimple": "boolean",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "leida",
+                  "name": "leida",
+                  "jsonName": null,
+                  "type": "System.Boolean",
+                  "typeSimple": "boolean",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Notificaciones.INotificacionAppService"
+            },
+            "GetConteoNoLeidasAsync": {
+              "uniqueName": "GetConteoNoLeidasAsync",
+              "name": "GetConteoNoLeidasAsync",
+              "httpMethod": "GET",
+              "url": "api/app/notificacion/conteo-no-leidas",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "System.Int32",
+                "typeSimple": "number"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Notificaciones.INotificacionAppService"
+            }
+          }
+        },
+        "TurisGo.Usuarios.UsuarioAppService": {
+          "controllerName": "Usuario",
+          "controllerGroupName": "Usuario",
+          "isRemoteService": true,
+          "isIntegrationService": false,
+          "apiVersion": null,
+          "type": "TurisGo.Usuarios.UsuarioAppService",
+          "interfaces": [
+            {
+              "type": "TurisGo.Usuarios.IUsuarioAppService",
+              "name": "IUsuarioAppService",
+              "methods": [
+                {
+                  "name": "RegistrarUsuarioAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Usuarios.CrearUsuarioDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Usuarios.CrearUsuarioDto",
+                      "typeSimple": "TurisGo.Usuarios.CrearUsuarioDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Usuarios.UsuarioDto",
+                    "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+                  }
+                },
+                {
+                  "name": "ObtenerPerfilActualAsync",
+                  "parametersOnMethod": [],
+                  "returnValue": {
+                    "type": "TurisGo.Usuarios.UsuarioDto",
+                    "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+                  }
+                },
+                {
+                  "name": "ActualizarPerfilAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Usuarios.ActualizarPerfilDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Usuarios.ActualizarPerfilDto",
+                      "typeSimple": "TurisGo.Usuarios.ActualizarPerfilDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Usuarios.UsuarioDto",
+                    "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+                  }
+                },
+                {
+                  "name": "ActualizarPreferenciasAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Usuarios.ActualizarPreferenciasDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Usuarios.ActualizarPreferenciasDto",
+                      "typeSimple": "TurisGo.Usuarios.ActualizarPreferenciasDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Usuarios.UsuarioDto",
+                    "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+                  }
+                },
+                {
+                  "name": "CambiarPasswordAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Usuarios.CambiarPasswordDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Usuarios.CambiarPasswordDto",
+                      "typeSimple": "TurisGo.Usuarios.CambiarPasswordDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                },
+                {
+                  "name": "EliminarCuentaPropia",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Usuarios.EliminarCuentaDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Usuarios.EliminarCuentaDto",
+                      "typeSimple": "TurisGo.Usuarios.EliminarCuentaDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                },
+                {
+                  "name": "ObtenerPerfilPublicoAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "nombreUsuario",
+                      "typeAsString": "System.String, System.Private.CoreLib",
+                      "type": "System.String",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Usuarios.PerfilPublicoDto",
+                    "typeSimple": "TurisGo.Usuarios.PerfilPublicoDto"
+                  }
+                },
+                {
+                  "name": "ObtenerTodosUsuariosAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Usuarios.ObtenerUsuariosInput, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Usuarios.ObtenerUsuariosInput",
+                      "typeSimple": "TurisGo.Usuarios.ObtenerUsuariosInput",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Usuarios.UsuarioDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Usuarios.UsuarioDto>"
+                  }
+                },
+                {
+                  "name": "ObtenerUsuarioPorIdAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Usuarios.UsuarioDto",
+                    "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+                  }
+                },
+                {
+                  "name": "ActualizarUsuarioAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    },
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Usuarios.ActualizarUsuarioDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Usuarios.ActualizarUsuarioDto",
+                      "typeSimple": "TurisGo.Usuarios.ActualizarUsuarioDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Usuarios.UsuarioDto",
+                    "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+                  }
+                },
+                {
+                  "name": "EliminarUsuarioAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "id",
+                      "typeAsString": "System.Guid, System.Private.CoreLib",
+                      "type": "System.Guid",
+                      "typeSimple": "string",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "System.Void",
+                    "typeSimple": "System.Void"
+                  }
+                },
+                {
+                  "name": "ReactivarUsuarioAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "TurisGo.Usuarios.CrearUsuarioDto, TurisGo.Application.Contracts",
+                      "type": "TurisGo.Usuarios.CrearUsuarioDto",
+                      "typeSimple": "TurisGo.Usuarios.CrearUsuarioDto",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "TurisGo.Usuarios.UsuarioDto",
+                    "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+                  }
+                }
+              ]
+            }
+          ],
+          "actions": {
+            "RegistrarUsuarioAsyncByInput": {
+              "uniqueName": "RegistrarUsuarioAsyncByInput",
+              "name": "RegistrarUsuarioAsync",
+              "httpMethod": "POST",
+              "url": "api/app/usuario/registrar-usuario",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Usuarios.CrearUsuarioDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Usuarios.CrearUsuarioDto",
+                  "typeSimple": "TurisGo.Usuarios.CrearUsuarioDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TurisGo.Usuarios.CrearUsuarioDto",
+                  "typeSimple": "TurisGo.Usuarios.CrearUsuarioDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Usuarios.UsuarioDto",
+                "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "ObtenerPerfilActualAsync": {
+              "uniqueName": "ObtenerPerfilActualAsync",
+              "name": "ObtenerPerfilActualAsync",
+              "httpMethod": "GET",
+              "url": "api/app/usuario/obtener-perfil-actual",
+              "supportedVersions": [],
+              "parametersOnMethod": [],
+              "parameters": [],
+              "returnValue": {
+                "type": "TurisGo.Usuarios.UsuarioDto",
+                "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "ActualizarPerfilAsyncByInput": {
+              "uniqueName": "ActualizarPerfilAsyncByInput",
+              "name": "ActualizarPerfilAsync",
+              "httpMethod": "PUT",
+              "url": "api/app/usuario/actualizar-perfil",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Usuarios.ActualizarPerfilDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Usuarios.ActualizarPerfilDto",
+                  "typeSimple": "TurisGo.Usuarios.ActualizarPerfilDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TurisGo.Usuarios.ActualizarPerfilDto",
+                  "typeSimple": "TurisGo.Usuarios.ActualizarPerfilDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Usuarios.UsuarioDto",
+                "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "ActualizarPreferenciasAsyncByInput": {
+              "uniqueName": "ActualizarPreferenciasAsyncByInput",
+              "name": "ActualizarPreferenciasAsync",
+              "httpMethod": "PUT",
+              "url": "api/app/usuario/actualizar-preferencias",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Usuarios.ActualizarPreferenciasDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Usuarios.ActualizarPreferenciasDto",
+                  "typeSimple": "TurisGo.Usuarios.ActualizarPreferenciasDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TurisGo.Usuarios.ActualizarPreferenciasDto",
+                  "typeSimple": "TurisGo.Usuarios.ActualizarPreferenciasDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Usuarios.UsuarioDto",
+                "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "CambiarPasswordAsyncByInput": {
+              "uniqueName": "CambiarPasswordAsyncByInput",
+              "name": "CambiarPasswordAsync",
+              "httpMethod": "POST",
+              "url": "api/app/usuario/cambiar-password",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Usuarios.CambiarPasswordDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Usuarios.CambiarPasswordDto",
+                  "typeSimple": "TurisGo.Usuarios.CambiarPasswordDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TurisGo.Usuarios.CambiarPasswordDto",
+                  "typeSimple": "TurisGo.Usuarios.CambiarPasswordDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "EliminarCuentaPropiaByInput": {
+              "uniqueName": "EliminarCuentaPropiaByInput",
+              "name": "EliminarCuentaPropia",
+              "httpMethod": "DELETE",
+              "url": "api/app/usuario/eliminar-cuenta-propia",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Usuarios.EliminarCuentaDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Usuarios.EliminarCuentaDto",
+                  "typeSimple": "TurisGo.Usuarios.EliminarCuentaDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "Password",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "ObtenerPerfilPublicoAsyncByNombreUsuario": {
+              "uniqueName": "ObtenerPerfilPublicoAsyncByNombreUsuario",
+              "name": "ObtenerPerfilPublicoAsync",
+              "httpMethod": "GET",
+              "url": "api/app/usuario/obtener-perfil-publico",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "nombreUsuario",
+                  "typeAsString": "System.String, System.Private.CoreLib",
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "nombreUsuario",
+                  "name": "nombreUsuario",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Usuarios.PerfilPublicoDto",
+                "typeSimple": "TurisGo.Usuarios.PerfilPublicoDto"
+              },
+              "allowAnonymous": true,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "ObtenerTodosUsuariosAsyncByInput": {
+              "uniqueName": "ObtenerTodosUsuariosAsyncByInput",
+              "name": "ObtenerTodosUsuariosAsync",
+              "httpMethod": "GET",
+              "url": "api/app/usuario/obtener-todos-usuarios",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Usuarios.ObtenerUsuariosInput, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Usuarios.ObtenerUsuariosInput",
+                  "typeSimple": "TurisGo.Usuarios.ObtenerUsuariosInput",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "Filtro",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Rol",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "EstaActivo",
+                  "jsonName": null,
+                  "type": "System.Boolean?",
+                  "typeSimple": "boolean?",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Sorting",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Usuarios.UsuarioDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<TurisGo.Usuarios.UsuarioDto>"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "ObtenerUsuarioPorIdAsyncById": {
+              "uniqueName": "ObtenerUsuarioPorIdAsyncById",
+              "name": "ObtenerUsuarioPorIdAsync",
+              "httpMethod": "GET",
+              "url": "api/app/usuario/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Usuarios.UsuarioDto",
+                "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "ActualizarUsuarioAsyncByIdAndInput": {
+              "uniqueName": "ActualizarUsuarioAsyncByIdAndInput",
+              "name": "ActualizarUsuarioAsync",
+              "httpMethod": "PUT",
+              "url": "api/app/usuario/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                },
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Usuarios.ActualizarUsuarioDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Usuarios.ActualizarUsuarioDto",
+                  "typeSimple": "TurisGo.Usuarios.ActualizarUsuarioDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TurisGo.Usuarios.ActualizarUsuarioDto",
+                  "typeSimple": "TurisGo.Usuarios.ActualizarUsuarioDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Usuarios.UsuarioDto",
+                "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "EliminarUsuarioAsyncById": {
+              "uniqueName": "EliminarUsuarioAsyncById",
+              "name": "EliminarUsuarioAsync",
+              "httpMethod": "DELETE",
+              "url": "api/app/usuario/{id}",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "id",
+                  "typeAsString": "System.Guid, System.Private.CoreLib",
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "id",
+                  "name": "id",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": [],
+                  "bindingSourceId": "Path",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "System.Void",
+                "typeSimple": "System.Void"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
+            },
+            "ReactivarUsuarioAsyncByInput": {
+              "uniqueName": "ReactivarUsuarioAsyncByInput",
+              "name": "ReactivarUsuarioAsync",
+              "httpMethod": "POST",
+              "url": "api/app/usuario/reactivar",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "TurisGo.Usuarios.CrearUsuarioDto, TurisGo.Application.Contracts",
+                  "type": "TurisGo.Usuarios.CrearUsuarioDto",
+                  "typeSimple": "TurisGo.Usuarios.CrearUsuarioDto",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "input",
+                  "jsonName": null,
+                  "type": "TurisGo.Usuarios.CrearUsuarioDto",
+                  "typeSimple": "TurisGo.Usuarios.CrearUsuarioDto",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "Body",
+                  "descriptorName": ""
+                }
+              ],
+              "returnValue": {
+                "type": "TurisGo.Usuarios.UsuarioDto",
+                "typeSimple": "TurisGo.Usuarios.UsuarioDto"
+              },
+              "allowAnonymous": false,
+              "implementFrom": "TurisGo.Usuarios.IUsuarioAppService"
             }
           }
         }
@@ -3797,6 +6161,41 @@
     }
   },
   "types": {
+    "System.Nullable<T0>": {
+      "baseType": "System.ValueType",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": [
+        "T"
+      ],
+      "properties": [
+        {
+          "name": "HasValue",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Value",
+          "jsonName": null,
+          "type": "T",
+          "typeSimple": "T",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
     "TurisGo.Calificaciones.CalificacionDto": {
       "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
       "isEnum": false,
@@ -3851,10 +6250,67 @@
           "minimum": null,
           "maximum": null,
           "regex": null
+        },
+        {
+          "name": "DestinoNombre",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
         }
       ]
     },
-    "TurisGo.Calificaciones.CreateUpdateCalificacionDto": {
+    "TurisGo.Calificaciones.ComentarioDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Puntuacion",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Comentario",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CreationTime",
+          "jsonName": null,
+          "type": "System.DateTime",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Calificaciones.CreateCalificacionDto": {
       "baseType": null,
       "isEnum": false,
       "enumNames": null,
@@ -3899,6 +6355,282 @@
         }
       ]
     },
+    "TurisGo.Calificaciones.ListarComentariosDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Comentarios",
+          "jsonName": null,
+          "type": "[TurisGo.Calificaciones.ComentarioDto]",
+          "typeSimple": "[TurisGo.Calificaciones.ComentarioDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Calificaciones.PromedioCalificacionDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "PromedioCalificacion",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalCalificaciones",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Calificaciones.UpdateCalificacionDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Puntuacion",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "1",
+          "maximum": "5",
+          "regex": null
+        },
+        {
+          "name": "Comentario",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": 1000,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Destinos.CityDetailDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Id",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Name",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Country",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CountryCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Region",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "RegionCode",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Latitude",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Longitude",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Population",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "WikiDataId",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TimeZone",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ElevationMeters",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Type",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
     "TurisGo.Destinos.CityDto": {
       "baseType": null,
       "isEnum": false,
@@ -3906,6 +6638,18 @@
       "enumValues": null,
       "genericArguments": null,
       "properties": [
+        {
+          "name": "Id",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
         {
           "name": "Name",
           "jsonName": null,
@@ -4118,6 +6862,1550 @@
           "jsonName": null,
           "type": "System.String",
           "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Coordenada",
+          "jsonName": null,
+          "type": "TurisGo.Destinos.CoordenadaDto",
+          "typeSimple": "TurisGo.Destinos.CoordenadaDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ApiCityId",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Experiencias.CreateExperienciaDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Titulo",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": 100,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Descripcion",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": 500,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Valoracion",
+          "jsonName": null,
+          "type": "TurisGo.Experiencias.TipoValoracion",
+          "typeSimple": "enum",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Experiencias.ExperienciaDto": {
+      "baseType": "Volo.Abp.Application.Dtos.AuditedEntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "UserId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Titulo",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Descripcion",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Valoracion",
+          "jsonName": null,
+          "type": "TurisGo.Experiencias.TipoValoracion",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Experiencias.ExperienciaPropiaDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "NombreUsuario",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Titulo",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Descripcion",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Valoracion",
+          "jsonName": null,
+          "type": "TurisGo.Experiencias.TipoValoracion",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Experiencias.GetExperienciasListDto": {
+      "baseType": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Valoracion",
+          "jsonName": null,
+          "type": "TurisGo.Experiencias.TipoValoracion?",
+          "typeSimple": "enum?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "PalabraClave",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Experiencias.ListarExperienciasDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Experiencias",
+          "jsonName": null,
+          "type": "[TurisGo.Experiencias.ExperienciaPropiaDto]",
+          "typeSimple": "[TurisGo.Experiencias.ExperienciaPropiaDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Experiencias.TipoValoracion": {
+      "baseType": "System.Enum",
+      "isEnum": true,
+      "enumNames": [
+        "Positiva",
+        "Neutra",
+        "Negativa"
+      ],
+      "enumValues": [
+        0,
+        1,
+        2
+      ],
+      "genericArguments": null,
+      "properties": null
+    },
+    "TurisGo.Experiencias.UpdateExperienciaDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Titulo",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": 100,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Descripcion",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": 500,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Valoracion",
+          "jsonName": null,
+          "type": "TurisGo.Experiencias.TipoValoracion",
+          "typeSimple": "enum",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": "0",
+          "maximum": "2",
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Favoritos.CrearFavoritoDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Favoritos.FavoritoConDestinoDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Destino",
+          "jsonName": null,
+          "type": "TurisGo.Destinos.DestinoDto",
+          "typeSimple": "TurisGo.Destinos.DestinoDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Favoritos.FavoritoDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "UserId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Favoritos.ListaFavoritosDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "UserId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Favoritos",
+          "jsonName": null,
+          "type": "[TurisGo.Favoritos.FavoritoConDestinoDto]",
+          "typeSimple": "[TurisGo.Favoritos.FavoritoConDestinoDto]",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Metricas.EstadisticasApiExternaDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "NombreApi",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalLlamadas",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "LlamadasExitosas",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "LlamadasFallidas",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TasaExito",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TiempoPromedioMs",
+          "jsonName": null,
+          "type": "System.Double",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TiempoMinimoMs",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TiempoMaximoMs",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TotalResultadosDevueltos",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FechaDesde",
+          "jsonName": null,
+          "type": "System.DateTime?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FechaHasta",
+          "jsonName": null,
+          "type": "System.DateTime?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Metricas.MetricaApiDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "NombreApi",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Endpoint",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "MetodoHttp",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ParametrosConsulta",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CodigoEstadoHttp",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TiempoRespuestaMs",
+          "jsonName": null,
+          "type": "System.Int64",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Exitosa",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "MensajeError",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "CantidadResultados",
+          "jsonName": null,
+          "type": "System.Int32?",
+          "typeSimple": "number?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FechaHora",
+          "jsonName": null,
+          "type": "System.DateTime",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Metricas.ObtenerMetricasInput": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "NombreApi",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FechaDesde",
+          "jsonName": null,
+          "type": "System.DateTime?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FechaHasta",
+          "jsonName": null,
+          "type": "System.DateTime?",
+          "typeSimple": "string?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "SoloFallidas",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "MaxResultCount",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Notificaciones.GetNotificacionesInput": {
+      "baseType": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "SoloNoLeidas",
+          "jsonName": null,
+          "type": "System.Boolean?",
+          "typeSimple": "boolean?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "TipoFiltro",
+          "jsonName": null,
+          "type": "TurisGo.Notificaciones.TipoNotificacion?",
+          "typeSimple": "enum?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Notificaciones.NotificacionDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "DestinoId",
+          "jsonName": null,
+          "type": "System.Guid",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Titulo",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Mensaje",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Tipo",
+          "jsonName": null,
+          "type": "TurisGo.Notificaciones.TipoNotificacion",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Leida",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FechaCreacion",
+          "jsonName": null,
+          "type": "System.DateTime",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "NombreDestino",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Notificaciones.NotificacionResultDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "UsuariosNotificados",
+          "jsonName": null,
+          "type": "System.Int32",
+          "typeSimple": "number",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "NombreDestino",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Tipo",
+          "jsonName": null,
+          "type": "TurisGo.Notificaciones.TipoNotificacion",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Mensaje",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Notificaciones.TipoNotificacion": {
+      "baseType": "System.Enum",
+      "isEnum": true,
+      "enumNames": [
+        "CambioDestino",
+        "NuevoEvento",
+        "ActualizacionDatos",
+        "Sistema"
+      ],
+      "enumValues": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "genericArguments": null,
+      "properties": null
+    },
+    "TurisGo.Usuarios.ActualizarPerfilDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "NombreCompleto",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": 0,
+          "maxLength": 100,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Email",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FotoPerfilUrl",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Usuarios.ActualizarPreferenciasDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "RecibirEnPantalla",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "RecibirPorEmail",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Frecuencia",
+          "jsonName": null,
+          "type": "TurisGo.Usuarios.FrecuenciaNotificacion",
+          "typeSimple": "enum",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Usuarios.ActualizarUsuarioDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "NombreCompleto",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Email",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FotoPerfilUrl",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Rol",
+          "jsonName": null,
+          "type": "TurisGo.Usuarios.TipoRol",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "EstaActivo",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Usuarios.CambiarPasswordDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "PasswordActual",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "NuevoPassword",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": 6,
+          "maxLength": 100,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "ConfirmarNuevoPassword",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Usuarios.CrearUsuarioDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "NombreCompleto",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "NombreUsuario",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Email",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Password",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": 6,
+          "maxLength": 100,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Rol",
+          "jsonName": null,
+          "type": "TurisGo.Usuarios.TipoRol",
+          "typeSimple": "enum",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FotoPerfilUrl",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Usuarios.EliminarCuentaDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Password",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": true,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Usuarios.FrecuenciaNotificacion": {
+      "baseType": "System.Enum",
+      "isEnum": true,
+      "enumNames": [
+        "Inmediata",
+        "Semanal"
+      ],
+      "enumValues": [
+        0,
+        1
+      ],
+      "genericArguments": null,
+      "properties": null
+    },
+    "TurisGo.Usuarios.ObtenerUsuariosInput": {
+      "baseType": "Volo.Abp.Application.Dtos.PagedAndSortedResultRequestDto",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "Filtro",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Rol",
+          "jsonName": null,
+          "type": "TurisGo.Usuarios.TipoRol?",
+          "typeSimple": "enum?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "EstaActivo",
+          "jsonName": null,
+          "type": "System.Boolean?",
+          "typeSimple": "boolean?",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Usuarios.PerfilPublicoDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "NombreCompleto",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "NombreUsuario",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FotoPerfilUrl",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Usuarios.PreferenciasNotificacionDto": {
+      "baseType": null,
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "RecibirEnPantalla",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "RecibirPorEmail",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Frecuencia",
+          "jsonName": null,
+          "type": "TurisGo.Usuarios.FrecuenciaNotificacion",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        }
+      ]
+    },
+    "TurisGo.Usuarios.TipoRol": {
+      "baseType": "System.Enum",
+      "isEnum": true,
+      "enumNames": [
+        "Usuario",
+        "Administrador"
+      ],
+      "enumValues": [
+        0,
+        1
+      ],
+      "genericArguments": null,
+      "properties": null
+    },
+    "TurisGo.Usuarios.UsuarioDto": {
+      "baseType": "Volo.Abp.Application.Dtos.EntityDto<System.Guid>",
+      "isEnum": false,
+      "enumNames": null,
+      "enumValues": null,
+      "genericArguments": null,
+      "properties": [
+        {
+          "name": "NombreCompleto",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "NombreUsuario",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Email",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "FotoPerfilUrl",
+          "jsonName": null,
+          "type": "System.String",
+          "typeSimple": "string",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Preferencias",
+          "jsonName": null,
+          "type": "TurisGo.Usuarios.PreferenciasNotificacionDto",
+          "typeSimple": "TurisGo.Usuarios.PreferenciasNotificacionDto",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "Rol",
+          "jsonName": null,
+          "type": "TurisGo.Usuarios.TipoRol",
+          "typeSimple": "enum",
+          "isRequired": false,
+          "minLength": null,
+          "maxLength": null,
+          "minimum": null,
+          "maximum": null,
+          "regex": null
+        },
+        {
+          "name": "EstaActivo",
+          "jsonName": null,
+          "type": "System.Boolean",
+          "typeSimple": "boolean",
           "isRequired": false,
           "minLength": null,
           "maxLength": null,

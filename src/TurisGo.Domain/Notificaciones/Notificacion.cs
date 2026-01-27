@@ -8,21 +8,22 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace TurisGo.Notificaciones
 {
+    // Implementa IUserOwned para filtros automáticos por usuario
     public class Notificacion : FullAuditedAggregateRoot<Guid>, IUserOwned
     {
         public Guid UserId { get; set; }
         public Guid DestinoId { get; private set; }
         public string Titulo { get; private set; }
-        public string Mensaje { get; private set; }
-        public TipoNotificacion Tipo { get; private set; }
+        public string Mensaje { get; private set; } 
+        public TipoNotificacion Tipo { get; private set; }      // Tipo de notificación (CambioDestino, DestinoPopular, etc.)
         public bool Leida { get; private set; }
-        public DateTime? FechaLectura { get; private set; }
+        public DateTime? FechaLectura { get; private set; }     // Fecha y hora en que se marcó como leída
         public bool EnviadaPorMail { get; private set; }
-        public DateTime? FechaEnvioMail { get; private set; }
-        public string NombreDestino { get; private set; }
+        public DateTime? FechaEnvioMail { get; private set; }       // Fecha y hora del envío por correo electrónico
+        public string NombreDestino { get; private set; }           // Nombre del destino (desnormalizado para evitar joins)
 
-
-        protected Notificacion() { }  // Constructor protegido para EF Core
+        
+        protected Notificacion() { }    // Constructor protegido para EF Core
 
         public Notificacion(Guid id, Guid usuarioId, Guid destinoId, string titulo, string mensaje, TipoNotificacion tipo, string nombreDestino)
             : base(id)
