@@ -352,7 +352,7 @@ namespace TurisGo.Calificaciones
         }
 
         // ------------------ Operacion 5.4. Obtener promedio de calificacion de un destino ------------
-
+        
         [Fact]
         public async Task Should_Calculate_Average_Rating_Correctly()
         {
@@ -554,7 +554,7 @@ namespace TurisGo.Calificaciones
             resultado.Comentarios.ShouldNotBeNull();
             resultado.Comentarios.Count.ShouldBe(0);
         }
-
+        
 
     }
 

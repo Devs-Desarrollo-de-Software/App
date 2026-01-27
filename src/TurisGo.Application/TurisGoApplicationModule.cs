@@ -8,6 +8,11 @@ using Volo.Abp.Modularity;
 using Microsoft.Extensions.DependencyInjection;
 using TurisGo.Destinos;
 using System.Net.Http;
+using Volo.Abp.BackgroundWorkers;
+using TurisGo.Notificaciones;
+using TurisGo.Favoritos;
+using System.Threading.Tasks;
+using Volo.Abp;
 
 namespace TurisGo;
 
@@ -32,5 +37,30 @@ public class TurisGoApplicationModule : AbpModule
        // context.Services.AddTransient<IDestinoAppService, DestinoAppService>();
        // Agregge esto!
         context.Services.AddHttpClient<ICitySearchService, GeoDbCitySearchService>();
+    }
+
+    public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
+    {
+        // Registrar Background Workers
+        await context.ServiceProvider
+            .GetRequiredService<IBackgroundWorkerManager>()
+            .AddAsync(
+                context.ServiceProvider
+                    .GetRequiredService<EnviarNotificacionesEmailWorker>()
+            );
+
+        await context.ServiceProvider
+            .GetRequiredService<IBackgroundWorkerManager>()
+            .AddAsync(
+                context.ServiceProvider
+                    .GetRequiredService<EnviarResumenSemanalWorker>()
+            );
+
+        await context.ServiceProvider
+            .GetRequiredService<IBackgroundWorkerManager>()
+            .AddAsync(
+                context.ServiceProvider
+                    .GetRequiredService<VerificarCambiosDestinosWorker>()
+            );
     }
 }

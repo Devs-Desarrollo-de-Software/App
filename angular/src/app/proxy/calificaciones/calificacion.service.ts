@@ -1,4 +1,4 @@
-import type { CalificacionDto, CreateCalificacionDto, UpdateCalificacionDto } from './models';
+import type { CalificacionDto, CreateCalificacionDto, ListarComentariosDto, PromedioCalificacionDto, UpdateCalificacionDto } from './models';
 import { RestService, Rest } from '@abp/ng.core';
 import type { PagedAndSortedResultRequestDto, PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
@@ -44,25 +44,27 @@ export class CalificacionService {
     { apiName: this.apiName,...config });
   
 
+  getListComentarios = (destinoId: string, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, ListarComentariosDto>({
+      method: 'GET',
+      url: `/api/app/calificacion/comentarios/${destinoId}`,
+    },
+    { apiName: this.apiName,...config });
+  
+
+  getPromedio = (destinoId: string, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, PromedioCalificacionDto>({
+      method: 'GET',
+      url: `/promedio/${destinoId}`,
+    },
+    { apiName: this.apiName,...config });
+  
+
   update = (id: string, input: UpdateCalificacionDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, CalificacionDto>({
       method: 'PUT',
       url: `/api/app/calificacion/${id}`,
       body: input,
-    },
-    { apiName: this.apiName,...config });
-
-  getPromedio = (destinoId: string, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, any>({
-      method: 'GET',
-      url: `/api/app/calificacion/promedio/${destinoId}`,
-    },
-    { apiName: this.apiName,...config });
-
-  getListComentarios = (destinoId: string, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, any>({
-      method: 'GET',
-      url: `/api/app/calificacion/list-comentarios/${destinoId}`,
     },
     { apiName: this.apiName,...config });
 

@@ -7,8 +7,10 @@ using Volo.Abp.Application.Dtos;
 
 namespace TurisGo.Usuarios
 {
+    // DTO que representa la información completa de un usuario
+    // Usado para transferir datos del usuario entre el backend y frontend
     public class UsuarioDto : EntityDto<Guid>
-    { 
+    {
         public string NombreCompleto { get; set; }
         public string NombreUsuario { get; set; }
         public string Email { get; set; }
@@ -16,6 +18,5 @@ namespace TurisGo.Usuarios
         public PreferenciasNotificacionDto Preferencias { get; set; }
         public TipoRol Rol { get; set; }
         public bool EstaActivo { get; set; }
-
     }
 }

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Validation;
+using TurisGo.Metricas;
 
 namespace TurisGo.Destinos
 {
@@ -20,78 +21,97 @@ namespace TurisGo.Destinos
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<GeoDbCitySearchService> _logger;
-        private readonly Microsoft.Extensions.Caching.Memory.IMemoryCache _cache; // Inject Cache
-        
-        private const string ApiKey = "9332dd950amsh49b8d385752ec23p13d526jsn5974666e3749";// Replace with your actual API key
-        private const string BaseUrl = "https://wft-geo-db.p.rapidapi.com/v1/geo";
-        
 
-        public GeoDbCitySearchService(HttpClient httpClient, ILogger<GeoDbCitySearchService> logger, Microsoft.Extensions.Caching.Memory.IMemoryCache cache)
+        // Caché en memoria para almacenar resultados y reducir llamadas a la API externa
+        private readonly Microsoft.Extensions.Caching.Memory.IMemoryCache _cache;
+
+        // Helper para registrar métricas de uso de la API externa
+        private readonly MetricaApiHelper _metricaHelper;
+
+        // Clave de API para RapidAPI (GeoDB Cities)
+        private const string ApiKey = "9332dd950amsh49b8d385752ec23p13d526jsn5974666e3749";
+
+        // URL base de la API de GeoDB Cities
+        private const string BaseUrl = "https://wft-geo-db.p.rapidapi.com/v1/geo";
+
+
+        public GeoDbCitySearchService(
+            HttpClient httpClient,
+            ILogger<GeoDbCitySearchService> logger,
+            Microsoft.Extensions.Caching.Memory.IMemoryCache cache,
+            MetricaApiHelper metricaHelper)
         {
             _httpClient = httpClient;
             _logger = logger;
             _cache = cache;
+            _metricaHelper = metricaHelper;
         }
 
         // --------------- 3.1 Buscar ciudades por nombre --------------------------
-        // Operación del Sistema: BÚSQUEDA SIMPLE
-        // Este método se encarga de buscar ciudades que coincidan con el prefijo dado.
-        // Es la operación utilizada por el autocompletado del buscador principal.
         public async Task<List<CityDto>> SearchCitiesByNameAsync(string namePrefix)
         {
             if (string.IsNullOrWhiteSpace(namePrefix))
                 throw new ArgumentException("El nombre de la ciudad no puede estar vacio.");
 
-            try
-            {
-                var url = 
-                    $"{BaseUrl}/cities?namePrefix={Uri.EscapeDataString(namePrefix)}&limit=5";
-                    
-                _logger.LogWarning("URL enviada a GeoDb: {Url}", url);
+            var endpoint = $"/cities?namePrefix={Uri.EscapeDataString(namePrefix)}&limit=5";
 
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-                request.Headers.Add("X-RapidAPI-Key", ApiKey);
-                request.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
-
-                var response = await _httpClient.SendAsync(request);
-
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception($"Error al consultar GeoDb: {response.StatusCode}");
-
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<GeoDbResponse>(json,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return result?.Data.Select(c => new CityDto
+            return await _metricaHelper.EjecutarYRegistrarAsync(
+                "GeoDB",
+                endpoint,
+                "GET",
+                new { namePrefix },
+                async () =>
                 {
-                    Id = c.Id,
-                    Name = c.City,
-                    Country = c.Country,
-                    Population = c.Population,
-                    Latitude = c.Latitude,
-                    Longitude = c.Longitude
-                }).ToList() ?? new List<CityDto>();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al buscar ciudades en GeoDb");
-                throw;
-            }
-            
+                    try
+                    {
+                        var url = $"{BaseUrl}{endpoint}";
 
+                        _logger.LogWarning("URL enviada a GeoDb: {Url}", url);
+
+                        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                        request.Headers.Add("X-RapidAPI-Key", ApiKey);
+                        request.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
+
+                        var response = await _httpClient.SendAsync(request);
+
+                        if (!response.IsSuccessStatusCode)
+                            throw new Exception($"Error al consultar GeoDb: {response.StatusCode}");
+
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<GeoDbResponse>(json,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        return result?.Data.Select(c => new CityDto
+                        {
+                            Id = c.Id,
+                            Name = c.City,
+                            Country = c.Country,
+                            Population = c.Population,
+                            Latitude = c.Latitude,
+                            Longitude = c.Longitude
+                        }).ToList() ?? new List<CityDto>();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error al buscar ciudades en GeoDb");
+                        throw;
+                    }
+                });
         }
 
         // -------- 3.2. Buscar ciudades filtrando por pais, poblacion minima o region ----------
-        // Cambiamos la firma para aceptar tambien 'cityNamePrefix' si se desea filtrar por nombre ADEMAS de los otros filtros
-        // Operación del Sistema: FILTRADO AVANZADO
-        // Este método implementa la lógica principal de filtros (País, Región, Población)
-        // Se encarga de orquestar la resolución de códigos ISO y llamar al endpoint correcto de GeoDB.
         public async Task<List<CityDto>> FilterCitiesAsync(string paisPrefix ,int poblacionMin, string regionPrefix, string cityNamePrefix = null)
         {
-            // Ya no retornamos lista vacía si no hay filtros.
             // Si todo es null, el flujo continuará y construirá una query a /cities?sort=-population&limit=10
             // resultando en "Destinos Populares".
-            
+
+            // Validar población mínima: si es negativa, la convertimos a 0
+            if (poblacionMin < 0)
+            {
+                _logger.LogWarning("Población mínima negativa ({Pob}). Ajustando a 0.", poblacionMin);
+                poblacionMin = 0;
+            }
+
             try
             {
                 string countryCode = null;
@@ -108,11 +128,7 @@ namespace TurisGo.Destinos
                     
                     if (!_cache.TryGetValue(cacheKey, out CountryData cachedCountry))
                     {
-                         // Si es codigo (len=2), podriamos intentar usarlo directo, pero para obtener el NOMBRE correcto
-                         // vamos a intentar resolverlo igual si queremos mostrar "United States" en vez de "US".
-                         // O, para ser eficientes, si es len=2 asumimos que es el codigo y el nombre es el mismo codigo por ahora,
-                         // salvo que llamemos a la API para detalles. 
-                         // Para mantenerlo simple: Si len > 2 llamamos API. Si len=2 usamos directo.
+                        // Si len > 2 llamamos API. Si len=2 usamos directo.
                          
                          if (countryInput.Length == 2) 
                          {
@@ -159,15 +175,22 @@ namespace TurisGo.Destinos
                 }
 
                 // 2. Resolver REGION (con Cache)
+                // IMPORTANTE: Si se especifica región sin país, retornar lista vacía (sin resultados)
+                if (!regionPrefix.IsNullOrWhiteSpace() && string.IsNullOrEmpty(countryCode))
+                {
+                    _logger.LogWarning("No se puede buscar por región sin especificar un país. Retornando lista vacía.");
+                    return new List<CityDto>();
+                }
+
                 if (!string.IsNullOrEmpty(countryCode) && !regionPrefix.IsNullOrWhiteSpace())
                 {
                     string regionInput = regionPrefix.Trim();
                     string cacheKey = $"Region_ISO_{countryCode}_{regionInput.ToLower()}";
-                    
+
                     if (!_cache.TryGetValue(cacheKey, out regionCode))
                     {
                          // Agregar pequeño delay para evitar 429 si se llama muy seguido del anterior
-                         await Task.Delay(500); 
+                         await Task.Delay(500);
 
                          regionCode = await GetRegionIsoCodeByNameAsync(countryCode, regionInput);
                          if (regionCode != null)
@@ -175,10 +198,10 @@ namespace TurisGo.Destinos
                              _cache.Set(cacheKey, regionCode, TimeSpan.FromDays(1));
                          }
                     }
-                    
+
                     if (string.IsNullOrEmpty(regionCode))
                     {
-                         _logger.LogWarning("No se encontró código de región '{Reg}' en país '{Pais}'", regionPrefix, countryCode);
+                         _logger.LogWarning("No se encontró código de región '{Reg}' en país '{Pais}'. Retornando lista vacía.", regionPrefix, countryCode);
                          return new List<CityDto>();
                     }
                 }
@@ -230,51 +253,63 @@ namespace TurisGo.Destinos
                     url += "?" + string.Join("&", queryParams);
                 }
 
+                // Extraer endpoint relativo para métricas
+                var endpoint = url.Replace(BaseUrl, "");
+
                 _logger.LogWarning("URL enviada a GeoDb (filtros): {Url}", url);
 
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-                request.Headers.Add("X-RapidAPI-Key", ApiKey);
-                request.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
+                // Registrar métricas de la llamada principal a la API
+                return await _metricaHelper.EjecutarYRegistrarAsync(
+                    "GeoDB",
+                    endpoint,
+                    "GET",
+                    new { paisPrefix, poblacionMin, regionPrefix, cityNamePrefix },
+                    async () =>
+                    {
+                        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                        request.Headers.Add("X-RapidAPI-Key", ApiKey);
+                        request.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
 
-                // Check 429
-                var response = await _httpClient.SendAsync(request);
+                        // Check 429
+                        var response = await _httpClient.SendAsync(request);
 
-                if (response.StatusCode == HttpStatusCode.TooManyRequests)
-                {
-                     // Si fallamos por rate limit, esperamos 1.5 seg y reintentamos una vez
-                     _logger.LogWarning("Rate Limit alcanzado (429). Esperando para reintentar...");
-                     await Task.Delay(1500); 
-                     
-                     using var retryRequest = new HttpRequestMessage(HttpMethod.Get, url);
-                     retryRequest.Headers.Add("X-RapidAPI-Key", ApiKey);
-                     retryRequest.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
-                     response = await _httpClient.SendAsync(retryRequest);
-                }
+                        if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                        {
+                            // Si fallamos por rate limit, esperamos 1.5 seg y reintentamos una vez
+                            _logger.LogWarning("Rate Limit alcanzado (429). Esperando para reintentar...");
+                            await Task.Delay(1500);
 
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                    return new List<CityDto>();
+                            using var retryRequest = new HttpRequestMessage(HttpMethod.Get, url);
+                            retryRequest.Headers.Add("X-RapidAPI-Key", ApiKey);
+                            retryRequest.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
+                            response = await _httpClient.SendAsync(retryRequest);
+                        }
 
-                if (!response.IsSuccessStatusCode)
-                {
-                     throw new Exception($"Error al consultar GeoDb (filtros): {response.StatusCode}");
-                }
+                        if (response.StatusCode == HttpStatusCode.NotFound)
+                            return new List<CityDto>();
 
-                var json = await response.Content.ReadAsStringAsync();
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            throw new Exception($"Error al consultar GeoDb (filtros): {response.StatusCode}");
+                        }
 
-                var result = JsonSerializer.Deserialize<GeoDbResponse>(json,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        var json = await response.Content.ReadAsStringAsync();
 
-                return result?.Data.Select(c => new CityDto
-                {
-                    Id = c.Id,
-                    Name = c.City,
-                    // Si la API devuelve el pais vacio (pasa en endpoints jerarquicos), usamos el que resolvimos nosotros
-                    Country = !string.IsNullOrEmpty(c.Country) ? c.Country : (countryName ?? countryCode),
-                    Population = c.Population,
-                    Latitude = c.Latitude,
-                    Longitude = c.Longitude
+                        var result = JsonSerializer.Deserialize<GeoDbResponse>(json,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                }).ToList() ?? new List<CityDto>();
+                        return result?.Data.Select(c => new CityDto
+                        {
+                            Id = c.Id,
+                            Name = c.City,
+                            // Si la API devuelve el pais vacio
+                            Country = !string.IsNullOrEmpty(c.Country) ? c.Country : (countryName ?? countryCode),
+                            Population = c.Population,
+                            Latitude = c.Latitude,
+                            Longitude = c.Longitude
+
+                        }).ToList() ?? new List<CityDto>();
+                    });
             }
             catch (Exception ex)
             {
@@ -345,69 +380,74 @@ namespace TurisGo.Destinos
         }
 
         // ------------ 3.3 Obtener informacion detallada de una ciudad ---------------
-        // Operación del Sistema: DETALLE DE CIUDAD
         // Obtiene todos los datos detallados de una ciudad específica por su ID.
-        // Utilizado para mostrar la vista previa o guardar el destino.
         public async Task<CityDetailDto> GetCityDetailsAsync(int cityId)
         {
             if (cityId <= 0 )
                 throw new AbpValidationException("El ID debe ser mayor a cero.");
 
-   
-            try
-            {
-                var url = $"{BaseUrl}/cities/{cityId}";
+            var endpoint = $"/cities/{cityId}";
 
-                _logger.LogWarning("URL enviada a GeoDb (detalle): {Url}", url);
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-                request.Headers.Add("X-RapidAPI-Key", ApiKey);
-                request.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
-
-                var response = await _httpClient.SendAsync(request);
-
-                if (response.StatusCode == HttpStatusCode.NotFound)
+            return await _metricaHelper.EjecutarYRegistrarAsync(
+                "GeoDB",
+                endpoint,
+                "GET",
+                new { cityId },
+                async () =>
                 {
-                    throw new EntityNotFoundException($"No se encontró la ciudad con Id = {cityId}");
-                }
+                    try
+                    {
+                        var url = $"{BaseUrl}{endpoint}";
 
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception($"Error al consultar GeoDb (detalle): {response.StatusCode}");
+                        _logger.LogWarning("URL enviada a GeoDb (detalle): {Url}", url);
 
-                var json = await response.Content.ReadAsStringAsync();
+                        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                        request.Headers.Add("X-RapidAPI-Key", ApiKey);
+                        request.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
 
-                var result = JsonSerializer.Deserialize<GeoDbDetailResponse>(json,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        var response = await _httpClient.SendAsync(request);
 
-                if (result?.Data == null)
-                    throw new EntityNotFoundException($"No se encontró la ciudad con Id = {cityId}");
-                
+                        if (response.StatusCode == HttpStatusCode.NotFound)
+                        {
+                            throw new EntityNotFoundException($"No se encontró la ciudad con Id = {cityId}");
+                        }
 
-                var c = result.Data;
+                        if (!response.IsSuccessStatusCode)
+                            throw new Exception($"Error al consultar GeoDb (detalle): {response.StatusCode}");
 
-                return new CityDetailDto
-                {
-                    Id = c.Id,
-                    Name = c.City,
-                    Country = c.Country,
-                    CountryCode = c.CountryCode,
-                    Region = c.Region,
-                    RegionCode = c.RegionCode,
-                    Latitude = c.Latitude,
-                    Longitude = c.Longitude,            
-                    Population = c.Population,
-                    WikiDataId = c.WikiDataId,
-                    TimeZone = c.TimeZone,
-                    ElevationMeters = c.ElevationMeters,
-                    Type = c.Type
-                };
-            }
-            catch (Exception ex) 
-            {
-                _logger.LogError(ex, "Error al obtener detalle de ciudad en GeoDb");
-                throw;
-            }
-            
+                        var json = await response.Content.ReadAsStringAsync();
+
+                        var result = JsonSerializer.Deserialize<GeoDbDetailResponse>(json,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        if (result?.Data == null)
+                            throw new EntityNotFoundException($"No se encontró la ciudad con Id = {cityId}");
+
+                        var c = result.Data;
+
+                        return new CityDetailDto
+                        {
+                            Id = c.Id,
+                            Name = c.City,
+                            Country = c.Country,
+                            CountryCode = c.CountryCode,
+                            Region = c.Region,
+                            RegionCode = c.RegionCode,
+                            Latitude = c.Latitude,
+                            Longitude = c.Longitude,
+                            Population = c.Population,
+                            WikiDataId = c.WikiDataId,
+                            TimeZone = c.TimeZone,
+                            ElevationMeters = c.ElevationMeters,
+                            Type = c.Type
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error al obtener detalle de ciudad en GeoDb");
+                        throw;
+                    }
+                });
         }
 
         private class GeoDbDetailResponse
@@ -484,40 +524,50 @@ namespace TurisGo.Destinos
         // Obtiene las ciudades con mayor población (Top 10 por defecto).
         public async Task<List<CityDto>> GetPopularCitiesAsync(int limit = 10)
         {
-             try
-            {
-                var url = $"{BaseUrl}/cities?sort=-population&limit={limit}";
+            var endpoint = $"/cities?sort=-population&limit={limit}";
 
-                 _logger.LogWarning("URL enviada a GeoDb (populares): {Url}", url);
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-                request.Headers.Add("X-RapidAPI-Key", ApiKey);
-                request.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
-
-                var response = await _httpClient.SendAsync(request);
-
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception($"Error al consultar GeoDb (populares): {response.StatusCode}");
-
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<GeoDbResponse>(json,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return result?.Data.Select(c => new CityDto
+            return await _metricaHelper.EjecutarYRegistrarAsync(
+                "GeoDB",
+                endpoint,
+                "GET",
+                new { sort = "-population", limit },
+                async () =>
                 {
-                    Id = c.Id,
-                    Name = c.City,
-                    Country = c.Country, 
-                    Population = c.Population,
-                    Latitude = c.Latitude,
-                    Longitude = c.Longitude
-                }).ToList() ?? new List<CityDto>();
-            }
-             catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error obteniendo ciudades populares");
-                throw;
-            }
+                    try
+                    {
+                        var url = $"{BaseUrl}{endpoint}";
+
+                        _logger.LogWarning("URL enviada a GeoDb (populares): {Url}", url);
+
+                        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                        request.Headers.Add("X-RapidAPI-Key", ApiKey);
+                        request.Headers.Add("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
+
+                        var response = await _httpClient.SendAsync(request);
+
+                        if (!response.IsSuccessStatusCode)
+                            throw new Exception($"Error al consultar GeoDb (populares): {response.StatusCode}");
+
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<GeoDbResponse>(json,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        return result?.Data.Select(c => new CityDto
+                        {
+                            Id = c.Id,
+                            Name = c.City,
+                            Country = c.Country,
+                            Population = c.Population,
+                            Latitude = c.Latitude,
+                            Longitude = c.Longitude
+                        }).ToList() ?? new List<CityDto>();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error obteniendo ciudades populares");
+                        throw;
+                    }
+                });
         }
 
             private class CityData

@@ -23,6 +23,7 @@ using System.Linq.Expressions;
 using TurisGo.Experiencias;
 using TurisGo.Favoritos;
 using TurisGo.Notificaciones;
+using TurisGo.Metricas;
 
 
 namespace TurisGo.EntityFrameworkCore;
@@ -42,6 +43,7 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Favorito> Favoritos { get; set; }
     public DbSet<Notificacion> Notificaciones { get; set; }
+    public DbSet<MetricaApiExterna> MetricasApiExterna { get; set; }
 
     #region Entities from the modules
 
@@ -164,7 +166,7 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
             b.Property(x => x.NombreUsuario).IsRequired().HasMaxLength(50);
             b.Property(x => x.IdentityUserId).IsRequired();
             b.Property(x => x.Email).IsRequired().HasMaxLength(100);
-            b.Property(x => x.FotoPerfilUrl).HasMaxLength(500);
+            b.Property(x => x.FotoPerfilUrl).HasMaxLength(int.MaxValue);
             b.Property(x => x.Rol).IsRequired().HasConversion<int>();
             b.Property(x => x.EstaActivo).IsRequired().HasDefaultValue(true);
 
@@ -270,9 +272,40 @@ public class TurisGoDbContext : AbpDbContext<TurisGoDbContext>,
 
         });
 
+        // --------------------- METRICAS API EXTERNA ---------------------
+
+        builder.Entity<MetricaApiExterna>(b =>
+        {
+            b.ToTable(TurisGoConsts.DbTablePrefix + "MetricasApiExterna", TurisGoConsts.DbSchema);
+            b.ConfigureByConvention();
+
+            b.Property(x => x.NombreApi).IsRequired().HasMaxLength(50);
+            b.Property(x => x.Endpoint).IsRequired().HasMaxLength(500);
+            b.Property(x => x.MetodoHttp).IsRequired().HasMaxLength(10);
+            b.Property(x => x.ParametrosConsulta).IsRequired(false).HasMaxLength(2000);
+            b.Property(x => x.CodigoEstadoHttp).IsRequired();
+            b.Property(x => x.TiempoRespuestaMs).IsRequired();
+            b.Property(x => x.Exitosa).IsRequired();
+            b.Property(x => x.MensajeError).HasMaxLength(1000);
+            b.Property(x => x.CantidadResultados).IsRequired(false);
+
+            // Índices
+            b.HasIndex(x => x.NombreApi)
+                .HasDatabaseName("IX_MetricasApiExterna_NombreApi");
+
+            b.HasIndex(x => x.CreationTime)
+                .HasDatabaseName("IX_MetricasApiExterna_CreationTime");
+
+            b.HasIndex(x => x.Exitosa)
+                .HasDatabaseName("IX_MetricasApiExterna_Exitosa");
+
+            b.HasIndex(x => new { x.NombreApi, x.CreationTime })
+                .HasDatabaseName("IX_MetricasApiExterna_NombreApi_CreationTime");
+        });
+
     }
         
-
+    // Indica que entidades deben tener filtros automaticos por usuario
     protected override bool ShouldFilterEntity<TEntity>(IMutableEntityType entityType)
     {
         if (typeof(IUserOwned).IsAssignableFrom(typeof(TEntity)))

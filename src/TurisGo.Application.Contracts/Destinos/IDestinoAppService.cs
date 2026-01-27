@@ -17,17 +17,17 @@ namespace TurisGo.Destinos
         CreateUpdateDestinoDto
         >
     {
-        Task<List<CityDto>> BuscarCiudadesPorNombreAsync(string nombre);
+        Task<List<CityDto>> BuscarCiudadesPorNombreAsync(string nombre);    // 3.1. Buscar ciudades por nombre
 
-        Task<List<CityDto>> FiltrarCiudadesAsync(
+        Task<List<CityDto>> FiltrarCiudadesAsync(   
             string paisPrefix = null,
             int poblacionMin = 0,
             string regionPrefix = null,
-            string nombreCiudad = null);
+            string nombreCiudad = null);    // 3.2. Buscar ciudades filtrando por país, región o población mínima.
 
-        Task<CityDetailDto> ObtenerDetalleCiudadAsync(int cityId);
+        Task<CityDetailDto> ObtenerDetalleCiudadAsync(int cityId);  // 3.3. Obtener información detallada de una ciudad.
 
-        Task<DestinoDto> GuardarDestinoDesdeApiAsync(int cityId);
-        Task<List<CityDto>> GetDestinosPopularesAsync();
+        Task<DestinoDto> GuardarDestinoDesdeApiAsync(int cityId);      //  3.5. Guardar destinos en la base interna de la app
+        Task<List<CityDto>> GetDestinosPopularesAsync(int limit = 10);
     }
 }

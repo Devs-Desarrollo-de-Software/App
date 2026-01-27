@@ -1,0 +1,161 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Loading spinner -->
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2 text-muted">Cargando perfil...</p>
+      </div>
+
+      <!-- Perfil del usuario -->
+      <div *ngIf="!loading && usuario" class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-person-circle me-2"></i>
+            Mi Perfil
+          </h4>
+        </div>
+        <div class="card-body">
+          <!-- Foto de perfil -->
+          <div class="text-center mb-4">
+            <div class="profile-image-container">
+              <img
+                [src]="usuario.fotoPerfilUrl || 'https://via.placeholder.com/150'"
+                alt="Foto de perfil"
+                class="rounded-circle img-thumbnail profile-image"
+                (error)="$any($event.target).src = 'https://via.placeholder.com/150'"
+              />
+            </div>
+            <h5 class="mt-3 mb-0">{{ usuario.nombreCompleto }}</h5>
+            <p class="text-muted">{{ '@' + usuario.nombreUsuario }}</p>
+            <span
+              class="badge"
+              [ngClass]="usuario.rol === TipoRol.Administrador ? 'bg-danger' : 'bg-primary'"
+            >
+              {{ getRolTexto(usuario.rol) }}
+            </span>
+          </div>
+
+          <hr />
+
+          <!-- Información del usuario -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <h6 class="text-muted mb-3">
+                <i class="bi bi-info-circle me-2"></i>Información Personal
+              </h6>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-4 fw-bold">Nombre Completo:</div>
+            <div class="col-8">{{ usuario.nombreCompleto }}</div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-4 fw-bold">Usuario:</div>
+            <div class="col-8">{{ usuario.nombreUsuario }}</div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-4 fw-bold">Email:</div>
+            <div class="col-8">{{ usuario.email }}</div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-4 fw-bold">Rol:</div>
+            <div class="col-8">
+              <span
+                class="badge"
+                [ngClass]="usuario.rol === TipoRol.Administrador ? 'bg-danger' : 'bg-primary'"
+              >
+                {{ getRolTexto(usuario.rol) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-4 fw-bold">Estado:</div>
+            <div class="col-8">
+              <span class="badge" [ngClass]="usuario.estaActivo ? 'bg-success' : 'bg-secondary'">
+                {{ usuario.estaActivo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- Preferencias de notificación -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <h6 class="text-muted mb-3">
+                <i class="bi bi-bell me-2"></i>Preferencias de Notificación
+              </h6>
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-4 fw-bold">En Pantalla:</div>
+            <div class="col-8">
+              <i
+                [class]="
+                  usuario.preferencias.recibirEnPantalla
+                    ? 'bi bi-check-circle-fill text-success'
+                    : 'bi bi-x-circle-fill text-danger'
+                "
+              ></i>
+              {{ usuario.preferencias.recibirEnPantalla ? 'Activado' : 'Desactivado' }}
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-4 fw-bold">Por Email:</div>
+            <div class="col-8">
+              <i
+                [class]="
+                  usuario.preferencias.recibirPorEmail
+                    ? 'bi bi-check-circle-fill text-success'
+                    : 'bi bi-x-circle-fill text-danger'
+                "
+              ></i>
+              {{ usuario.preferencias.recibirPorEmail ? 'Activado' : 'Desactivado' }}
+            </div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-4 fw-bold">Frecuencia:</div>
+            <div class="col-8">
+              {{ getFrecuenciaTexto(usuario.preferencias.frecuencia) }}
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- Botones de acción -->
+          <div class="d-flex flex-wrap gap-2 justify-content-center">
+            <button class="btn btn-primary" (click)="editarPerfil()">
+              <i class="bi bi-pencil-square me-1"></i>
+              Editar Perfil
+            </button>
+            <button class="btn btn-warning" (click)="cambiarPassword()">
+              <i class="bi bi-key-fill me-1"></i>
+              Cambiar Contraseña
+            </button>
+            <button class="btn btn-danger" (click)="eliminarCuenta()">
+              <i class="bi bi-trash-fill me-1"></i>
+              Eliminar Cuenta
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div *ngIf="!loading && !usuario" class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        No se pudo cargar la información del perfil.
+      </div>
+    </div>
+  </div>
+</div>

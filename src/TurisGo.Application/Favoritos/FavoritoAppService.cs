@@ -25,9 +25,7 @@ namespace TurisGo.Favoritos
             _destinoRepository = destinoRepository;
         }
 
-        /// <summary>
-        /// 6.1. Agregar destino a lista de favoritos
-        /// </summary>
+        // 6.1. Agregar destino a lista de favoritos
         public async Task<FavoritoDto> AgregarFavoritoAsync(CrearFavoritoDto input)
         {
             if (!CurrentUser.IsAuthenticated)

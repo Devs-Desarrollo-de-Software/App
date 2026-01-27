@@ -2,17 +2,19 @@ import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular
 import { CommonModule } from '@angular/common';
 import { CoreModule } from '@abp/ng.core';
 import { DestinoService, CityDetailDto } from 'src/app/proxy/destinos';
+import { ComentariosListComponent } from 'src/app/calificaciones/comentarios-list/comentarios-list.component';
 
 @Component({
   selector: 'app-destino-detalle-modal',
   standalone: true,
-  imports: [CommonModule, CoreModule],
+  imports: [CommonModule, CoreModule, ComentariosListComponent],
   templateUrl: './destino-detalle-modal.component.html',
   styleUrls: ['./destino-detalle-modal.component.scss'],
 })
 export class DestinoDetalleModalComponent implements OnInit {
   @Input() cityId!: number;
   @Input() cityName: string = '';
+  @Input() destinoId: string = '';
   @Input() isVisible: boolean = false;
   @Output() close = new EventEmitter<void>();
 

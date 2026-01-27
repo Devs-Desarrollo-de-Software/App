@@ -24,7 +24,7 @@ using Volo.Abp.Validation;
 
 namespace TurisGo.Calificaciones
 {
-   [Authorize] //Exige token
+    [Authorize]
     public class CalificacionAppService : ApplicationService, ICalificacionAppService
     {
         private readonly ICurrentUser _currentUser;
@@ -45,7 +45,7 @@ namespace TurisGo.Calificaciones
         }
 
 
-        // 5.1 Calificar un destino
+        // Crea una nueva calificación para un destino
         public async Task<CalificacionDto> CreateAsync(CreateCalificacionDto input)
         {
             if (!_currentUser.IsAuthenticated)
@@ -53,7 +53,7 @@ namespace TurisGo.Calificaciones
 
             var userId = _currentUser.Id!.Value;
 
-            // Verificar si el usuario ya califico anteriormente
+            // Verificar si el usuario ya calificó este destino anteriormente
             var yaCalifico = await _repository.FirstOrDefaultAsync(x =>
                 x.DestinoId == input.DestinoId &&
                 x.UserId == userId);
@@ -61,7 +61,7 @@ namespace TurisGo.Calificaciones
             if (yaCalifico != null)
                 throw new AbpValidationException("Ya has calificado este destino.");
 
-            //Crear la nueva calificacion
+            // Crear la nueva calificación
             var calificacion = new Calificacion(
                 GuidGenerator.Create(),
                 input.DestinoId,
@@ -74,14 +74,14 @@ namespace TurisGo.Calificaciones
             return ObjectMapper.Map<Calificacion, CalificacionDto>(calificacionCreada);
         }
 
-        // Obtener una calificacion propia
+        // Obtiene una calificación específica por ID
         public async Task<CalificacionDto> GetAsync(Guid id)
         {
             var calificacion = await _repository.GetAsync(id);
             return ObjectMapper.Map<Calificacion, CalificacionDto>(calificacion);
         }
 
-        // Listar calificaciones propias.
+        // Lista las calificaciones del usuario autenticado con paginación
         public async Task<PagedResultDto<CalificacionDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             var queryable = await _repository.GetQueryableAsync();
@@ -99,8 +99,8 @@ namespace TurisGo.Calificaciones
             // Agregar el nombre del destino a cada calificación
             foreach (var calificacionDto in calificacionesDto)
             {
-                var destino = await _destinoRepository.GetAsync(calificacionDto.DestinoId);
-                calificacionDto.DestinoNombre = destino.Nombre;
+                var destino = await _destinoRepository.FirstOrDefaultAsync(d => d.Id == calificacionDto.DestinoId);
+                calificacionDto.DestinoNombre = destino?.Nombre ?? "Destino eliminado";
             }
 
             return new PagedResultDto<CalificacionDto>(
@@ -175,11 +175,7 @@ namespace TurisGo.Calificaciones
             };
         }
 
-
-
         // 5.5 Listar comentarios de un destino (privados - solo del usuario autenticado)
-        [HttpGet]
-        [Route("list-comentarios/{destinoId}")]
         public async Task<ListarComentariosDto> GetListComentariosAsync(Guid destinoId)
         {
             if (destinoId == Guid.Empty)

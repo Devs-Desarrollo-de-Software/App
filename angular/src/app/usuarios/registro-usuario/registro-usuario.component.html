@@ -1,0 +1,177 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-person-plus-fill me-2"></i>
+            Registrar Nuevo Usuario
+          </h4>
+        </div>
+        <div class="card-body">
+          <form #usuarioForm="ngForm" (ngSubmit)="registrarUsuario()">
+            <!-- Nombre Completo -->
+            <div class="mb-3">
+              <label for="nombreCompleto" class="form-label">
+                Nombre Completo <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="nombreCompleto"
+                name="nombreCompleto"
+                [(ngModel)]="usuario.nombreCompleto"
+                required
+                maxlength="100"
+                placeholder="Ej: Juan Pérez"
+                [disabled]="loading"
+              />
+            </div>
+
+            <!-- Nombre de Usuario -->
+            <div class="mb-3">
+              <label for="nombreUsuario" class="form-label">
+                Nombre de Usuario <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="nombreUsuario"
+                name="nombreUsuario"
+                [(ngModel)]="usuario.nombreUsuario"
+                required
+                maxlength="50"
+                placeholder="Ej: juanperez"
+                [disabled]="loading"
+              />
+              <small class="form-text text-muted">
+                El nombre de usuario debe ser único en el sistema
+              </small>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">
+                Correo Electrónico <span class="text-danger">*</span>
+              </label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                [(ngModel)]="usuario.email"
+                required
+                placeholder="ejemplo@dominio.com"
+                [disabled]="loading"
+              />
+            </div>
+
+            <!-- Contraseña -->
+            <div class="mb-3">
+              <label for="password" class="form-label">
+                Contraseña <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <input
+                  [type]="mostrarPassword ? 'text' : 'password'"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  [(ngModel)]="usuario.password"
+                  required
+                  minlength="6"
+                  maxlength="100"
+                  placeholder="Mínimo 6 caracteres"
+                  [disabled]="loading"
+                />
+                <button
+                  class="btn btn-outline-secondary"
+                  type="button"
+                  (click)="toggleMostrarPassword()"
+                  [disabled]="loading"
+                >
+                  <i [class]="mostrarPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+                </button>
+              </div>
+              <small class="form-text text-muted">
+                La contraseña debe tener entre 6 y 100 caracteres
+              </small>
+            </div>
+
+            <!-- Rol -->
+            <div class="mb-3">
+              <label for="rol" class="form-label"> Rol <span class="text-danger">*</span> </label>
+              <select
+                class="form-select"
+                id="rol"
+                name="rol"
+                [(ngModel)]="usuario.rol"
+                required
+                [disabled]="loading"
+              >
+                <option *ngFor="let rol of roles" [ngValue]="rol.valor">
+                  {{ rol.etiqueta }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Foto de Perfil (Opcional) -->
+            <div class="mb-3">
+              <label for="fotoPerfilUrl" class="form-label">
+                URL de Foto de Perfil (Opcional)
+              </label>
+              <input
+                type="url"
+                class="form-control"
+                id="fotoPerfilUrl"
+                name="fotoPerfilUrl"
+                [(ngModel)]="usuario.fotoPerfilUrl"
+                placeholder="https://ejemplo.com/foto.jpg"
+                [disabled]="loading"
+              />
+              <small class="form-text text-muted">
+                Ingrese la URL de una imagen para la foto de perfil
+              </small>
+            </div>
+
+            <!-- Vista previa de foto -->
+            <div class="mb-3" *ngIf="usuario.fotoPerfilUrl?.trim()">
+              <label class="form-label">Vista Previa:</label>
+              <div class="text-center">
+                <img
+                  [src]="usuario.fotoPerfilUrl"
+                  alt="Vista previa"
+                  class="img-thumbnail"
+                  style="max-width: 150px; max-height: 150px"
+                  (error)="usuario.fotoPerfilUrl = ''"
+                />
+              </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-end gap-2">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="cancelar()"
+                [disabled]="loading"
+              >
+                <i class="bi bi-x-circle me-1"></i>
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="loading || !usuarioForm.valid"
+              >
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                <i *ngIf="!loading" class="bi bi-check-circle me-1"></i>
+                {{ loading ? 'Registrando...' : 'Registrar Usuario' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

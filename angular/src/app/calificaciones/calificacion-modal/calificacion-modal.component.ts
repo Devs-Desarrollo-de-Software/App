@@ -2,9 +2,9 @@ import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular
 import { CommonModule } from '@angular/common';
 import { CoreModule } from '@abp/ng.core';
 import { CalificacionFormComponent } from '../calificacion-form/calificacion-form.component';
-import { CalificacionPromedioComponent } from '../calificacion-promedio/calificacion-promedio.component';
-import { ComentariosListComponent } from '../comentarios-list/comentarios-list.component';
 
+// Modal para calificar un destino turístico
+// Contiene el formulario de calificación y maneja su visualización
 @Component({
   selector: 'app-calificacion-modal',
   standalone: true,
@@ -12,18 +12,24 @@ import { ComentariosListComponent } from '../comentarios-list/comentarios-list.c
     CommonModule,
     CoreModule,
     CalificacionFormComponent,
-    CalificacionPromedioComponent,
-    ComentariosListComponent,
   ],
   templateUrl: './calificacion-modal.component.html',
   styleUrls: ['./calificacion-modal.component.scss'],
 })
 export class CalificacionModalComponent implements OnInit {
+  // ID del destino a calificar
   @Input() destinoId!: string;
+
+  // Nombre del destino (para mostrar en el modal)
   @Input() destinoNombre: string = '';
+
+  // Controla la visibilidad del modal
   @Input() isVisible: boolean = false;
+
+  // Evento emitido cuando se cierra el modal
   @Output() close = new EventEmitter<void>();
 
+  // Controla la visibilidad del formulario dentro del modal
   mostrarFormulario: boolean = true;
 
   ngOnInit(): void {

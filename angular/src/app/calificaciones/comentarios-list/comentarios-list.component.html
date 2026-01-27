@@ -1,50 +1,47 @@
-<div class="comentarios-list-container">
-  <div class="list-header">
-    <h4>{{ '::MyReviews' | abpLocalization }}</h4>
-    <small class="text-muted">{{ '::OnlyYouCanSeeYourReviews' | abpLocalization }}</small>
+<div class="comentarios-container">
+  <h3 class="comentarios-title">{{ '::Comments' | abpLocalization }}</h3>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>{{ '::Loading' | abpLocalization }}</p>
   </div>
 
-  <!-- Loading state -->
-  <div *ngIf="loading" class="loading-state">
-    <i class="fas fa-spinner fa-spin"></i>
-    <span>{{ '::LoadingReviews' | abpLocalization }}</span>
-  </div>
-
-  <!-- Error state -->
-  <div *ngIf="error && !loading" class="error-state">
+  <!-- Error -->
+  <div *ngIf="errorMessage" class="error-message">
     <i class="fas fa-exclamation-circle"></i>
-    <span>{{ '::ErrorLoadingReviews' | abpLocalization }}</span>
+    {{ errorMessage }}
   </div>
 
   <!-- Lista de comentarios -->
-  <div *ngIf="!loading && !error" class="comentarios-list">
-    <!-- Empty state -->
-    <div *ngIf="comentarios.length === 0" class="empty-state">
-      <i class="fas fa-comments"></i>
-      <p>{{ '::NoReviewsYet' | abpLocalization }}</p>
-      <small>{{ '::BeTheFirstToReview' | abpLocalization }}</small>
-    </div>
-
-    <!-- Comentarios -->
-    <div *ngFor="let comentario of comentarios" class="comentario-card">
-      <div class="comentario-header">
-        <div class="rating-stars">
-          <i
-            *ngFor="let estrella of estrellas"
-            class="fas fa-star"
-            [ngClass]="obtenerClaseEstrella(comentario, estrella)"
-          ></i>
-        </div>
-        <span class="fecha">{{ formatearFecha(comentario.creationTime) }}</span>
+  <div *ngIf="!loading && comentarios.length > 0" class="comentarios-list">
+    <div class="comentario-card" *ngFor="let comentario of comentarios">
+      <!-- Estrellas -->
+      <div class="rating-stars">
+        <i *ngFor="let estrella of getEstrellas(comentario.puntuacion)"
+           class="fas fa-star"
+           [class.filled]="estrella === 'full'"></i>
       </div>
 
-      <div *ngIf="comentario.comentario" class="comentario-body">
-        <p>{{ comentario.comentario }}</p>
-      </div>
+      <!-- Comentario -->
+      <p class="comentario-text" *ngIf="comentario.comentario">
+        {{ comentario.comentario }}
+      </p>
+      <p class="sin-comentario" *ngIf="!comentario.comentario">
+        <em>{{ '::NoCommentWritten' | abpLocalization }}</em>
+      </p>
 
-      <div *ngIf="!comentario.comentario" class="sin-comentario">
-        <em>{{ '::NoCommentProvided' | abpLocalization }}</em>
+      <!-- Fecha -->
+      <div class="comentario-fecha">
+        <i class="fas fa-clock"></i>
+        {{ formatearFecha(comentario.creationTime) }}
       </div>
     </div>
+  </div>
+
+  <!-- Sin comentarios -->
+  <div *ngIf="!loading && comentarios.length === 0 && !errorMessage" class="sin-comentarios">
+    <i class="fas fa-comment-slash"></i>
+    <p>{{ '::NoCommentsYet' | abpLocalization }}</p>
   </div>
 </div>

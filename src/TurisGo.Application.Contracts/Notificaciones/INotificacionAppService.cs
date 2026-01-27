@@ -10,36 +10,22 @@ namespace TurisGo.Notificaciones
 {
     public interface INotificacionAppService : IApplicationService
     {
-        /// [ADMIN] Notifica a todos los usuarios que tienen el destino en favoritos sobre un cambio relevante
+        // [ADMIN] Notifica a todos los usuarios que tienen el destino en favoritos sobre un cambio relevante
         Task<NotificacionResultDto> NotificarCambioDestinoAsync(
              Guid destinoId,
              string titulo,
              string mensaje,
              TipoNotificacion tipo);
 
-
-        /// [ADMIN] Notifica sobre un nuevo evento en un destino
-        Task<NotificacionResultDto> NotificarNuevoEventoAsync(
-           Guid destinoId,
-           string nombreEvento,
-           DateTime fechaEvento);
-
-
-        /// [ADMIN] Notifica sobre actualización de datos del destino
-        Task<NotificacionResultDto> NotificarActualizacionDatosAsync(
-            Guid destinoId,
-            string descripcionCambio);
-
-
-        /// [USUARIO] Obtiene la lista de notificaciones del usuario actual
+        // [USUARIO] Obtiene la lista de notificaciones del usuario actual
         Task<PagedResultDto<NotificacionDto>> GetListAsync(GetNotificacionesInput input);
 
 
-        /// [USUARIO] Marca una notificación como leída o no leída
+        // [USUARIO] Marca una notificación como leída o no leída
         Task MarcarComoLeidaAsync(Guid id, bool leida);
 
 
-        /// [USUARIO] Obtiene el conteo de notificaciones no leídas
+        // [USUARIO] Obtiene el conteo de notificaciones no leídas
         Task<int> GetConteoNoLeidasAsync();
 
 

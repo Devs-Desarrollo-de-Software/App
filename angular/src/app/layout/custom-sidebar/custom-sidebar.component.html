@@ -1,0 +1,27 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+  <!-- Logo -->
+  <div class="sidebar-header">
+    <div class="logo">
+      <i class="fas fa-globe"></i>
+      <span class="logo-text" *ngIf="!collapsed">TurisGo</span>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      <li *ngFor="let item of menuItems" class="nav-item">
+        <a
+          *ngIf="canShowItem(item)"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          class="nav-link"
+          [title]="item.label"
+        >
+          <i [class]="item.icon" class="nav-icon"></i>
+          <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>

@@ -1,0 +1,81 @@
+<div class="configuracion-container">
+  <div class="configuracion-card">
+    <!-- Header -->
+    <div class="configuracion-header">
+      <button class="back-btn" (click)="goBack()" type="button">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1 class="configuracion-title">
+        <i class="fa-solid fa-gear"></i>
+        Configuración
+      </h1>
+    </div>
+
+    <!-- Language Section -->
+    <div class="configuracion-section">
+      <h2 class="section-title">
+        <i class="fas fa-language"></i>
+        Idioma / Language
+      </h2>
+      <p class="section-description">Selecciona tu idioma preferido</p>
+
+      <div class="language-selector">
+        <button
+          class="language-dropdown-btn"
+          (click)="toggleLanguageDropdown($event)"
+          type="button"
+        >
+          <div class="selected-language">
+            <span class="flag-icon">{{ getCurrentLanguageObject()?.flagIcon }}</span>
+            <span class="language-name">{{ getCurrentLanguageObject()?.displayName }}</span>
+          </div>
+          <i class="fas fa-chevron-down" [class.rotate]="showLanguageDropdown"></i>
+        </button>
+
+        <div class="language-dropdown" *ngIf="showLanguageDropdown">
+          <button
+            *ngFor="let language of languages"
+            class="language-option"
+            [class.active]="isCurrentLanguage(language.cultureName)"
+            (click)="changeLanguage(language.cultureName)"
+            type="button"
+          >
+            <div class="language-info">
+              <span class="flag-icon">{{ language.flagIcon }}</span>
+              <span class="language-name">{{ language.displayName }}</span>
+            </div>
+            <i
+              *ngIf="isCurrentLanguage(language.cultureName)"
+              class="fas fa-check check-icon"
+            ></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Future sections can be added here -->
+    <div class="configuracion-section">
+      <h2 class="section-title">
+        <i class="fas fa-paint-brush"></i>
+        Apariencia
+      </h2>
+      <p class="section-description">Personaliza la apariencia de la aplicación</p>
+      <div class="coming-soon">
+        <i class="fas fa-wrench"></i>
+        <span>Próximamente</span>
+      </div>
+    </div>
+
+    <div class="configuracion-section">
+      <h2 class="section-title">
+        <i class="fas fa-bell"></i>
+        Notificaciones
+      </h2>
+      <p class="section-description">Gestiona tus preferencias de notificación</p>
+      <div class="coming-soon">
+        <i class="fas fa-wrench"></i>
+        <span>Próximamente</span>
+      </div>
+    </div>
+  </div>
+</div>

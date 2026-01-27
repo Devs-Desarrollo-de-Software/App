@@ -93,39 +93,6 @@ namespace TurisGo.Notificaciones
             };
         }
 
-        [Authorize(Roles = "admin")]
-        public virtual async Task<NotificacionResultDto> NotificarNuevoEventoAsync(
-            Guid destinoId,
-            string nombreEvento,
-            DateTime fechaEvento)
-        {
-            var titulo = "🎉 Nuevo evento disponible";
-            var mensaje = $"Se ha detectado un nuevo evento: {nombreEvento} el {fechaEvento:dd/MM/yyyy}";
-
-            return await NotificarCambioDestinoAsync(
-                destinoId,
-                titulo,
-                mensaje,
-                TipoNotificacion.NuevoEvento
-            );
-        }
-
-        [Authorize(Roles = "admin")]
-        public virtual async Task<NotificacionResultDto> NotificarActualizacionDatosAsync(
-            Guid destinoId,
-            string descripcionCambio)
-        {
-            var titulo = "📊 Actualización de información";
-            var mensaje = $"Se ha actualizado la información del destino: {descripcionCambio}";
-
-            return await NotificarCambioDestinoAsync(
-                destinoId,
-                titulo,
-                mensaje,
-                TipoNotificacion.ActualizacionDatos
-            );
-        }
-
         public virtual async Task<PagedResultDto<NotificacionDto>> GetListAsync(GetNotificacionesInput input)
         {
             var userId = CurrentUser.GetId();

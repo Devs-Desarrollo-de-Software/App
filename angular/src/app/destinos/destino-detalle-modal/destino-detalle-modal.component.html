@@ -99,6 +99,11 @@
           </div>
         </div>
       </div>
+
+      <!-- Sección de comentarios (solo si hay destinoId) -->
+      <div *ngIf="detalles && !loading && !error && destinoId" class="comentarios-section">
+        <app-comentarios-list [destinoId]="destinoId"></app-comentarios-list>
+      </div>
     </div>
 
     <!-- Footer -->

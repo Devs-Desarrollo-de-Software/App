@@ -1,0 +1,268 @@
+<div class="container mt-4">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ '::MyAccount' | abpLocalization }}</h5>
+          <nav class="nav flex-column">
+            <a class="nav-link" [class.active]="activeTab === 'perfil'" (click)="cambiarTab('perfil')" style="cursor: pointer;">
+              <i class="fas fa-user me-2"></i>{{ '::PersonalSettings' | abpLocalization }}
+            </a>
+            <a class="nav-link" [class.active]="activeTab === 'preferencias'" (click)="cambiarTab('preferencias')" style="cursor: pointer;">
+              <i class="fas fa-bell me-2"></i>{{ '::NotificationPreferences' | abpLocalization }}
+            </a>
+            <a class="nav-link" routerLink="/usuarios/cambiar-password">
+              <i class="fas fa-lock me-2"></i>{{ '::ChangePassword' | abpLocalization }}
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="col-md-9">
+      <div class="tab-content">
+        <!-- Tab de Perfil Personal -->
+        <div *ngIf="activeTab === 'perfil'" id="perfil">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">{{ '::PersonalSettings' | abpLocalization }}</h5>
+            </div>
+            <div class="card-body">
+              <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()">
+                <!-- Foto de perfil -->
+                <div class="row mb-4">
+                  <div class="col-md-12">
+                    <label class="form-label">{{ '::ProfilePicture' | abpLocalization }}</label>
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="profile-picture-preview">
+                        <img
+                          [src]="fotoPreview || 'https://cdn-icons-png.flaticon.com/512/12225/12225881.png'"
+                          alt="Profile"
+                          class="rounded-circle"
+                          [style.width.px]="120"
+                          [style.height.px]="120"
+                          [style.object-fit]="fotoPreview ? 'cover' : 'contain'"
+                          [style.border]="fotoPreview ? '3px solid #e9ecef' : 'none'"
+                          [style.background-color]="fotoPreview ? 'transparent' : '#fff'"
+                        />
+                      </div>
+                      <div>
+                        <input
+                          #fileInput
+                          type="file"
+                          class="form-control mb-2"
+                          (change)="onFileSelected($event)"
+                          accept="image/*"
+                          style="max-width: 300px"
+                        />
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-danger"
+                          (click)="eliminarFoto()"
+                          *ngIf="fotoPreview"
+                        >
+                          <i class="fas fa-trash me-1"></i>{{ '::Delete' | abpLocalization }}
+                        </button>
+                        <small class="d-block text-muted mt-2">
+                          {{ '::MaxFileSize5MB' | abpLocalization }}
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Nombre de usuario (solo lectura) -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">{{ '::UserName' | abpLocalization }}</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [value]="usuario?.nombreUsuario || ''"
+                      readonly
+                      disabled
+                    />
+                    <small class="text-muted">{{
+                      '::UserNameCannotBeChanged' | abpLocalization
+                    }}</small>
+                  </div>
+                </div>
+
+                <!-- Nombre completo -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">{{ '::FullName' | abpLocalization }} *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="nombreCompleto"
+                      [class.is-invalid]="
+                        perfilForm.get('nombreCompleto')?.invalid &&
+                        perfilForm.get('nombreCompleto')?.touched
+                      "
+                    />
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="
+                        perfilForm.get('nombreCompleto')?.invalid &&
+                        perfilForm.get('nombreCompleto')?.touched
+                      "
+                    >
+                      {{ '::ThisFieldIsRequired' | abpLocalization }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">{{ '::EmailAddress' | abpLocalization }} *</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      formControlName="email"
+                      [class.is-invalid]="
+                        perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched
+                      "
+                    />
+                    <div
+                      class="invalid-feedback"
+                      *ngIf="perfilForm.get('email')?.invalid && perfilForm.get('email')?.touched"
+                    >
+                      {{ '::InvalidEmailAddress' | abpLocalization }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Botón guardar -->
+                <div class="row">
+                  <div class="col-md-12">
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      [disabled]="isLoadingPerfil || perfilForm.invalid"
+                    >
+                      <span *ngIf="!isLoadingPerfil">
+                        <i class="fas fa-check me-1"></i>{{ '::Save' | abpLocalization }}
+                      </span>
+                      <span *ngIf="isLoadingPerfil">
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        {{ '::Saving' | abpLocalization }}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab de Preferencias de Notificación -->
+        <div *ngIf="activeTab === 'preferencias'" id="preferencias">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">{{ '::NotificationPreferences' | abpLocalization }}</h5>
+            </div>
+            <div class="card-body">
+              <form [formGroup]="preferenciasForm" (ngSubmit)="guardarPreferencias()">
+                <p class="text-muted mb-4">
+                  {{ '::ConfigureHowYouWantToReceiveNotifications' | abpLocalization }}
+                </p>
+
+                <!-- Recibir en pantalla -->
+                <div class="form-check mb-3">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    formControlName="recibirEnPantalla"
+                    id="recibirEnPantalla"
+                  />
+                  <label class="form-check-label" for="recibirEnPantalla">
+                    <strong>{{ '::ReceiveOnScreenNotifications' | abpLocalization }}</strong>
+                    <small class="d-block text-muted">{{
+                      '::NotificationsWillAppearInApp' | abpLocalization
+                    }}</small>
+                  </label>
+                </div>
+
+                <!-- Recibir por email -->
+                <div class="form-check mb-4">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    formControlName="recibirPorEmail"
+                    id="recibirPorEmail"
+                  />
+                  <label class="form-check-label" for="recibirPorEmail">
+                    <strong>{{ '::ReceiveEmailNotifications' | abpLocalization }}</strong>
+                    <small class="d-block text-muted">{{
+                      '::NotificationsWillBeSentToYourEmail' | abpLocalization
+                    }}</small>
+                  </label>
+                </div>
+
+                <!-- Frecuencia -->
+                <div class="mb-4">
+                  <label class="form-label"
+                    ><strong>{{ '::NotificationFrequency' | abpLocalization }}</strong></label
+                  >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      formControlName="frecuencia"
+                      [value]="FrecuenciaNotificacion.Inmediata"
+                      id="inmediata"
+                    />
+                    <label class="form-check-label" for="inmediata">
+                      {{ '::Immediate' | abpLocalization }}
+                      <small class="d-block text-muted">{{
+                        '::ReceiveNotificationsImmediately' | abpLocalization
+                      }}</small>
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      formControlName="frecuencia"
+                      [value]="FrecuenciaNotificacion.Semanal"
+                      id="semanal"
+                    />
+                    <label class="form-check-label" for="semanal">
+                      {{ '::Weekly' | abpLocalization }}
+                      <small class="d-block text-muted">{{
+                        '::ReceiveWeeklySummary' | abpLocalization
+                      }}</small>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Botón guardar -->
+                <div class="row">
+                  <div class="col-md-12">
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      [disabled]="isLoadingPreferencias || preferenciasForm.invalid"
+                    >
+                      <span *ngIf="!isLoadingPreferencias">
+                        <i class="fas fa-check me-1"></i>{{ '::Save' | abpLocalization }}
+                      </span>
+                      <span *ngIf="isLoadingPreferencias">
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                        {{ '::Saving' | abpLocalization }}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
