@@ -1,0 +1,217 @@
+<div class="container">
+  <div class="search-header">
+    <h1>{{ '::Destinations' | abpLocalization }}</h1>
+    <h2>{{ '::Destinations' | abpLocalization }}/{{ '::Country' | abpLocalization }}</h2>
+  </div>
+
+  <div class="search-bar">
+    <div class="input-group">
+      <label for="destination">{{ '::Destination' | abpLocalization }}</label>
+      <input
+        type="text"
+        id="destination"
+        class="form-control"
+        placeholder="Madrid, Paris, ..."
+        [(ngModel)]="nombreCiudad"
+        (keyup.enter)="onSearch()"
+        (input)="onSearchInput()"
+      />
+    </div>
+    <div class="input-group">
+      <label for="country">{{ '::Country' | abpLocalization }}</label>
+      <input
+        type="text"
+        id="country"
+        class="form-control"
+        placeholder="Argentina, Chile, ..."
+        [(ngModel)]="nombrePais"
+        (keyup.enter)="onSearch()"
+        (input)="onSearchInput()"
+      />
+    </div>
+    <div class="input-group">
+      <label for="region">{{ '::Region' | abpLocalization }}</label>
+      <input
+        type="text"
+        id="region"
+        class="form-control"
+        [placeholder]="'::Region' | abpLocalization"
+        [(ngModel)]="nombreRegion"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+    <div class="input-group">
+      <label for="minPopulation">{{ '::MinPopulation' | abpLocalization }}</label>
+      <input
+        type="number"
+        id="minPopulation"
+        class="form-control"
+        placeholder="0"
+        [(ngModel)]="minPoblacion"
+        (keyup.enter)="onSearch()"
+        min="0"
+        step="1"
+      />
+    </div>
+    <div class="buttons">
+      <button class="btn btn-primary" (click)="onSearch()">
+        <i class="fas fa-search"></i> {{ '::Search' | abpLocalization }}
+      </button>
+      <button class="btn btn-secondary" (click)="clearSearch()">
+        <i class="fas fa-times"></i> {{ '::Clear' | abpLocalization }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>{{ '::Loading' | abpLocalization }}</p>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-circle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Results grid -->
+  <div *ngIf="!loading && ciudades.length > 0" class="results-grid">
+    <div class="city-card" *ngFor="let ciudad of ciudades">
+      <div class="card-image">
+        <div class="country-badge">
+          <i class="fas fa-map-marker-alt"></i>
+          {{ ciudad.country }}
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h3 class="city-name">{{ ciudad.name }}</h3>
+
+        <div class="info-item">
+          <span class="info-label">
+            <i class="fas fa-globe"></i>
+            <!--{{ '::Destinations' | abpLocalization }}/-->{{ '::Country' | abpLocalization }}:
+          </span>
+          <span class="info-value">{{ ciudad.country }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">
+            <i class="fas fa-users"></i>
+            {{ '::Population' | abpLocalization }}:
+          </span>
+          <span class="info-value">{{ formatearPoblacion(ciudad.population) }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">
+            <i class="fas fa-map-pin"></i>
+            {{ '::Coordinates' | abpLocalization }}:
+          </span>
+          <span class="info-value"
+            >{{ formatearCoordenadas(ciudad.latitude, ciudad.longitude) }}</span
+          >
+        </div>
+
+        <!-- Promedio de calificaciones (solo si el destino está guardado) -->
+        <div class="rating-section" *ngIf="getDestinoId(ciudad) && getPromedio(ciudad)">
+          <!-- Mostrar estrellas y promedio si hay calificaciones -->
+          <div class="rating-display" *ngIf="getPromedio(ciudad)!.totalCalificaciones > 0">
+            <div class="stars">
+              <i *ngFor="let estrella of getEstrellas(getPromedio(ciudad)!.promedioCalificacion)"
+                 class="fas fa-star"
+                 [class.filled]="estrella === 'full'"
+                 [class.half]="estrella === 'half'"></i>
+            </div>
+            <span class="rating-text">
+              <strong>{{ getPromedio(ciudad)!.promedioCalificacion.toFixed(1) }}</strong>
+              <span class="rating-count">({{ getPromedio(ciudad)!.totalCalificaciones }} calificación{{ getPromedio(ciudad)!.totalCalificaciones !== 1 ? 'es' : '' }})</span>
+            </span>
+          </div>
+
+          <!-- Mostrar mensaje cuando no hay calificaciones -->
+          <div class="rating-display no-ratings" *ngIf="getPromedio(ciudad)!.totalCalificaciones === 0">
+            <div class="stars">
+              <i *ngFor="let i of [1,2,3,4,5]" class="fas fa-star empty"></i>
+            </div>
+            <span class="rating-text">
+              <strong>0.0</strong>
+              <span class="no-ratings-text">{{ '::NoRatingsYet' | abpLocalization }}</span>
+            </span>
+          </div>
+        </div>
+
+        <button class="btn-view-details" (click)="abrirModalDetalles(ciudad)">
+          <i class="fas fa-info-circle"></i> {{ '::ViewDetails' | abpLocalization }}
+        </button>
+
+        <button class="btn-view-map" (click)="verEnMapa(ciudad)">
+          <i class="fas fa-map"></i> {{ '::ViewOnMap' | abpLocalization }}
+        </button>
+
+        <!-- Botón de guardar (si no está guardado) -->
+        <button
+          *ngIf="!getDestinoId(ciudad)"
+          class="btn btn-success btn-save"
+          (click)="guardarDestino(ciudad)"
+        >
+          <i class="fas fa-save"></i> {{ '::Save' | abpLocalization }}
+        </button>
+
+        <!-- Botón de calificar (si ya está guardado Y aún no ha sido calificado) -->
+        <button
+          *ngIf="getDestinoId(ciudad) && !yaCalificado(ciudad)"
+          class="btn btn-primary btn-rate"
+          (click)="abrirModalCalificaciones(ciudad)"
+        >
+          <i class="fas fa-star"></i> {{ '::RateDestination' | abpLocalization }}
+        </button>
+
+        <!-- Botón de eliminar (si ya está guardado) -->
+        <button
+          *ngIf="getDestinoId(ciudad)"
+          class="btn btn-danger btn-delete"
+          (click)="eliminarDestino(ciudad)"
+        >
+          <i class="fas fa-trash"></i> {{ '::Delete' | abpLocalization }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de calificaciones -->
+  <app-calificacion-modal
+    [destinoId]="modalDestinoId"
+    [destinoNombre]="modalDestinoNombre"
+    [isVisible]="modalVisible"
+    (close)="cerrarModalCalificaciones()"
+  ></app-calificacion-modal>
+
+  <!-- Modal de detalles -->
+  <app-destino-detalle-modal
+    [cityId]="detalleCityId"
+    [cityName]="detalleCityName"
+    [destinoId]="detalleDestinoId"
+    [isVisible]="detalleModalVisible"
+    (close)="cerrarModalDetalles()"
+  ></app-destino-detalle-modal>
+
+  <!-- No results message -->
+  <div
+    *ngIf="!loading && nombreCiudad && ciudades.length === 0 && !errorMessage"
+    class="no-results"
+  >
+    <i class="fas fa-search"></i>
+    <p>{{ '::NoResults' | abpLocalization }}</p>
+  </div>
+
+  <!-- Empty state -->
+  <div
+    *ngIf="!loading && !nombreCiudad && ciudades.length === 0 && !errorMessage"
+    class="empty-state"
+  >
+    <i class="fas fa-search-location"></i>
+    <p>{{ '::EnterCityName' | abpLocalization }}</p>
+  </div>
+</div>

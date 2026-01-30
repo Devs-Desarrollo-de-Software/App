@@ -1,0 +1,160 @@
+.comentarios-container {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.comentarios-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #007bff;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  color: #666;
+
+  .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  padding: 1rem;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  i {
+    font-size: 1.2rem;
+  }
+}
+
+.comentarios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comentario-card {
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.rating-stars {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+
+  i {
+    font-size: 1.1rem;
+    color: #ddd;
+
+    &.filled {
+      color: #ffc107;
+    }
+  }
+}
+
+.comentario-text {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border-left: 3px solid #007bff;
+}
+
+.sin-comentario {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.comentario-fecha {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+
+  i {
+    font-size: 0.85rem;
+  }
+}
+
+.sin-comentarios {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  color: #6c757d;
+  text-align: center;
+
+  i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .comentarios-container {
+    padding: 0.75rem;
+  }
+
+  .comentarios-title {
+    font-size: 1.1rem;
+  }
+
+  .comentario-card {
+    padding: 0.75rem;
+  }
+
+  .rating-stars i {
+    font-size: 1rem;
+  }
+
+  .comentario-text {
+    font-size: 0.95rem;
+  }
+}

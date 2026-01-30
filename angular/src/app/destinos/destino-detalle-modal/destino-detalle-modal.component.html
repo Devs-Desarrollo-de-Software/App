@@ -1,0 +1,119 @@
+<div class="modal-backdrop" *ngIf="isVisible" (click)="onBackdropClick($event)">
+  <div class="modal-container">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2>
+        <i class="fas fa-info-circle"></i>
+        {{ detalles?.name || cityName }}
+      </h2>
+      <button class="btn-close" (click)="cerrarModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>{{ '::Loading' | abpLocalization }}</span>
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="error && !loading" class="error-state">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ '::ErrorLoadingDetails' | abpLocalization }}</span>
+      </div>
+
+      <!-- Detalles -->
+      <div *ngIf="detalles && !loading && !error" class="detalles-grid">
+        <div class="detalle-item">
+          <i class="fas fa-map-marker-alt icon"></i>
+          <div class="detalle-content">
+            <span class="label">{{ '::City' | abpLocalization }}</span>
+            <span class="value">{{ detalles.name }}</span>
+          </div>
+        </div>
+
+        <div class="detalle-item">
+          <i class="fas fa-flag icon"></i>
+          <div class="detalle-content">
+            <span class="label">{{ '::Country' | abpLocalization }}</span>
+            <span class="value">{{ detalles.country }} ({{ detalles.countryCode }})</span>
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="detalles.region">
+          <i class="fas fa-map icon"></i>
+          <div class="detalle-content">
+            <span class="label">{{ '::Region' | abpLocalization }}</span>
+            <span class="value">{{ detalles.region }} ({{ detalles.regionCode }})</span>
+          </div>
+        </div>
+
+        <div class="detalle-item">
+          <i class="fas fa-users icon"></i>
+          <div class="detalle-content">
+            <span class="label">{{ '::Population' | abpLocalization }}</span>
+            <span class="value">{{ formatearNumero(detalles.population) }}</span>
+          </div>
+        </div>
+
+        <div class="detalle-item">
+          <i class="fas fa-map-pin icon"></i>
+          <div class="detalle-content">
+            <span class="label">{{ '::Coordinates' | abpLocalization }}</span>
+            <span class="value">{{ detalles.latitude }}, {{ detalles.longitude }}</span>
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="detalles.timeZone">
+          <i class="fas fa-clock icon"></i>
+          <div class="detalle-content">
+            <span class="label">{{ '::TimeZone' | abpLocalization }}</span>
+            <span class="value">{{ detalles.timeZone }}</span>
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="detalles.elevationMeters">
+          <i class="fas fa-mountain icon"></i>
+          <div class="detalle-content">
+            <span class="label">{{ '::Elevation' | abpLocalization }}</span>
+            <span class="value">{{ formatearNumero(detalles.elevationMeters) }} m</span>
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="detalles.type">
+          <i class="fas fa-building icon"></i>
+          <div class="detalle-content">
+            <span class="label">{{ '::Type' | abpLocalization }}</span>
+            <span class="value">{{ detalles.type }}</span>
+          </div>
+        </div>
+
+        <div class="detalle-item" *ngIf="detalles.wikiDataId">
+          <i class="fab fa-wikipedia-w icon"></i>
+          <div class="detalle-content">
+            <span class="label">WikiData ID</span>
+            <span class="value">{{ detalles.wikiDataId }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de comentarios (solo si hay destinoId) -->
+      <div *ngIf="detalles && !loading && !error && destinoId" class="comentarios-section">
+        <app-comentarios-list [destinoId]="destinoId"></app-comentarios-list>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer" *ngIf="detalles && !loading && !error">
+      <button class="btn btn-secondary" (click)="cerrarModal()">
+        <i class="fas fa-times"></i> {{ '::Close' | abpLocalization }}
+      </button>
+      <button class="btn btn-primary" (click)="verEnMapa()">
+        <i class="fas fa-map"></i> {{ '::ViewOnMap' | abpLocalization }}
+      </button>
+    </div>
+  </div>
+</div>

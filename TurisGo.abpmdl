@@ -1,0 +1,97 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXLiteTheme": {
+      "version": "4.3.2",
+      "isInstalled": true
+    },
+    "Volo.Abp.Account": {
+      "version": "9.3.2",
+      "isInstalled": true
+    },
+    "Volo.Abp.OpenIddict": {
+      "version": "9.3.2",
+      "isInstalled": true
+    },
+    "Volo.Abp.Identity": {
+      "version": "9.3.2",
+      "isInstalled": true
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "9.3.2",
+      "isInstalled": true
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "9.3.2",
+      "isInstalled": true
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "9.3.2",
+      "isInstalled": true
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "TurisGo.Application": {
+      "path": "src/TurisGo.Application/TurisGo.Application.abppkg",
+      "folder": "src"
+    },
+    "TurisGo.Application.Tests": {
+      "path": "test/TurisGo.Application.Tests/TurisGo.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "TurisGo.Domain.Shared": {
+      "path": "src/TurisGo.Domain.Shared/TurisGo.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "TurisGo.Application.Contracts": {
+      "path": "src/TurisGo.Application.Contracts/TurisGo.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "TurisGo.HttpApi": {
+      "path": "src/TurisGo.HttpApi/TurisGo.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "TurisGo.HttpApi.Client": {
+      "path": "src/TurisGo.HttpApi.Client/TurisGo.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "TurisGo.EntityFrameworkCore.Tests": {
+      "path": "test/TurisGo.EntityFrameworkCore.Tests/TurisGo.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "TurisGo.EntityFrameworkCore": {
+      "path": "src/TurisGo.EntityFrameworkCore/TurisGo.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "TurisGo.TestBase": {
+      "path": "test/TurisGo.TestBase/TurisGo.TestBase.abppkg",
+      "folder": "test"
+    },
+    "TurisGo.Domain.Tests": {
+      "path": "test/TurisGo.Domain.Tests/TurisGo.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "TurisGo.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/TurisGo.HttpApi.Client.ConsoleTestApp/TurisGo.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "TurisGo.DbMigrator": {
+      "path": "src/TurisGo.DbMigrator/TurisGo.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "TurisGo.HttpApi.Host": {
+      "path": "src/TurisGo.HttpApi.Host/TurisGo.HttpApi.Host.abppkg",
+      "folder": "src"
+    },
+    "TurisGo.Domain": {
+      "path": "src/TurisGo.Domain/TurisGo.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}

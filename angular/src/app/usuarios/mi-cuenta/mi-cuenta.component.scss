@@ -1,0 +1,74 @@
+.nav-link {
+  color: #495057;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+.nav-link:hover {
+  background-color: #f8f9fa;
+  color: #007bff;
+}
+
+.nav-link.active {
+  background-color: #007bff;
+  color: white;
+}
+i {
+  color: #6c757d;
+  width: 20px;
+  text-align: center;
+}
+
+#btnEliminar i {
+  color: #fff;
+}
+
+#btnEliminar {
+  background-color: rgb(216, 12, 12);
+  color: #fff;
+  border: 1px solid #f00;
+}
+
+#btnEliminar:hover {
+  opacity: 0.8;
+}
+
+.profile-picture-preview {
+  img {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.card {
+  box-shadow: 0 0.125rem 0.25rem #222;
+}
+
+.form-check-label {
+  cursor: pointer;
+}
+
+.form-check-input {
+  cursor: pointer;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav a {
+  border-radius: 10px;
+  border: 1px solid #48e;
+}
+
+.nav a:hover {
+  background-color: #48e;
+  color: #fff;
+}
+
+.nav a:hover i {
+  color: #fff;
+}

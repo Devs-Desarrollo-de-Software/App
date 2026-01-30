@@ -1,0 +1,64 @@
+<div class="calificacion-form-container">
+  <div class="form-header">
+    <h3>{{ '::RateDestination' | abpLocalization }}</h3>
+    <p *ngIf="destinoNombre" class="destino-nombre">{{ destinoNombre }}</p>
+  </div>
+
+  <div class="form-body">
+    <!-- Selector de estrellas -->
+    <div class="rating-section">
+      <label class="form-label">{{ '::YourRating' | abpLocalization }}</label>
+      <div class="stars-container" (mouseleave)="resetHover()">
+        <i
+          *ngFor="let estrella of estrellas"
+          class="fas fa-star"
+          [ngClass]="obtenerClaseEstrella(estrella)"
+          (click)="seleccionarPuntuacion(estrella)"
+          (mouseenter)="hoverEstrella(estrella)"
+        ></i>
+      </div>
+      <p class="rating-text" *ngIf="puntuacion > 0">
+        {{ puntuacion }} {{ '::Stars' | abpLocalization }}
+      </p>
+    </div>
+
+    <!-- Campo de comentario -->
+    <div class="comment-section">
+      <label for="comentario" class="form-label">
+        {{ '::Comment' | abpLocalization }} ({{ '::Optional' | abpLocalization }})
+      </label>
+      <textarea
+        id="comentario"
+        class="form-control"
+        rows="4"
+        maxlength="1000"
+        [placeholder]="'::ShareYourExperience' | abpLocalization"
+        [(ngModel)]="comentario"
+        [disabled]="loading"
+      ></textarea>
+      <small class="character-count">{{ comentario.length }}/1000</small>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="cancelar()"
+        [disabled]="loading"
+      >
+        {{ '::Cancel' | abpLocalization }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="enviarCalificacion()"
+        [disabled]="loading || puntuacion === 0"
+      >
+        <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+        <span *ngIf="!loading">{{ '::SubmitRating' | abpLocalization }}</span>
+        <span *ngIf="loading">{{ '::Sending' | abpLocalization }}</span>
+      </button>
+    </div>
+  </div>
+</div>

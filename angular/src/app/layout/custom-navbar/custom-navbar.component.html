@@ -1,0 +1,69 @@
+<div class="navbar-container">
+  <nav class="navbar">
+    <!-- Left side: Toggle button -->
+    <div class="navbar-left">
+      <button class="toggle-btn" (click)="onToggleSidebar()" type="button" title="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Right side: User menu -->
+    <div class="navbar-right">
+      <!-- Authenticated user -->
+      <div *ngIf="isAuthenticated" class="user-menu">
+        <button class="user-btn" (click)="toggleUserMenu($event)" type="button">
+          <img
+            [src]="userPhoto"
+            alt="User avatar"
+            class="user-avatar-img"
+            style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 8px;"
+          />
+          <span class="user-name">{{ userName }}</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+
+        <!-- Dropdown menu -->
+        <div class="dropdown-menu" *ngIf="showUserMenu">
+          <div class="dropdown-header">
+            <div class="user-info">
+              <img
+                [src]="userPhoto"
+                alt="User avatar"
+                class="user-avatar"
+                style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;"
+              />
+              <div class="user-details">
+                <div class="user-name-text">{{ userName }}</div>
+                <div class="user-email-text">{{ userEmail }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a
+            [routerLink]="['/account/manage']"
+            class="dropdown-item"
+            (click)="showUserMenu = false"
+          >
+            <i class="fas fa-user"></i>
+            <span>Mi Perfil</span>
+          </a>
+          <a [routerLink]="['/configuracion']" class="dropdown-item" (click)="showUserMenu = false">
+            <i class="fa-solid fa-gear"></i>
+            <span>Configuración</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout-btn" (click)="logout()" type="button">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Cerrar Sesión</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Not authenticated -->
+      <a *ngIf="!isAuthenticated" [routerLink]="['/account/login']" class="login-btn">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Iniciar Sesión</span>
+      </a>
+    </div>
+  </nav>
+</div>
